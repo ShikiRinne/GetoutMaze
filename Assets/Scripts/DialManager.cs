@@ -108,8 +108,6 @@ public class DialManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("IsTouchGoal:" + IsOperateDial);
-
         //スペースキーで取得済みメモの表示、非表示切り替え
         DisplayList.SetActive(MemoDisplay);
         if (Input.GetKeyDown(KeyCode.Space))
@@ -117,26 +115,7 @@ public class DialManager : MonoBehaviour
             MemoDisplay = !MemoDisplay;
         }
 
-        //ゴールに触れたとき、UIの操作を行っていないとき
-        //if (IsTouchiGoal/* && !UIManager.UIManager_Instance.PassCanUIOperation*/)
-        //{
-        //    PassCanControl = false;
-        //    GameManager.GameManager_Instance.UseCursor(true);
-        //    ChangeReticleType(ReticleType.DontUse);
-        //    DialPadLock.SetActive(true);
-        //    ArrowSet.SetActive(true);
-        //    MouseDialSelected();
-        //    ButtonDialSelected();
-        //    MoveArrow(SelectDial);
-        //}
-        //else
-        //{
-        //    GameManager.GameManager_Instance.UseCursor(false);
-        //    ChangeReticleType(ReticleType.DefaultType);
-        //    DialPadLock.SetActive(false);
-        //    ArrowSet.SetActive(false);
-        //}
-        DialSetActive(IsOperateDial);
+        
     }
 
     /// <summary>

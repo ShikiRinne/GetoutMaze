@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7127477528444062793}
   - component: {fileID: 2308071891222493226}
   - component: {fileID: 3684985615040058738}
+  - component: {fileID: 1835429162994355911}
   m_Layer: 5
   m_Name: Dial3
   m_TagString: Dial
@@ -79,6 +80,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &1835429162994355911
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430380600247280170}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8755718478212373183, guid: 80141092abed3e743b5652ab5e03fad1, type: 3}
 --- !u!1 &2061089052037406104
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +189,7 @@ GameObject:
   - component: {fileID: 7136325524953728041}
   - component: {fileID: 8994878387135738269}
   - component: {fileID: 9186448373113753564}
+  - component: {fileID: 7978728807103254886}
   m_Layer: 5
   m_Name: Dial1
   m_TagString: Dial
@@ -242,6 +258,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &7978728807103254886
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2292750418826958014}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2951259278226997831, guid: 80141092abed3e743b5652ab5e03fad1, type: 3}
 --- !u!1 &4760637656382870259
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,6 +362,7 @@ GameObject:
   - component: {fileID: 7667827159926740847}
   - component: {fileID: 8602876108454576098}
   - component: {fileID: 8242599010944844583}
+  - component: {fileID: 203358657911720368}
   m_Layer: 5
   m_Name: Dial4
   m_TagString: Dial
@@ -400,6 +431,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &203358657911720368
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5172131734115847286}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2526007446680458745, guid: 80141092abed3e743b5652ab5e03fad1, type: 3}
 --- !u!1 &5605483383536242393
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,6 +456,7 @@ GameObject:
   - component: {fileID: 4349569404218064284}
   - component: {fileID: 3749715193339381413}
   - component: {fileID: 7443648816964804193}
+  - component: {fileID: 7016835330637631651}
   m_Layer: 5
   m_Name: Dial2
   m_TagString: Dial
@@ -479,3 +525,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &7016835330637631651
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5605483383536242393}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -7133935647051782620, guid: 80141092abed3e743b5652ab5e03fad1, type: 3}
