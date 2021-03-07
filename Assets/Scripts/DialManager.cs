@@ -115,7 +115,12 @@ public class DialManager : MonoBehaviour
             MemoDisplay = !MemoDisplay;
         }
 
-        
+        if (IsTouchiGoal)
+        {
+            GameManager.GameManager_Instance.UseCursor(true);
+            DialPadLock.SetActive(true);
+            ArrowSet.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -157,7 +162,7 @@ public class DialManager : MonoBehaviour
         if (active)
         {
             ChangeReticleType(ReticleType.DontUse);
-            MouseDialSelected();
+            //MouseDialSelected();
             ButtonDialSelected();
             MoveDialArrow(PassSelectDial);
         }

@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class CursorDialOperate : MonoBehaviour
+public class CursorDial : MonoBehaviour
 {
-    [SerializeField]
     private DialManager DM;
+
+    void Start()
+    {
+        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+    }
 
     public void ClickSelect()
     {
@@ -29,10 +34,6 @@ public class CursorDialOperate : MonoBehaviour
                     break;
             }
         }
-        else
-        {
-            DM.JudgeUnlock();
-        }
         DM.MoveDialArrow(DM.PassSelectDial);
     }
 
@@ -49,6 +50,7 @@ public class CursorDialOperate : MonoBehaviour
                 }
                 break;
             case "DownArrow":
+                Debug.Log("down");
                 DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, 36f);
                 DM.PassDialNumberList[DM.PassSelectDial] -= 1;
                 if (DM.PassDialNumberList[DM.PassSelectDial] < 0)

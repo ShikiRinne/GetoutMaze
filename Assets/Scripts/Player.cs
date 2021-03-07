@@ -61,7 +61,33 @@ public class Player : MonoBehaviour
             CameraMove();
         }
 
-        
+        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        {
+            if (hit.collider.CompareTag("Notes"))
+            {
+                DefaultReticle.color = Color.red;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                {
+                    DM.PickupMemo();
+                    hit.collider.gameObject.SetActive(false);
+                }
+            }
+            else if (hit.collider.CompareTag("Exit"))
+            {
+                DefaultReticle.color = Color.red;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                {
+                    DM.PassCanControl = false;
+                    DM.IsTouchiGoal = true;
+                }
+            }
+            else
+            {
+                DefaultReticle.color = Color.gray;
+            }
+        }
     }
 
     /// <summary>
