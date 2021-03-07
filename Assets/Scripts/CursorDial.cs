@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class CursorDial : MonoBehaviour
 {
-    private DialManager DM;
+    private DialOperation DP;
 
     void Start()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        DP = GameObject.Find("DialPadLock").GetComponent<DialOperation>();
     }
 
     public void ClickSelect()
@@ -19,47 +19,45 @@ public class CursorDial : MonoBehaviour
             switch (gameObject.name)
             {
                 case "Dial1":
-                    DM.PassSelectDial = 0;
+                    DP.PassSelectDial = 0;
                     break;
                 case "Dial2":
-                    DM.PassSelectDial = 1;
+                    DP.PassSelectDial = 1;
                     break;
                 case "Dial3":
-                    DM.PassSelectDial = 2;
+                    DP.PassSelectDial = 2;
                     break;
                 case "Dial4":
-                    DM.PassSelectDial = 3;
+                    DP.PassSelectDial = 3;
                     break;
                 default:
                     break;
             }
         }
-        DM.MoveDialArrow(DM.PassSelectDial);
     }
 
     public void ClickRotate()
     {
-        switch (gameObject.name)
-        {
-            case "UpArrow":
-                DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, -36f);
-                DM.PassDialNumberList[DM.PassSelectDial] += 1;
-                if (DM.PassDialNumberList[DM.PassSelectDial] > 9)
-                {
-                    DM.PassDialNumberList[DM.PassSelectDial] = 0;
-                }
-                break;
-            case "DownArrow":
-                Debug.Log("down");
-                DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, 36f);
-                DM.PassDialNumberList[DM.PassSelectDial] -= 1;
-                if (DM.PassDialNumberList[DM.PassSelectDial] < 0)
-                {
-                    DM.PassDialNumberList[DM.PassSelectDial] = 9;
-                }
-                break;
-            default:
-                break;
-        }
+        //switch (gameObject.name)
+        //{
+        //    case "UpArrow":
+        //        DP.PassDialNumberList[DM.PassSelectDial] += 1;
+        //        if (DM.PassDialNumberList[DM.PassSelectDial] > 9)
+        //        {
+        //            DM.PassDialNumberList[DM.PassSelectDial] = 0;
+        //        }
+        //        break;
+        //    case "DownArrow":
+        //        Debug.Log("down");
+        //        DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, 36f);
+        //        DM.PassDialNumberList[DM.PassSelectDial] -= 1;
+        //        if (DM.PassDialNumberList[DM.PassSelectDial] < 0)
+        //        {
+        //            DM.PassDialNumberList[DM.PassSelectDial] = 9;
+        //        }
+        //        break;
+        //    default:
+        //        break;
+        //}
     }
 }
