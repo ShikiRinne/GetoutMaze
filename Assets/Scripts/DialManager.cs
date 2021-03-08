@@ -19,17 +19,23 @@ public class DialManager : MonoBehaviour
     [SerializeField]
     private Camera UICamera;
     [SerializeField]
-    private GameObject DisplayMemo;
+    private GameObject DisplayList;
     [SerializeField]
     private GameObject DialPadLock;
     [SerializeField]
     private GameObject ArrowSet;
+    [SerializeField]
+    private GameObject UpArrow;
+    [SerializeField]
+    private GameObject DownArrow;
     [SerializeField]
     private GameObject Reticle_Parent;
     [SerializeField]
     private Text Reticle_Default;
     [SerializeField]
     private Text Reticle_Spray;
+    [SerializeField]
+    private LayerMask MaskLayer;
 
     private bool MemoDisplay = false;
 
@@ -65,23 +71,45 @@ public class DialManager : MonoBehaviour
         IsOperateDial = false;
         PassCanControl = true;
 
-        //メモをリストとして保存、非アクティブ化
-        foreach (Transform memo in DisplayMemo.transform)
+        //ダイヤルを初期化
+        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
         {
-            DisplayMemosList.Add(memo.gameObject);
-            memo.gameObject.SetActive(false);
+            PassDialNumberList.Add(0);
         }
 
+        //メモをリストとして保存、非アクティブ化
+        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
+        {
+            DisplayMemosList.Add(DisplayList.transform.GetChild(i).gameObject);
+            DisplayMemosList[i].SetActive(false);
+        }
+
+        //各ダイヤルをリストとして保存、非アクティブ化
+        for (int i = 0; i < DialPadLock.transform.childCount; ++i)
+        {
+            if (DialPadLock.transform.GetChild(i).CompareTag("Dial"))
+            {
+                PassDialObject.Add(DialPadLock.transform.GetChild(i).gameObject);
+            }
+        }
+
+        //脱出するキーの設定
+        SetExitKeyCode();
+        Debug.Log("Code = " + ExitKeyCode[0] + ExitKeyCode[1] + ExitKeyCode[2] + ExitKeyCode[3]);
+
+        //ダイヤルを操作する矢印の初期位置の設定
+        ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
+
         //不要なオブジェクトを非アクティブ化
-        DisplayMemo.SetActive(false);
-        //DialPadLock.SetActive(false);
-        //ArrowSet.SetActive(false);
+        DisplayList.SetActive(false);
+        DialPadLock.SetActive(false);
+        ArrowSet.SetActive(false);
     }
 
     void Update()
     {
         //スペースキーで取得済みメモの表示、非表示切り替え
-        DisplayMemo.SetActive(MemoDisplay);
+        DisplayList.SetActive(MemoDisplay);
         if (Input.GetKeyDown(KeyCode.Space))
         {
             MemoDisplay = !MemoDisplay;
@@ -93,12 +121,6 @@ public class DialManager : MonoBehaviour
             DialPadLock.SetActive(true);
             ArrowSet.SetActive(true);
         }
-        else
-        {
-            GameManager.GameManager_Instance.UseCursor(false);
-            DialPadLock.SetActive(false);
-            ArrowSet.SetActive(false);
-        }
     }
 
     /// <summary>
@@ -107,9 +129,47 @@ public class DialManager : MonoBehaviour
     /// <param name="Pickup"></param>
     public void PickupMemo()
     {
-        DisplayMemo.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
+        DisplayList.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
-        GetPickMemoCount++;
+        if (GetPickMemoCount < MGM.PassTotalSplitMemos)
+        {
+            GetPickMemoCount++;
+        }
+    }
+
+    /// <summary>
+    /// 脱出するキーコードの設定
+    /// </summary>
+    private void SetExitKeyCode()
+    {
+        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
+        {
+            ExitKeyCode.Add(Random.Range(1, 10));
+        }
+    }
+
+    /// <summary>
+    /// ダイヤルの操作
+    /// </summary>
+    /// <param name="active"></param>
+    public void DialSetActive(bool active)
+    {
+        PassCanControl = !active;
+        GameManager.GameManager_Instance.UseCursor(active);
+        DialPadLock.SetActive(active);
+        ArrowSet.SetActive(active);
+
+        if (active)
+        {
+            ChangeReticleType(ReticleType.DontUse);
+            //MouseDialSelected();
+            ButtonDialSelected();
+            MoveDialArrow(PassSelectDial);
+        }
+        else
+        {
+            ChangeReticleType(ReticleType.DefaultType);
+        }
     }
 
     /// <summary>
@@ -144,6 +204,103 @@ public class DialManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// マウスでのダイヤル選択
+    /// </summary>
+    private void MouseDialSelected()
+    {
+        GameObject select;
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = UICamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit3D;
+            RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, MaskLayer);
+
+            //クリックされた位置にあるダイヤルを参照
+            if (Physics.Raycast(ray, out hit3D))
+            {
+                if (hit3D.transform.gameObject.CompareTag("Dial"))
+                {
+                    select = hit3D.transform.gameObject;
+
+                    //各ダイヤルの処理
+                    switch (select.name)
+                    {
+                        case "Dial1":
+                            PassSelectDial = 0;
+                            if (hit2D)
+                            {
+                                PassDialNumberList[0] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[0]);
+                            }
+                            break;
+                        case "Dial2":
+                            PassSelectDial = 1;
+                            if (hit2D)
+                            {
+                                PassDialNumberList[1] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[1]);
+                            }
+                            break;
+                        case "Dial3":
+                            PassSelectDial = 2;
+                            if (hit2D)
+                            {
+                                PassDialNumberList[2] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[2]);
+                            }
+                            break;
+                        case "Dial4":
+                            PassSelectDial = 3;
+                            if (hit2D)
+                            {
+                                PassDialNumberList[3] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[3]);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    JudgeUnlock();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// マウスでのダイヤル回転
+    /// </summary>
+    /// <param name="hit2D"></param>
+    /// <param name="select"></param>
+    private int MouseDialRotate(GameObject arrow, GameObject select, int dialnum)
+    {
+        //上下どちらのダイヤルをクリックしているか
+        switch (arrow.name)
+        {
+            case "UpArrow":
+                //回転
+                select.transform.Rotate(0f, 0f, -36f);
+
+                dialnum += 1;
+                if (dialnum > 9)
+                {
+                    dialnum = 0;
+                }
+                break;
+            case "DownArrow":
+                //回転
+                select.transform.Rotate(0f, 0f, 36f);
+
+                dialnum -= 1;
+                if (dialnum < 0)
+                {
+                    dialnum = 9;
+                }
+                break;
+            default:
+                break;
+        }
+        return dialnum;
+    }
 
     /// <summary>
     /// ダイヤル解除判定
@@ -162,6 +319,7 @@ public class DialManager : MonoBehaviour
         }
         else
         {
+            //DialSetActive(false);
             Debug.Log("Miss");
             IsTouchiGoal = false;
             IsOperateDial = false;

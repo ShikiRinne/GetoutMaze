@@ -12,7 +12,6 @@ TagManager:
   - Arrow
   - Clear
   - Over
-  - Memo
   layers:
   - Default
   - TransparentFX
