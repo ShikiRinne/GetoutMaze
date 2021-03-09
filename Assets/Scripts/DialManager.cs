@@ -58,10 +58,10 @@ public class DialManager : MonoBehaviour
         PassCanControl = true;
 
         //ダイヤルを初期化
-        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
-        {
-            PassDialNumberList.Add(0);
-        }
+        //for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
+        //{
+        //    PassDialNumberList.Add(0);
+        //}
 
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
@@ -74,17 +74,20 @@ public class DialManager : MonoBehaviour
             }
         }
 
+        DialPadLock.GetComponent<DialOperation>().StartDialSetting();
+        ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
+
         //各ダイヤルをリストとして保存、非アクティブ化
-        for (int i = 0; i < DialPadLock.transform.childCount; ++i)
-        {
-            if (DialPadLock.transform.GetChild(i).CompareTag("Dial"))
-            {
-                PassDialObject.Add(DialPadLock.transform.GetChild(i).gameObject);
-            }
-        }
+        //for (int i = 0; i < DialPadLock.transform.childCount; ++i)
+        //{
+        //    if (DialPadLock.transform.GetChild(i).CompareTag("Dial"))
+        //    {
+        //        PassDialObject.Add(DialPadLock.transform.GetChild(i).gameObject);
+        //    }
+        //}
 
         //ダイヤルを操作する矢印の初期位置の設定
-        ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
+        //ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
 
         //不要なオブジェクトを非アクティブ化
         DisplayMemo.SetActive(false);
@@ -138,8 +141,8 @@ public class DialManager : MonoBehaviour
         {
             ChangeReticleType(ReticleType.DontUse);
             //MouseDialSelected();
-            ButtonDialSelected();
-            MoveDialArrow(PassSelectDial);
+            //ButtonDialSelected();
+            //MoveDialArrow(PassSelectDial);
         }
         else
         {

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class CursorDial : MonoBehaviour
 {
-    private DialManager DM;
+    private DialOperation DO;
 
     void Start()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        DO = GameObject.Find("DialPadLock").GetComponent<DialOperation>();
     }
 
     public void ClickSelect()
@@ -19,22 +19,21 @@ public class CursorDial : MonoBehaviour
             switch (gameObject.name)
             {
                 case "Dial1":
-                    DM.PassSelectDial = 0;
+                    DO.PassSelectDial = 0;
                     break;
                 case "Dial2":
-                    DM.PassSelectDial = 1;
+                    DO.PassSelectDial = 1;
                     break;
                 case "Dial3":
-                    DM.PassSelectDial = 2;
+                    DO.PassSelectDial = 2;
                     break;
                 case "Dial4":
-                    DM.PassSelectDial = 3;
+                    DO.PassSelectDial = 3;
                     break;
                 default:
                     break;
             }
         }
-        DM.MoveDialArrow(DM.PassSelectDial);
     }
 
     public void ClickRotate()
@@ -42,21 +41,10 @@ public class CursorDial : MonoBehaviour
         switch (gameObject.name)
         {
             case "UpArrow":
-                DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, -36f);
-                DM.PassDialNumberList[DM.PassSelectDial] += 1;
-                if (DM.PassDialNumberList[DM.PassSelectDial] > 9)
-                {
-                    DM.PassDialNumberList[DM.PassSelectDial] = 0;
-                }
+                DO.DirType = DialOperation.RotateDirType.Up;
                 break;
             case "DownArrow":
-                Debug.Log("down");
-                DM.PassDialObject[DM.PassSelectDial].transform.Rotate(0f, 0f, 36f);
-                DM.PassDialNumberList[DM.PassSelectDial] -= 1;
-                if (DM.PassDialNumberList[DM.PassSelectDial] < 0)
-                {
-                    DM.PassDialNumberList[DM.PassSelectDial] = 9;
-                }
+                DO.DirType = DialOperation.RotateDirType.Down;
                 break;
             default:
                 break;
