@@ -17,25 +17,17 @@ public class DialManager : MonoBehaviour
     private MazeGenerateManager MGM;
 
     [SerializeField]
-    private Camera UICamera;
-    [SerializeField]
-    private GameObject DisplayList;
+    private GameObject DisplayMemo;
     [SerializeField]
     private GameObject DialPadLock;
     [SerializeField]
     private GameObject ArrowSet;
-    [SerializeField]
-    private GameObject UpArrow;
-    [SerializeField]
-    private GameObject DownArrow;
     [SerializeField]
     private GameObject Reticle_Parent;
     [SerializeField]
     private Text Reticle_Default;
     [SerializeField]
     private Text Reticle_Spray;
-    [SerializeField]
-    private LayerMask MaskLayer;
 
     private bool MemoDisplay = false;
 
@@ -58,12 +50,6 @@ public class DialManager : MonoBehaviour
         DontUse
     }
 
-    private enum DialRotateDirection
-    {
-        Up,
-        Down
-    }
-
     void Start()
     {
         MGM = GetComponent<MazeGenerateManager>();
@@ -78,10 +64,14 @@ public class DialManager : MonoBehaviour
         }
 
         //メモをリストとして保存、非アクティブ化
-        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
+        foreach (Transform memo in DisplayMemo.transform)
         {
-            DisplayMemosList.Add(DisplayList.transform.GetChild(i).gameObject);
-            DisplayMemosList[i].SetActive(false);
+            if (memo.CompareTag("Memo"))
+            {
+                DisplayMemosList.Add(memo.gameObject);
+                ExitKeyCode.Add(Random.Range(0, 10));
+                memo.gameObject.SetActive(false);
+            }
         }
 
         //各ダイヤルをリストとして保存、非アクティブ化
@@ -93,15 +83,11 @@ public class DialManager : MonoBehaviour
             }
         }
 
-        //脱出するキーの設定
-        SetExitKeyCode();
-        Debug.Log("Code = " + ExitKeyCode[0] + ExitKeyCode[1] + ExitKeyCode[2] + ExitKeyCode[3]);
-
         //ダイヤルを操作する矢印の初期位置の設定
         ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
 
         //不要なオブジェクトを非アクティブ化
-        DisplayList.SetActive(false);
+        DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
     }
@@ -109,7 +95,7 @@ public class DialManager : MonoBehaviour
     void Update()
     {
         //スペースキーで取得済みメモの表示、非表示切り替え
-        DisplayList.SetActive(MemoDisplay);
+        DisplayMemo.SetActive(MemoDisplay);
         if (Input.GetKeyDown(KeyCode.Space))
         {
             MemoDisplay = !MemoDisplay;
@@ -129,22 +115,11 @@ public class DialManager : MonoBehaviour
     /// <param name="Pickup"></param>
     public void PickupMemo()
     {
-        DisplayList.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
+        DisplayMemo.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
         if (GetPickMemoCount < MGM.PassTotalSplitMemos)
         {
             GetPickMemoCount++;
-        }
-    }
-
-    /// <summary>
-    /// 脱出するキーコードの設定
-    /// </summary>
-    private void SetExitKeyCode()
-    {
-        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
-        {
-            ExitKeyCode.Add(Random.Range(1, 10));
         }
     }
 
@@ -202,104 +177,6 @@ public class DialManager : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    /// <summary>
-    /// マウスでのダイヤル選択
-    /// </summary>
-    private void MouseDialSelected()
-    {
-        GameObject select;
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = UICamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit3D;
-            RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, MaskLayer);
-
-            //クリックされた位置にあるダイヤルを参照
-            if (Physics.Raycast(ray, out hit3D))
-            {
-                if (hit3D.transform.gameObject.CompareTag("Dial"))
-                {
-                    select = hit3D.transform.gameObject;
-
-                    //各ダイヤルの処理
-                    switch (select.name)
-                    {
-                        case "Dial1":
-                            PassSelectDial = 0;
-                            if (hit2D)
-                            {
-                                PassDialNumberList[0] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[0]);
-                            }
-                            break;
-                        case "Dial2":
-                            PassSelectDial = 1;
-                            if (hit2D)
-                            {
-                                PassDialNumberList[1] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[1]);
-                            }
-                            break;
-                        case "Dial3":
-                            PassSelectDial = 2;
-                            if (hit2D)
-                            {
-                                PassDialNumberList[2] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[2]);
-                            }
-                            break;
-                        case "Dial4":
-                            PassSelectDial = 3;
-                            if (hit2D)
-                            {
-                                PassDialNumberList[3] = MouseDialRotate(hit2D.transform.gameObject, select, PassDialNumberList[3]);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    JudgeUnlock();
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// マウスでのダイヤル回転
-    /// </summary>
-    /// <param name="hit2D"></param>
-    /// <param name="select"></param>
-    private int MouseDialRotate(GameObject arrow, GameObject select, int dialnum)
-    {
-        //上下どちらのダイヤルをクリックしているか
-        switch (arrow.name)
-        {
-            case "UpArrow":
-                //回転
-                select.transform.Rotate(0f, 0f, -36f);
-
-                dialnum += 1;
-                if (dialnum > 9)
-                {
-                    dialnum = 0;
-                }
-                break;
-            case "DownArrow":
-                //回転
-                select.transform.Rotate(0f, 0f, 36f);
-
-                dialnum -= 1;
-                if (dialnum < 0)
-                {
-                    dialnum = 9;
-                }
-                break;
-            default:
-                break;
-        }
-        return dialnum;
     }
 
     /// <summary>

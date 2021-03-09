@@ -143,6 +143,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5550740286713759505, guid: a7781885561867b4984fee8c3dd0c232,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5988233196131573030, guid: a7781885561867b4984fee8c3dd0c232,
         type: 3}
       propertyPath: m_SortingLayer
@@ -2167,7 +2172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UICamera: {fileID: 1758862622}
-  DisplayList: {fileID: 1917831334}
+  DisplayMemo: {fileID: 1917831334}
   DialPadLock: {fileID: 2024961608}
   ArrowSet: {fileID: 1003831938}
   UpArrow: {fileID: 737861556}
@@ -2223,7 +2228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1917831335}
   m_Layer: 5
-  m_Name: DisplayList
+  m_Name: DisplayMemo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
