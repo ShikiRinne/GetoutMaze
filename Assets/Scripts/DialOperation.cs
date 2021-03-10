@@ -10,6 +10,7 @@ public class DialOperation : MonoBehaviour
     private List<int> DialNumberList = new List<int>();
 
     public int PassSelectDial { get; set; } = 0;
+    public int PassDialNumber { get; set; } = 0;
 
     public enum RotateDirType
     {
@@ -29,7 +30,7 @@ public class DialOperation : MonoBehaviour
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
         DialSetting(ControlManager.ControlManager_Instance.VerticalInput);
-        DialNumChange(DirType);
+        DialNumChange(PassDialNumber);
         AO.MoveArrow(PassSelectDial);
     }
 
@@ -63,12 +64,12 @@ public class DialOperation : MonoBehaviour
         }
 
         //0を下回ったら3(Dial4)に戻す
-        if (select < 0)
+        if (PassSelectDial < 0)
         {
             PassSelectDial = 3;
         }
         //3を上回ったら0(Dial1)に戻す
-        if (select > 3)
+        if (PassSelectDial > 3)
         {
             PassSelectDial = 0;
         }
@@ -78,36 +79,50 @@ public class DialOperation : MonoBehaviour
     {
         if (rotate != 0)
         {
+            PassDialNumber += rotate;
+            if (PassDialNumber > 9)
+            {
+                PassDialNumber = 0;
+            }
+            if (PassDialNumber < 0)
+            {
+                PassDialNumber = 9;
+            }
+
             if (rotate > 0)
             {
-                DirType = RotateDirType.Up;
+                DialRotation(RotateDirType.Up);
             }
             if (rotate < 0)
             {
-                DirType = RotateDirType.Down;
+                DialRotation(RotateDirType.Down);
             }
         }
     }
 
-    public void DialNumChange(RotateDirType type)
+    public void DialNumChange(int dialnum)
     {
-        switch (type)
+        DialNumberList[PassSelectDial] = dialnum;
+
+        if (DialNumberList[PassSelectDial] > 9)
+        {
+            DialNumberList[PassSelectDial] = 0;
+        }
+        if (DialNumberList[PassSelectDial] < 0)
+        {
+            DialNumberList[PassSelectDial] = 9;
+        }
+    }
+
+    public void DialRotation(RotateDirType direction)
+    {
+        switch (direction)
         {
             case RotateDirType.Up:
                 EachDial[PassSelectDial].transform.Rotate(0f, 0f, -36f);
-                DialNumberList[PassSelectDial] += 1;
-                if (DialNumberList[PassSelectDial] > 9)
-                {
-                    DialNumberList[PassSelectDial] = 0;
-                }
                 break;
             case RotateDirType.Down:
                 EachDial[PassSelectDial].transform.Rotate(0f, 0f, 36f);
-                DialNumberList[PassSelectDial] -= 1;
-                if (DialNumberList[PassSelectDial] < 0)
-                {
-                    DialNumberList[PassSelectDial] = 9;
-                }
                 break;
             default:
                 break;

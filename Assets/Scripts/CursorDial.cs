@@ -7,6 +7,8 @@ public class CursorDial : MonoBehaviour
 {
     private DialOperation DO;
 
+    private bool isClick = false;
+
     void Start()
     {
         DO = GameObject.Find("DialPadLock").GetComponent<DialOperation>();
@@ -41,10 +43,20 @@ public class CursorDial : MonoBehaviour
         switch (gameObject.name)
         {
             case "UpArrow":
-                DO.DirType = DialOperation.RotateDirType.Up;
+                DO.PassDialNumber += 1;
+                if (DO.PassDialNumber > 9)
+                {
+                    DO.PassDialNumber = 0;
+                }
+                DO.DialRotation(DialOperation.RotateDirType.Up);
                 break;
             case "DownArrow":
-                DO.DirType = DialOperation.RotateDirType.Down;
+                DO.PassDialNumber -= 1;
+                if (DO.PassDialNumber < 0)
+                {
+                    DO.PassDialNumber = 9;
+                }
+                DO.DialRotation(DialOperation.RotateDirType.Down);
                 break;
             default:
                 break;
