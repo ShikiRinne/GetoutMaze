@@ -7,13 +7,15 @@ public class CursorDial : MonoBehaviour
 {
     private DialOperation DO;
 
-    private bool isClick = false;
-
     void Start()
     {
         DO = GameObject.Find("DialPadLock").GetComponent<DialOperation>();
     }
 
+    /// <summary>
+    /// ダイヤルを選択する
+    /// EventTrigger_PointerDown
+    /// </summary>
     public void ClickSelect()
     {
         if (gameObject.CompareTag("Dial"))
@@ -38,23 +40,27 @@ public class CursorDial : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ダイヤルを回転させる
+    /// EventTrigger_PointerDown
+    /// </summary>
     public void ClickRotate()
     {
         switch (gameObject.name)
         {
             case "UpArrow":
-                DO.PassDialNumber += 1;
-                if (DO.PassDialNumber > 9)
+                DO.DialNumberList[DO.PassSelectDial] += 1;
+                if (DO.DialNumberList[DO.PassSelectDial] > 9)
                 {
-                    DO.PassDialNumber = 0;
+                    DO.DialNumberList[DO.PassSelectDial] = 0;
                 }
                 DO.DialRotation(DialOperation.RotateDirType.Up);
                 break;
             case "DownArrow":
-                DO.PassDialNumber -= 1;
-                if (DO.PassDialNumber < 0)
+                DO.DialNumberList[DO.PassSelectDial] -= 1;
+                if (DO.DialNumberList[DO.PassSelectDial] < 0)
                 {
-                    DO.PassDialNumber = 9;
+                    DO.DialNumberList[DO.PassSelectDial] = 9;
                 }
                 DO.DialRotation(DialOperation.RotateDirType.Down);
                 break;

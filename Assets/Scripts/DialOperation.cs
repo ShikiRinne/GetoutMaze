@@ -6,9 +6,9 @@ public class DialOperation : MonoBehaviour
 {
     private ArrowOperation AO;
 
-    private List<GameObject> EachDial = new List<GameObject>();
-    private List<int> DialNumberList = new List<int>();
-
+    public List<GameObject> EachDial { get; set; } = new List<GameObject>();
+    public List<Renderer> DialRendererList { get; private set; } = new List<Renderer>();
+    public List<int> DialNumberList { get; set; } = new List<int>();
     public int PassSelectDial { get; set; } = 0;
     public int PassDialNumber { get; set; } = 0;
 
@@ -29,8 +29,7 @@ public class DialOperation : MonoBehaviour
         ControlManager.ControlManager_Instance.InputArrow(ControlManager.ArrowType.Select);
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
-        DialSetting(ControlManager.ControlManager_Instance.VerticalInput);
-        DialNumChange(PassDialNumber);
+        DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
         AO.MoveArrow(PassSelectDial);
     }
 
@@ -47,6 +46,7 @@ public class DialOperation : MonoBehaviour
             {
                 EachDial.Add(dial.gameObject);
                 DialNumberList.Add(0);
+                DialRendererList.Add(dial.GetComponent<Renderer>());
             }
         }
     }
@@ -75,19 +75,15 @@ public class DialOperation : MonoBehaviour
         }
     }
 
-    private void DialSetting(int rotate)
+    /// <summary>
+    /// ダイヤルの数値を変更する
+    /// </summary>
+    /// <param name="rotate"></param>
+    private void DialChangeNum(int rotate)
     {
         if (rotate != 0)
         {
-            PassDialNumber += rotate;
-            if (PassDialNumber > 9)
-            {
-                PassDialNumber = 0;
-            }
-            if (PassDialNumber < 0)
-            {
-                PassDialNumber = 9;
-            }
+            DialNumberList[PassSelectDial] += rotate;
 
             if (rotate > 0)
             {
@@ -98,11 +94,6 @@ public class DialOperation : MonoBehaviour
                 DialRotation(RotateDirType.Down);
             }
         }
-    }
-
-    public void DialNumChange(int dialnum)
-    {
-        DialNumberList[PassSelectDial] = dialnum;
 
         if (DialNumberList[PassSelectDial] > 9)
         {
@@ -114,6 +105,10 @@ public class DialOperation : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ダイヤルを回転させる
+    /// </summary>
+    /// <param name="direction"></param>
     public void DialRotation(RotateDirType direction)
     {
         switch (direction)

@@ -57,12 +57,6 @@ public class DialManager : MonoBehaviour
         IsOperateDial = false;
         PassCanControl = true;
 
-        //ダイヤルを初期化
-        //for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
-        //{
-        //    PassDialNumberList.Add(0);
-        //}
-
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
         {
@@ -76,18 +70,6 @@ public class DialManager : MonoBehaviour
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
-
-        //各ダイヤルをリストとして保存、非アクティブ化
-        //for (int i = 0; i < DialPadLock.transform.childCount; ++i)
-        //{
-        //    if (DialPadLock.transform.GetChild(i).CompareTag("Dial"))
-        //    {
-        //        PassDialObject.Add(DialPadLock.transform.GetChild(i).gameObject);
-        //    }
-        //}
-
-        //ダイヤルを操作する矢印の初期位置の設定
-        //ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
 
         //不要なオブジェクトを非アクティブ化
         DisplayMemo.SetActive(false);
@@ -123,30 +105,6 @@ public class DialManager : MonoBehaviour
         if (GetPickMemoCount < MGM.PassTotalSplitMemos)
         {
             GetPickMemoCount++;
-        }
-    }
-
-    /// <summary>
-    /// ダイヤルの操作
-    /// </summary>
-    /// <param name="active"></param>
-    public void DialSetActive(bool active)
-    {
-        PassCanControl = !active;
-        GameManager.GameManager_Instance.UseCursor(active);
-        DialPadLock.SetActive(active);
-        ArrowSet.SetActive(active);
-
-        if (active)
-        {
-            ChangeReticleType(ReticleType.DontUse);
-            //MouseDialSelected();
-            //ButtonDialSelected();
-            //MoveDialArrow(PassSelectDial);
-        }
-        else
-        {
-            ChangeReticleType(ReticleType.DefaultType);
         }
     }
 
@@ -204,95 +162,6 @@ public class DialManager : MonoBehaviour
             IsTouchiGoal = false;
             IsOperateDial = false;
             PassCanControl = true;
-        }
-    }
-
-    /// <summary>
-    /// 矢印を選択されたダイヤルの位置へ移動
-    /// </summary>
-    /// <param name="position"></param>
-    public void MoveDialArrow(int position)
-    {
-        switch (position)
-        {
-            case 0:
-                ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-44.0f, 0f, -620f);
-                break;
-            case 1:
-                ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(-15.0f, 0f, -620f);
-                break;
-            case 2:
-                ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(15.0f, 0f, -620f);
-                break;
-            case 3:
-                ArrowSet.GetComponent<RectTransform>().localPosition = new Vector3(44.0f, 0f, -620f);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
-    /// キー入力でのダイヤル選択
-    /// </summary>
-    private void ButtonDialSelected()
-    {
-        ControlManager.ControlManager_Instance.InputArrow(ControlManager.ArrowType.Select);
-        if (ControlManager.ControlManager_Instance.HorizontalInput != 0)
-        {
-            PassSelectDial += ControlManager.ControlManager_Instance.HorizontalInput;
-        }
-
-        //0未満になったら3（ダイヤル4）に、3を超えたら0に
-        if (PassSelectDial < 0)
-        {
-            PassSelectDial = 3;
-        }
-        if (PassSelectDial > 3)
-        {
-            PassSelectDial = 0;
-        }
-
-        ButtonDialRotate(PassSelectDial);
-        MoveDialArrow(PassSelectDial);
-    }
-
-    /// <summary>
-    /// キー入力でのダイヤル回転
-    /// </summary>
-    /// <param name="dialcnt"></param>
-    private void ButtonDialRotate(int dialcnt)
-    {
-        //数値を加減算
-        PassDialNumberList[dialcnt] += ControlManager.ControlManager_Instance.VerticalInput;
-        
-        //入力が正
-        if (ControlManager.ControlManager_Instance.VerticalInput > 0)
-        {
-            //回転
-            PassDialObject[dialcnt].transform.Rotate(0f, 0f, -36f);
-            //9を超えたら0へ
-            if (PassDialNumberList[dialcnt] > 9)
-            {
-                PassDialNumberList[dialcnt] = 0;
-            }
-        }
-        //入力が負
-        if (ControlManager.ControlManager_Instance.VerticalInput < 0)
-        {
-            //回転
-            PassDialObject[dialcnt].transform.Rotate(0f, 0f, 36f);
-            //0を下回ったら9へ
-            if (PassDialNumberList[dialcnt] < 0)
-            {
-                PassDialNumberList[dialcnt] = 9;
-            }
-        }
-
-        //ダイヤル解除判定
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            JudgeUnlock();
         }
     }
 }
