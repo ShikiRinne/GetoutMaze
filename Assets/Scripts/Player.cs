@@ -63,54 +63,26 @@ public class Player : MonoBehaviour
 
         PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
         Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
-        DefaultReticle.color = Color.gray;
-        //取得関連
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            //Tag = hit.collider.gameObject.tag;
-            //switch (Tag)
-            //{
-            //    case "Notes":
-            //        DefaultReticle.color = Color.red;
-            //        if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-            //        {
-            //            DM.PickupMemo();
-            //            hit.transform.gameObject.SetActive(false);
-            //        }
-            //        break;
-            //    case "Exit":
-            //        DefaultReticle.color = Color.red;
-            //        if (!DM.IsOperateDial)
-            //        {
-            //            if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-            //            {
-            //                DM.IsOperateDial = true;
-            //            }
-            //        }
-            //        break;
-            //}
-
-            //メモの取得
-            if (hit.collider.gameObject.CompareTag("Notes"))
+            if (hit.collider.CompareTag("Notes"))
             {
                 DefaultReticle.color = Color.red;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                 {
                     DM.PickupMemo();
-                    hit.transform.gameObject.SetActive(false);
+                    hit.collider.gameObject.SetActive(false);
                 }
             }
-            //ゴールとの接触
-            else if (hit.collider.gameObject.CompareTag("Exit")/* && !DM.IsOperateDial*/)
+            else if (hit.collider.CompareTag("Exit"))
             {
                 DefaultReticle.color = Color.red;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                 {
+                    DM.PassCanControl = false;
                     DM.IsTouchiGoal = true;
-                    DM.IsOperateDial = true;
                 }
             }
-            //非接触
             else
             {
                 DefaultReticle.color = Color.gray;
