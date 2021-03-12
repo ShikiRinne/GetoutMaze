@@ -14,8 +14,6 @@ using UnityEngine.UI;
 /// </summary>
 public class DialManager : MonoBehaviour
 {
-    private MazeGenerateManager MGM;
-
     [SerializeField]
     private GameObject DisplayMemo;
     [SerializeField]
@@ -32,12 +30,10 @@ public class DialManager : MonoBehaviour
     private bool MemoDisplay = false;
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
-    public List<GameObject> PassDialObject { get; set; } = new List<GameObject>();
 
     private List<int> ExitKeyCode = new List<int>();
     public List<int> PassDialNumberList { get; set; } = new List<int>();
 
-    public int PassSelectDial { get; set; } = 0;
     public int GetPickMemoCount { get; set; } = 0;
     public bool IsOperateDial { get; set; }
     public bool IsTouchiGoal { get; set; }
@@ -52,7 +48,6 @@ public class DialManager : MonoBehaviour
 
     void Start()
     {
-        MGM = GetComponent<MazeGenerateManager>();
         IsTouchiGoal = false;
         IsOperateDial = false;
         PassCanControl = true;
@@ -102,10 +97,7 @@ public class DialManager : MonoBehaviour
     {
         DisplayMemo.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
-        if (GetPickMemoCount < MGM.PassTotalSplitMemos)
-        {
-            GetPickMemoCount++;
-        }
+        GetPickMemoCount++;
     }
 
     /// <summary>
