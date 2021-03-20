@@ -380,7 +380,7 @@ GameObject:
   - component: {fileID: 1056372173066044186}
   - component: {fileID: 1029756556986581938}
   - component: {fileID: 5904390402204732387}
-  - component: {fileID: 4758117328130653574}
+  - component: {fileID: 3558144158575907545}
   m_Layer: 5
   m_Name: Lock
   m_TagString: Untagged
@@ -449,7 +449,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &4758117328130653574
+--- !u!65 &3558144158575907545
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -457,11 +457,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4760637656382870259}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.044521317, y: 0.006000002, z: 0.03426069}
-  m_Center: {x: -0.019260662, y: -0.000000001047738, z: 0.017130334}
+  m_Size: {x: 0.044521324, y: 0.006000004, z: 0.03426069}
+  m_Center: {x: -0.019260662, y: -0.000000002195763, z: 0.017130334}
 --- !u!1 &5172131734115847286
 GameObject:
   m_ObjectHideFlags: 0

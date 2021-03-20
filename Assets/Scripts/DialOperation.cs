@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DialOperation : MonoBehaviour
 {
     private ArrowOperation AO;
 
     public List<GameObject> EachDial { get; set; } = new List<GameObject>();
-    public List<Renderer> DialRendererList { get; private set; } = new List<Renderer>();
+    public List<MeshRenderer> RendererList { get; private set; } = new List<MeshRenderer>();
     public List<int> DialNumberList { get; set; } = new List<int>();
     public int PassSelectDial { get; set; } = 0;
-    public int PassDialNumber { get; set; } = 0;
+
+    [ColorUsage(false, false)]
+    private Color DefaultColor;
+    [ColorUsage(false, true)]
+    private Color SelectedColor;
 
     public enum RotateDirType
     {
@@ -21,7 +27,8 @@ public class DialOperation : MonoBehaviour
 
     void Start()
     {
-
+        DefaultColor = new Color(0f, 0f, 0f);
+        SelectedColor = new Color(50f, 0f, 0f);
     }
 
     void Update()
@@ -30,6 +37,7 @@ public class DialOperation : MonoBehaviour
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
         DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
+        DialLuminescent(PassSelectDial);
         AO.MoveArrow(PassSelectDial);
     }
 
@@ -42,11 +50,11 @@ public class DialOperation : MonoBehaviour
 
         foreach (Transform dial in gameObject.transform)
         {
+            RendererList.Add(dial.GetComponent<MeshRenderer>());
             if (dial.CompareTag("Dial"))
             {
                 EachDial.Add(dial.gameObject);
                 DialNumberList.Add(0);
-                DialRendererList.Add(dial.GetComponent<Renderer>());
             }
         }
     }
@@ -121,6 +129,26 @@ public class DialOperation : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    /// <summary>
+    /// 選択されているオブジェクトをEmissionで発光させる
+    /// </summary>
+    /// <param name="select"></param>
+    public void DialLuminescent(int select)
+    {
+        foreach (MeshRenderer num in RendererList)
+        {
+            if (num == RendererList[select])
+            {
+                num.material.EnableKeyword("_EMISSION");
+                num.material.SetColor("_EmissionColor", SelectedColor);
+            }
+            else
+            {
+                num.material.SetColor("_EmissionColor", DefaultColor);
+            }
         }
     }
 }
