@@ -85,7 +85,7 @@ public class DialManager : MonoBehaviour
         {
             GameManager.GameManager_Instance.UseCursor(true);
             DialPadLock.SetActive(true);
-            ArrowSet.SetActive(true);
+            //ArrowSet.SetActive(true);
         }
     }
 

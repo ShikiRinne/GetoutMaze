@@ -1343,7 +1343,7 @@ GameObject:
   - component: {fileID: 1003831939}
   - component: {fileID: 1003831940}
   m_Layer: 5
-  m_Name: Arrow_Rotate
+  m_Name: ArrowSet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2427,6 +2427,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558144158575907545, guid: 3f5c1a84c39d16c45bb09e13bbffc1e4,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558144158575907545, guid: 3f5c1a84c39d16c45bb09e13bbffc1e4,
+        type: 3}
+      propertyPath: m_Center.y
+      value: -0.00000000248841
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558144158575907545, guid: 3f5c1a84c39d16c45bb09e13bbffc1e4,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 0.019284794
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558144158575907545, guid: 3f5c1a84c39d16c45bb09e13bbffc1e4,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.019260664
       objectReference: {fileID: 0}
     - target: {fileID: 3684985615040058738, guid: 3f5c1a84c39d16c45bb09e13bbffc1e4,
         type: 3}

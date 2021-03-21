@@ -19,7 +19,10 @@ public class ArrowOperation : MonoBehaviour
 
     void Start()
     {
-        
+        ArrowRect = gameObject.GetComponent<RectTransform>();
+        ArrowRect.anchoredPosition = Dial1Pos;
+
+        gameObject.SetActive(false);
     }
 
     void Update()

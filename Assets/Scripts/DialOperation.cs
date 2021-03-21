@@ -6,17 +6,22 @@ using UnityEngine.AI;
 
 public class DialOperation : MonoBehaviour
 {
+    private DialManager DM;
     private ArrowOperation AO;
 
     public List<GameObject> EachDial { get; set; } = new List<GameObject>();
     public List<MeshRenderer> RendererList { get; private set; } = new List<MeshRenderer>();
     public List<int> DialNumberList { get; set; } = new List<int>();
     public int PassSelectDial { get; set; } = 0;
+    public int PassSelectCount { get; set; } = 0;
+
+    private bool canRotate = false;
+    private bool isActiveself = false;
 
     [ColorUsage(false, false)]
-    private Color DefaultColor;
+    private Color32 DefaultColor;
     [ColorUsage(false, true)]
-    private Color SelectedColor;
+    private Color32 SelectedColor;
 
     public enum RotateDirType
     {
@@ -27,18 +32,26 @@ public class DialOperation : MonoBehaviour
 
     void Start()
     {
-        DefaultColor = new Color(0f, 0f, 0f);
-        SelectedColor = new Color(50f, 0f, 0f);
+        
     }
 
     void Update()
     {
+        if (gameObject.activeSelf && !isActiveself)
+        {
+            DialLuminescent(PassSelectDial);
+            isActiveself = true;
+        }
+
         ControlManager.ControlManager_Instance.InputArrow(ControlManager.ArrowType.Select);
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
-        DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
-        DialLuminescent(PassSelectDial);
-        AO.MoveArrow(PassSelectDial);
+
+        if (canRotate)
+        {
+            DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
+        }
+        //AO.MoveArrow(PassSelectDial);
     }
 
     /// <summary>
@@ -57,6 +70,8 @@ public class DialOperation : MonoBehaviour
                 DialNumberList.Add(0);
             }
         }
+        DefaultColor = new Color32(0, 0, 0, 255);
+        SelectedColor = new Color32(100, 100, 100, 255);
     }
 
     /// <summary>
@@ -69,17 +84,40 @@ public class DialOperation : MonoBehaviour
         if (select != 0)
         {
             PassSelectDial += select;
+            if (PassSelectDial < 0)
+            {
+                PassSelectDial = 4;
+            }
+            if (PassSelectDial > 4)
+            {
+                PassSelectDial = 0;
+            }
+            DialLuminescent(PassSelectDial);
         }
-
-        //0を下回ったら3(Dial4)に戻す
-        if (PassSelectDial < 0)
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            PassSelectDial = 3;
-        }
-        //3を上回ったら0(Dial1)に戻す
-        if (PassSelectDial > 3)
-        {
-            PassSelectDial = 0;
+            if (PassSelectDial != 4)
+            {
+                switch (PassSelectCount)
+                {
+                    case 0:
+                        AO.gameObject.SetActive(true);
+                        AO.MoveArrow(PassSelectDial);
+                        canRotate = true;
+                        PassSelectCount++;
+                        break;
+                    case 1:
+                        AO.gameObject.SetActive(false);
+                        canRotate = false;
+                        PassSelectCount--;
+                        break;
+                }
+            }
+            else
+            {
+                //DialManagerのIsTouchGoalをfalseにしないとダメ
+                gameObject.SetActive(false);
+            }
         }
     }
 
