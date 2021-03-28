@@ -14,8 +14,8 @@ public class DialOperation : MonoBehaviour
     public List<int> DialNumberList { get; set; } = new List<int>();
     public int PassSelectDial { get; set; } = 0;
     public int PassSelectCount { get; set; } = 0;
+    public bool PassCanRotate { get; set; } = false;
 
-    private bool canRotate = false;
     private bool isActiveself = false;
 
     [ColorUsage(false, false)]
@@ -47,11 +47,10 @@ public class DialOperation : MonoBehaviour
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
 
-        if (canRotate)
+        if (PassCanRotate)
         {
             DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
         }
-        //AO.MoveArrow(PassSelectDial);
     }
 
     /// <summary>
@@ -61,15 +60,19 @@ public class DialOperation : MonoBehaviour
     {
         AO = GameObject.Find("ArrowSet").GetComponent<ArrowOperation>();
 
+        //リストに挿入
         foreach (Transform dial in gameObject.transform)
         {
+            //各ダイヤルとシャックルのMeshRendererをリストに挿入
             RendererList.Add(dial.GetComponent<MeshRenderer>());
+            //各ダイヤルをダイヤルリストに挿入、ダイヤルの番号を0で挿入
             if (dial.CompareTag("Dial"))
             {
                 EachDial.Add(dial.gameObject);
                 DialNumberList.Add(0);
             }
         }
+        //通常時と選択時のオブジェクトのEmissyonColorを設定
         DefaultColor = new Color32(0, 0, 0, 255);
         SelectedColor = new Color32(100, 100, 100, 255);
     }
@@ -81,7 +84,7 @@ public class DialOperation : MonoBehaviour
     private void DialSelect(int select)
     {
         //操作されている場合のみ代入
-        if (select != 0)
+        if (!PassCanRotate && select != 0)
         {
             PassSelectDial += select;
             if (PassSelectDial < 0)
@@ -92,32 +95,45 @@ public class DialOperation : MonoBehaviour
             {
                 PassSelectDial = 0;
             }
+            //選択されているダイヤルを発光させる
             DialLuminescent(PassSelectDial);
         }
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            //シャックル以外
             if (PassSelectDial != 4)
             {
-                switch (PassSelectCount)
-                {
-                    case 0:
-                        AO.gameObject.SetActive(true);
-                        AO.MoveArrow(PassSelectDial);
-                        canRotate = true;
-                        PassSelectCount++;
-                        break;
-                    case 1:
-                        AO.gameObject.SetActive(false);
-                        canRotate = false;
-                        PassSelectCount--;
-                        break;
-                }
+                DialDicision();
             }
+            //シャックル、ダイヤルの数値が脱出コードと同じか判定
             else
             {
                 //DialManagerのIsTouchGoalをfalseにしないとダメ
                 gameObject.SetActive(false);
             }
+        }
+    }
+
+    /// <summary>
+    /// 選択され決定されたダイヤルの操作
+    /// </summary>
+    public void DialDicision()
+    {
+        //一度押したらダイヤルを回転、もう一度押したら矢印を非表示にしてダイヤル選択
+        switch (PassSelectCount)
+        {
+            case 0:
+                AO.gameObject.SetActive(true);
+                AO.MoveArrow(PassSelectDial);
+                PassCanRotate = true;
+                PassSelectCount++;
+                break;
+            case 1:
+                AO.gameObject.SetActive(false);
+                PassCanRotate = false;
+                PassSelectCount--;
+                break;
         }
     }
 
