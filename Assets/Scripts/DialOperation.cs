@@ -58,6 +58,7 @@ public class DialOperation : MonoBehaviour
     /// </summary>
     public void StartDialSetting()
     {
+        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
         AO = GameObject.Find("ArrowSet").GetComponent<ArrowOperation>();
 
         //リストに挿入
@@ -72,6 +73,7 @@ public class DialOperation : MonoBehaviour
                 DialNumberList.Add(0);
             }
         }
+
         //通常時と選択時のオブジェクトのEmissyonColorを設定
         DefaultColor = new Color32(0, 0, 0, 255);
         SelectedColor = new Color32(100, 100, 100, 255);
@@ -95,23 +97,14 @@ public class DialOperation : MonoBehaviour
             {
                 PassSelectDial = 0;
             }
+
             //選択されているダイヤルを発光させる
             DialLuminescent(PassSelectDial);
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            //シャックル以外
-            if (PassSelectDial != 4)
-            {
-                DialDicision();
-            }
-            //シャックル、ダイヤルの数値が脱出コードと同じか判定
-            else
-            {
-                //DialManagerのIsTouchGoalをfalseにしないとダメ
-                gameObject.SetActive(false);
-            }
+            DialDicision();
         }
     }
 
@@ -120,20 +113,27 @@ public class DialOperation : MonoBehaviour
     /// </summary>
     public void DialDicision()
     {
-        //一度押したらダイヤルを回転、もう一度押したら矢印を非表示にしてダイヤル選択
-        switch (PassSelectCount)
+        if (PassSelectDial != 4)
         {
-            case 0:
-                AO.gameObject.SetActive(true);
-                AO.MoveArrow(PassSelectDial);
-                PassCanRotate = true;
-                PassSelectCount++;
-                break;
-            case 1:
-                AO.gameObject.SetActive(false);
-                PassCanRotate = false;
-                PassSelectCount--;
-                break;
+            //一度押したらダイヤルを回転、もう一度押したら矢印を非表示にしてダイヤル選択
+            switch (PassSelectCount)
+            {
+                case 0:
+                    AO.gameObject.SetActive(true);
+                    AO.MoveArrow(PassSelectDial);
+                    PassCanRotate = true;
+                    PassSelectCount++;
+                    break;
+                case 1:
+                    AO.gameObject.SetActive(false);
+                    PassCanRotate = false;
+                    PassSelectCount--;
+                    break;
+            }
+        }
+        else
+        {
+            DM.JudgeUnlock(DialNumberList);
         }
     }
 

@@ -85,7 +85,6 @@ public class DialManager : MonoBehaviour
         {
             GameManager.GameManager_Instance.UseCursor(true);
             DialPadLock.SetActive(true);
-            //ArrowSet.SetActive(true);
         }
     }
 
@@ -135,10 +134,10 @@ public class DialManager : MonoBehaviour
     /// <summary>
     /// ダイヤル解除判定
     /// </summary>
-    public void JudgeUnlock()
+    public void JudgeUnlock(List<int> dialnum)
     {
         //ダイヤルの数値と脱出するキーコードが一致しているか判定
-        bool isUnlock = PassDialNumberList.SequenceEqual(ExitKeyCode);
+        bool isUnlock = dialnum.SequenceEqual(ExitKeyCode);
         Debug.Log("isUnlock = " + isUnlock);
 
         //一致ならGameClear、不一致ならそのまま非表示にして再開
@@ -149,8 +148,9 @@ public class DialManager : MonoBehaviour
         }
         else
         {
-            //DialSetActive(false);
             Debug.Log("Miss");
+            GameManager.GameManager_Instance.UseCursor(false);
+            DialPadLock.SetActive(false);
             IsTouchiGoal = false;
             IsOperateDial = false;
             PassCanControl = true;
