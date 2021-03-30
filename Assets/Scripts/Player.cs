@@ -8,10 +8,6 @@ public class Player : MonoBehaviour
     private DialManager DM;
 
     private GameObject MainCamera;
-    [SerializeField]
-    private GameObject Spray;
-    [SerializeField]
-    private GameObject Phone;
 
     private CharacterController Chara;
 
@@ -21,9 +17,6 @@ public class Player : MonoBehaviour
     private float SetRotateSpeed;
     [SerializeField]
     private float SetHandLength;
-
-    private bool isdial = false;
-    private string Tag = null;
 
     private Text DefaultReticle;
 

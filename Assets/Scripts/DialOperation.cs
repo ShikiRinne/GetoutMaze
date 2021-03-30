@@ -1,16 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DialOperation : MonoBehaviour
 {
+    private DialManager DM;
     private ArrowOperation AO;
 
     public List<GameObject> EachDial { get; set; } = new List<GameObject>();
-    public List<Renderer> DialRendererList { get; private set; } = new List<Renderer>();
+    public List<MeshRenderer> RendererList { get; private set; } = new List<MeshRenderer>();
     public List<int> DialNumberList { get; set; } = new List<int>();
     public int PassSelectDial { get; set; } = 0;
-    public int PassDialNumber { get; set; } = 0;
+    public int PassSelectCount { get; set; } = 0;
+    public bool PassCanRotate { get; set; } = false;
+
+    private bool isActiveself = false;
+
+    [ColorUsage(false, false)]
+    private Color32 DefaultColor;
+    [ColorUsage(false, true)]
+    private Color32 SelectedColor;
 
     public enum RotateDirType
     {
@@ -21,16 +32,25 @@ public class DialOperation : MonoBehaviour
 
     void Start()
     {
-
+        
     }
 
     void Update()
     {
+        if (gameObject.activeSelf && !isActiveself)
+        {
+            DialLuminescent(PassSelectDial);
+            isActiveself = true;
+        }
+
         ControlManager.ControlManager_Instance.InputArrow(ControlManager.ArrowType.Select);
 
         DialSelect(ControlManager.ControlManager_Instance.HorizontalInput);
-        DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
-        AO.MoveArrow(PassSelectDial);
+
+        if (PassCanRotate)
+        {
+            DialChangeNum(ControlManager.ControlManager_Instance.VerticalInput);
+        }
     }
 
     /// <summary>
@@ -38,17 +58,25 @@ public class DialOperation : MonoBehaviour
     /// </summary>
     public void StartDialSetting()
     {
+        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
         AO = GameObject.Find("ArrowSet").GetComponent<ArrowOperation>();
 
+        //リストに挿入
         foreach (Transform dial in gameObject.transform)
         {
+            //各ダイヤルとシャックルのMeshRendererをリストに挿入
+            RendererList.Add(dial.GetComponent<MeshRenderer>());
+            //各ダイヤルをダイヤルリストに挿入、ダイヤルの番号を0で挿入
             if (dial.CompareTag("Dial"))
             {
                 EachDial.Add(dial.gameObject);
                 DialNumberList.Add(0);
-                DialRendererList.Add(dial.GetComponent<Renderer>());
             }
         }
+
+        //通常時と選択時のオブジェクトのEmissyonColorを設定
+        DefaultColor = new Color32(0, 0, 0, 255);
+        SelectedColor = new Color32(100, 100, 100, 255);
     }
 
     /// <summary>
@@ -58,20 +86,54 @@ public class DialOperation : MonoBehaviour
     private void DialSelect(int select)
     {
         //操作されている場合のみ代入
-        if (select != 0)
+        if (!PassCanRotate && select != 0)
         {
             PassSelectDial += select;
+            if (PassSelectDial < 0)
+            {
+                PassSelectDial = 4;
+            }
+            if (PassSelectDial > 4)
+            {
+                PassSelectDial = 0;
+            }
+
+            //選択されているダイヤルを発光させる
+            DialLuminescent(PassSelectDial);
         }
 
-        //0を下回ったら3(Dial4)に戻す
-        if (PassSelectDial < 0)
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            PassSelectDial = 3;
+            DialDicision();
         }
-        //3を上回ったら0(Dial1)に戻す
-        if (PassSelectDial > 3)
+    }
+
+    /// <summary>
+    /// 選択され決定されたダイヤルの操作
+    /// </summary>
+    public void DialDicision()
+    {
+        if (PassSelectDial != 4)
         {
-            PassSelectDial = 0;
+            //一度押したらダイヤルを回転、もう一度押したら矢印を非表示にしてダイヤル選択
+            switch (PassSelectCount)
+            {
+                case 0:
+                    AO.gameObject.SetActive(true);
+                    AO.MoveArrow(PassSelectDial);
+                    PassCanRotate = true;
+                    PassSelectCount++;
+                    break;
+                case 1:
+                    AO.gameObject.SetActive(false);
+                    PassCanRotate = false;
+                    PassSelectCount--;
+                    break;
+            }
+        }
+        else
+        {
+            DM.JudgeUnlock(DialNumberList);
         }
     }
 
@@ -121,6 +183,26 @@ public class DialOperation : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    /// <summary>
+    /// 選択されているオブジェクトをEmissionで発光させる
+    /// </summary>
+    /// <param name="select"></param>
+    public void DialLuminescent(int select)
+    {
+        foreach (MeshRenderer num in RendererList)
+        {
+            if (num == RendererList[select])
+            {
+                num.material.EnableKeyword("_EMISSION");
+                num.material.SetColor("_EmissionColor", SelectedColor);
+            }
+            else
+            {
+                num.material.SetColor("_EmissionColor", DefaultColor);
+            }
         }
     }
 }

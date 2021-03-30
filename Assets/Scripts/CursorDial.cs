@@ -18,7 +18,16 @@ public class CursorDial : MonoBehaviour
     /// </summary>
     public void ClickSelect()
     {
-        if (gameObject.CompareTag("Dial"))
+        DO.DialDicision();
+    }
+
+    /// <summary>
+    /// ダイヤルを発光させる
+    /// EventTrigger_PointerEnter
+    /// </summary>
+    public void EnterLuminescent()
+    {
+        if (!DO.PassCanRotate)
         {
             switch (gameObject.name)
             {
@@ -34,9 +43,13 @@ public class CursorDial : MonoBehaviour
                 case "Dial4":
                     DO.PassSelectDial = 3;
                     break;
+                case "Shackle":
+                    DO.PassSelectDial = 4;
+                    break;
                 default:
                     break;
             }
+            DO.DialLuminescent(DO.PassSelectDial);
         }
     }
 
