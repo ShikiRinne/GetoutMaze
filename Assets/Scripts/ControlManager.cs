@@ -18,7 +18,6 @@ public class ControlManager : MonoBehaviour
     public int HorizontalInput { get; private set; }
 
     public bool CanControl { get; set; } = false;
-    public bool CanMove { get; set; } = false;
 
     public enum ArrowType
     {

@@ -6,7 +6,6 @@ using UnityEngine;
 public class CursorDial : MonoBehaviour
 {
     private DialOperation DO;
-    private int cnt = 0;
 
     void Start()
     {
