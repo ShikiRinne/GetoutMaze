@@ -54,12 +54,12 @@ public class DialManager : MonoBehaviour
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
         {
-            if (memo.CompareTag("Memo"))
-            {
+            //if (memo.CompareTag("Memo"))
+            //{
                 DisplayMemosList.Add(memo.gameObject);
                 ExitKeyCode.Add(Random.Range(0, 10));
                 memo.gameObject.SetActive(false);
-            }
+            //}
         }
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();

@@ -32,6 +32,8 @@ public class MazeGenerateManager: MonoBehaviour
     private List<int> DeadendPointList;
     private List<GameObject> MemoStorageList = new List<GameObject>();
 
+    public Vector3 PassRestartPos { get; private set; }
+
     private enum ObjectType
     {
         Path = 0,
@@ -282,7 +284,7 @@ public class MazeGenerateManager: MonoBehaviour
                         }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
                         Instantiate(StartPoint, new Vector3(x, StartPoint.transform.localScale.y, y), Quaternion.identity);
-                        Debug.Log(StartDirection);
+                        PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y, y);
                         break;
                     case (int)ObjectType.Exit:
                         //出口を配置
