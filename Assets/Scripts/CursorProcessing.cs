@@ -73,6 +73,7 @@ public class CursorProcessing : MonoBehaviour
         switch (gameObject.name)
         {
             case "Text_Retry":
+                GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.Play);
                 Debug.Log("ReTry");
                 break;
             case "Text_Retire":

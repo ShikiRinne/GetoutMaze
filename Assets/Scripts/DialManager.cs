@@ -36,7 +36,6 @@ public class DialManager : MonoBehaviour
     public int GetPickMemoCount { get; set; } = 0;
     public bool IsOperateDial { get; set; }
     public bool IsTouchiGoal { get; set; }
-    public bool PassCanControl { get; set; }
 
     public enum ReticleType
     {
@@ -49,17 +48,13 @@ public class DialManager : MonoBehaviour
     {
         IsTouchiGoal = false;
         IsOperateDial = false;
-        PassCanControl = true;
 
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
         {
-            //if (memo.CompareTag("Memo"))
-            //{
-                DisplayMemosList.Add(memo.gameObject);
-                ExitKeyCode.Add(Random.Range(0, 10));
-                memo.gameObject.SetActive(false);
-            //}
+            DisplayMemosList.Add(memo.gameObject);
+            ExitKeyCode.Add(Random.Range(0, 10));
+            memo.gameObject.SetActive(false);
         }
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
@@ -83,7 +78,15 @@ public class DialManager : MonoBehaviour
         if (IsTouchiGoal)
         {
             GameManager.GameManager_Instance.UseCursor(true);
+            ControlManager.ControlManager_Instance.CanPlayerMove = false;
             DialPadLock.SetActive(true);
+        }
+        else
+        {
+            GameManager.GameManager_Instance.UseCursor(false);
+            ControlManager.ControlManager_Instance.CanPlayerMove = true;
+            DialPadLock.SetActive(false);
+            IsOperateDial = false;
         }
     }
 
@@ -148,11 +151,7 @@ public class DialManager : MonoBehaviour
         else
         {
             Debug.Log("Miss");
-            GameManager.GameManager_Instance.UseCursor(false);
-            DialPadLock.SetActive(false);
             IsTouchiGoal = false;
-            IsOperateDial = false;
-            PassCanControl = true;
         }
     }
 }

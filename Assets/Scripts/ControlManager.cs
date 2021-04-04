@@ -18,6 +18,7 @@ public class ControlManager : MonoBehaviour
     public int HorizontalInput { get; private set; }
 
     public bool CanControl { get; set; } = false;
+    public bool CanPlayerMove { get; set; } = false;
 
     public enum ArrowType
     {
@@ -51,7 +52,7 @@ public class ControlManager : MonoBehaviour
         {
             //移動の際の各方向及びスティック入力
             case ArrowType.Move:
-                if (CanControl && (Input.GetAxisRaw("Horizontal") != 0.0f || Input.GetAxisRaw("Vertical") != 0.0f))
+                if ((CanControl && CanPlayerMove) && (Input.GetAxisRaw("Horizontal") != 0.0f || Input.GetAxisRaw("Vertical") != 0.0f))
                 {
                     MoveHorizontal = Input.GetAxisRaw("Horizontal");
                     MoveVertical = Input.GetAxisRaw("Vertical");
@@ -104,7 +105,7 @@ public class ControlManager : MonoBehaviour
     /// </summary>
     public void ViewAndCursor()
     {
-        if (CanControl && (Input.GetAxisRaw("Mouse X") != 0.0f || Input.GetAxisRaw("Mouse Y") != 0.0f))
+        if ((CanControl && CanPlayerMove) && (Input.GetAxisRaw("Mouse X") != 0.0f || Input.GetAxisRaw("Mouse Y") != 0.0f))
         {
             RotateHorizontal = Input.GetAxisRaw("Mouse X");
             RotateVertical = Input.GetAxisRaw("Mouse Y");
