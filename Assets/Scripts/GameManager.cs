@@ -16,9 +16,6 @@ public class GameManager : MonoBehaviour
     private int FrameRate = 60;
 
     public bool WantQuit { get; set; } = false;
-    public bool WantRetry { get; set; } = false;
-
-    public bool CanChange { get; set; }
 
     public enum GameState
     {
@@ -51,7 +48,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(PlayStart());
-        CanChange = false;
     }
 
     void Update()
@@ -135,12 +131,9 @@ public class GameManager : MonoBehaviour
                 {
                     UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
                     UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
-                    WantRetry = true;
                 }
-                else
-                {
-                    SceneManager.LoadScene(state);
-                }
+                ControlManager.ControlManager_Instance.CanPlayerMove = true;
+                SceneManager.LoadScene(state);
                 break;
             case "Tutorial":
                 break;
@@ -183,6 +176,5 @@ public class GameManager : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
-
     }
 }

@@ -48,39 +48,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (DM.PassCanControl)
-        {
-            PlayerMove();
-            CameraMove();
-        }
-
-        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
-        {
-            if (hit.collider.CompareTag("Notes"))
-            {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    DM.PickupMemo();
-                    hit.collider.gameObject.SetActive(false);
-                }
-            }
-            else if (hit.collider.CompareTag("Exit"))
-            {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    DM.PassCanControl = false;
-                    DM.IsTouchiGoal = true;
-                }
-            }
-            else
-            {
-                DefaultReticle.color = Color.gray;
-            }
-        }
+        PlayerMove();
+        CameraMove();
+        PickHands();
     }
 
     /// <summary>
@@ -116,5 +86,38 @@ public class Player : MonoBehaviour
         //Y軸回転はプレイヤーごと回す
         transform.Rotate(0, PlayerRotation.y, 0);
         MainCamera.transform.Rotate(CameraRotation.x, 0, 0);
+    }
+
+    /// <summary>
+    /// 拾得処理
+    /// </summary>
+    private void PickHands()
+    {
+        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        {
+            if (hit.collider.CompareTag("Notes"))
+            {
+                DefaultReticle.color = Color.red;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                {
+                    DM.PickupMemo();
+                    hit.collider.gameObject.SetActive(false);
+                }
+            }
+            else if (hit.collider.CompareTag("Exit"))
+            {
+                DefaultReticle.color = Color.red;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                {
+                    DM.IsTouchiGoal = true;
+                }
+            }
+            else
+            {
+                DefaultReticle.color = Color.gray;
+            }
+        }
     }
 }
