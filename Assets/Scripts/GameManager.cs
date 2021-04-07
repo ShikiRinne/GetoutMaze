@@ -26,7 +26,8 @@ public class GameManager : MonoBehaviour
         GameOver,
         Exit
     }
-    public GameState PassNowState { get; private set; }
+    public GameState PassNowState { get; private set; } //ゲームの現在の状態
+    public GameState PassFromState { get; set; }        //どこから呼び出すかの分岐
 
     void Awake()
     {
@@ -95,6 +96,8 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(ChangeGameScene("GameClear", FadeScreen.FadeColor.White));
                 break;
             case GameState.GameOver:
+                UIManager.UIManager_Instance.PassCanUIOperation = true;
+                StartCoroutine(ChangeGameScene("GameOver", FadeScreen.FadeColor.Black));
                 break;
             case GameState.Exit:
                 Debug.LogError("不正な操作");
@@ -111,9 +114,12 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator ChangeGameScene(string state, FadeScreen.FadeColor color)
     {
+        //フェード画像をアクティブ化し、フェードを実行
         FadeScreen.FadeScreen_Instance.PassFadeObject.SetActive(true);
         StartCoroutine(FadeScreen.FadeScreen_Instance.FadeExecution(FadeScreen.FadeType.OUT, 2.0f, color));
+        //フェード中操作不可
         ControlManager.ControlManager_Instance.CanControl = false;
+        //フェードしている時間待機
         yield return new WaitForSeconds(FadeScreen.FadeScreen_Instance.PassFadeTime);
 
         switch (state)
@@ -122,28 +128,47 @@ public class GameManager : MonoBehaviour
                 UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
                 UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
                 UIManager.UIManager_Instance.TitleItemDisplay(true);
+                PassFromState = GameState.Title;
                 SceneManager.LoadScene(state);
                 break;
             case "Play":
                 UseCursor(false);
-                UIManager.UIManager_Instance.TitleItemDisplay(false);
-                if (SceneManager.GetActiveScene().name == state)
-                {
-                    UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
-                    UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
-                }
                 ControlManager.ControlManager_Instance.CanPlayerMove = true;
-                SceneManager.LoadScene(state);
+                //どこからPlayシーンが呼び出されたかで処理を変更する
+                switch (PassFromState)
+                {
+                    //タイトルからのスタート
+                    case GameState.Title:
+                        UIManager.UIManager_Instance.TitleItemDisplay(false);
+                        SceneManager.LoadScene(state);
+                        break;
+                    //ゲームクリアからのリトライ
+                    //シーンを再度呼び出して新たなステージで再開
+                    case GameState.GameClear:
+                        UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
+                        SceneManager.LoadScene(state);
+                        break;
+                    //ゲームオーバーからのリトライ
+                    //シーンを呼び出さず進行状況をそのままに再開
+                    case GameState.GameOver:
+                        UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
+                        /* プレイヤーとエネミーを初期位置に戻す */
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case "Tutorial":
                 break;
             case "GameClear":
                 UseCursor(true);
+                PassFromState = GameState.GameClear;
                 UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
                 UIManager.UIManager_Instance.PlayItemDisplay(true, UIManager.DisplayText.Clear);
                 break;
             case "GameOver":
                 UseCursor(true);
+                PassFromState = GameState.GameOver;
                 UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
                 UIManager.UIManager_Instance.PlayItemDisplay(true, UIManager.DisplayText.Over);
                 break;
