@@ -236,6 +236,7 @@ public class UIManager : MonoBehaviour
                 break;
             case DisplayText.Over:
                 BackGround.color = new Color((float)DisplayColor.Black, (float)DisplayColor.Black, (float)DisplayColor.Black);
+                BackGround.gameObject.SetActive(display);
                 GameOverText.SetActive(display);
                 SelectArrow.SetActive(display);
                 PlaySet.SetActive(display);

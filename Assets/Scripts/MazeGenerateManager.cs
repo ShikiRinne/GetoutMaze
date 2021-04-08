@@ -20,9 +20,9 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject Wall = default;
     [SerializeField]
-    private GameObject StartPoint = default;
+    private GameObject Player = default;
     [SerializeField]
-    private GameObject ExitPoint = default;
+    private GameObject Exit = default;
     [SerializeField]
     private GameObject Memo = default;
 
@@ -54,15 +54,22 @@ public class MazeGenerateManager: MonoBehaviour
 
     public int PassTotalSplitMemos { get; private set; } = 4;
 
-    /// <summary>
-    /// 配置した後メモを管理するKeyCodeMemoで使用するためプロパティで受け渡しできるようにする
-    /// </summary>
+    //配置した後メモを管理するKeyCodeMemoで使用するためプロパティで受け渡しできるようにする
     public List<int> NotePositionList { get; set; }
     public List<GameObject> NotesList { get; set; }
 
     void Start()
     {
         Create();
+    }
+
+    void Update()
+    {
+        if (GameManager.GameManager_Instance.WantReset)
+        {
+            CharaPosReset();
+            GameManager.GameManager_Instance.WantReset = false;
+        }
     }
 
     /// <summary>
@@ -283,17 +290,22 @@ public class MazeGenerateManager: MonoBehaviour
                             StartDirection = -90f;
                         }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
-                        Instantiate(StartPoint, new Vector3(x, StartPoint.transform.localScale.y, y), Quaternion.identity);
-                        PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y, y);
+                        PassRestartPos = new Vector3(x, Player.transform.localScale.y, y);
+                        Instantiate(Player, PassRestartPos, Quaternion.identity);
                         break;
                     case (int)ObjectType.Exit:
                         //出口を配置
-                        Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
+                        Instantiate(Exit, new Vector3(x, 0, y), Quaternion.identity);
                         break;
                 }
 
                 Count++;
             }
         }
+    }
+
+    public void CharaPosReset()
+    {
+        Player.transform.position = PassRestartPos;
     }
 }

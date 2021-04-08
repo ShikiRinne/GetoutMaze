@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     private int FrameRate = 60;
 
     public bool WantQuit { get; set; } = false;
+    public bool WantReset { get; set; } = false;
 
     public enum GameState
     {
@@ -152,7 +153,7 @@ public class GameManager : MonoBehaviour
                     //シーンを呼び出さず進行状況をそのままに再開
                     case GameState.GameOver:
                         UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
-                        /* プレイヤーとエネミーを初期位置に戻す */
+                        WantReset = true;
                         break;
                     default:
                         break;
