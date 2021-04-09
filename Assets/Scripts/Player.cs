@@ -48,13 +48,16 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        PlayerMove();
-        CameraMove();
-        PickHands();
+        if (GameManager.GameManager_Instance.CanPlayerMove)
+        {
+            PlayerMove();
+            CameraMove();
+            PickHands();
+        }
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            ControlManager.ControlManager_Instance.CanPlayerMove = false;
+            GameManager.GameManager_Instance.CanPlayerMove = false;
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
         }
     }

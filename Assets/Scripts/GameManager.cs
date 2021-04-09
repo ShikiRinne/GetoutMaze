@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     public bool WantQuit { get; set; } = false;
     public bool WantReset { get; set; } = false;
+    public bool CanPlayerMove { get; set; } = false;
 
     public enum GameState
     {
@@ -134,7 +135,7 @@ public class GameManager : MonoBehaviour
                 break;
             case "Play":
                 UseCursor(false);
-                ControlManager.ControlManager_Instance.CanPlayerMove = true;
+                CanPlayerMove = true;
                 //どこからPlayシーンが呼び出されたかで処理を変更する
                 switch (PassFromState)
                 {

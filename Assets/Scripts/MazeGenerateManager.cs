@@ -307,5 +307,6 @@ public class MazeGenerateManager: MonoBehaviour
     public void CharaPosReset()
     {
         Player.transform.position = PassRestartPos;
+        Debug.Log("PositionReset");
     }
 }
