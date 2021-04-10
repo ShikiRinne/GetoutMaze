@@ -20,11 +20,13 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject Wall = default;
     [SerializeField]
-    private GameObject Player = default;
+    private GameObject StartPoint = default;
     [SerializeField]
-    private GameObject Exit = default;
+    private GameObject ExitPoint = default;
     [SerializeField]
     private GameObject Memo = default;
+
+    private GameObject PlayerClone;
 
     private int MemoCount;
 
@@ -65,11 +67,11 @@ public class MazeGenerateManager: MonoBehaviour
 
     void Update()
     {
-        if (GameManager.GameManager_Instance.WantReset)
-        {
-            CharaPosReset();
-            GameManager.GameManager_Instance.WantReset = false;
-        }
+        //if (GameManager.GameManager_Instance.WantReset)
+        //{
+        //    CharaPosReset();
+        //    GameManager.GameManager_Instance.WantReset = false;
+        //}
     }
 
     /// <summary>
@@ -290,12 +292,12 @@ public class MazeGenerateManager: MonoBehaviour
                             StartDirection = -90f;
                         }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
-                        PassRestartPos = new Vector3(x, Player.transform.localScale.y, y);
-                        Instantiate(Player, PassRestartPos, Quaternion.identity);
+                        PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y, y);
+                        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
                         break;
                     case (int)ObjectType.Exit:
                         //出口を配置
-                        Instantiate(Exit, new Vector3(x, 0, y), Quaternion.identity);
+                        Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
                 }
 
@@ -306,7 +308,7 @@ public class MazeGenerateManager: MonoBehaviour
 
     public void CharaPosReset()
     {
-        Player.transform.position = PassRestartPos;
+        PlayerClone.transform.position = PassRestartPos;
         Debug.Log("PositionReset");
     }
 }
