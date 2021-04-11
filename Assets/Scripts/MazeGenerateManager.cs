@@ -67,11 +67,12 @@ public class MazeGenerateManager: MonoBehaviour
 
     void Update()
     {
-        //if (GameManager.GameManager_Instance.WantReset)
-        //{
-        //    CharaPosReset();
-        //    GameManager.GameManager_Instance.WantReset = false;
-        //}
+        //ゲームオーバーからのリセット
+        if (GameManager.GameManager_Instance.WantReset)
+        {
+            CharaPosReset();
+            GameManager.GameManager_Instance.WantReset = false;
+        }
     }
 
     /// <summary>
@@ -306,9 +307,13 @@ public class MazeGenerateManager: MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// プレイヤーの状態のリセット
+    /// </summary>
     public void CharaPosReset()
     {
-        PlayerClone.transform.position = PassRestartPos;
-        Debug.Log("PositionReset");
+        PlayerClone.transform.DetachChildren();
+        Destroy(PlayerClone);
+        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
     }
 }

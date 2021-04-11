@@ -44,8 +44,8 @@ public class Player : MonoBehaviour
         Chara = GetComponent<CharacterController>();
 
         //壁のない方向にプレイヤーを向ける
+        MainCamera.transform.localRotation = Quaternion.identity;
         CameraRotation = MGM.StartDirection;
-        //transform.rotation = Quaternion.Euler(CameraRotation);
         transform.Rotate(0f, CameraRotation, 0f);
     }
 
@@ -58,19 +58,11 @@ public class Player : MonoBehaviour
             PickHands();
         }
 
+        //ゲームオーバー遷移（後でEnemyに接触時に変更）
         if (Input.GetKeyDown(KeyCode.F1))
         {
             GameManager.GameManager_Instance.CanPlayerMove = false;
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-        }
-
-        //プレイヤーの位置と角度をリセットする
-        if (GameManager.GameManager_Instance.WantReset)
-        {
-            PlayerRotation.y = MGM.StartDirection;
-            CameraRotation = 0f;
-            transform.position = MGM.PassRestartPos;
-            GameManager.GameManager_Instance.WantReset = false;
         }
     }
 
@@ -140,14 +132,5 @@ public class Player : MonoBehaviour
                 DefaultReticle.color = Color.gray;
             }
         }
-    }
-
-    /// <summary>
-    /// プレイヤーの状態のリセット
-    /// </summary>
-    private void StateReset()
-    {
-        transform.position = MGM.PassRestartPos;
-        transform.Rotate(0f, CameraRotation, 0f);
     }
 }
