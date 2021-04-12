@@ -127,8 +127,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case "Title":
-                UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
-                UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
+                UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.None);
                 UIManager.UIManager_Instance.TitleItemDisplay(true);
                 PassFromState = GameState.Title;
                 SceneManager.LoadScene(state);
@@ -147,13 +146,13 @@ public class GameManager : MonoBehaviour
                     //ゲームクリアからのリトライ
                     //シーンを再度呼び出して新たなステージで再開
                     case GameState.GameClear:
-                        UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
+                        UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.None);
                         SceneManager.LoadScene(state);
                         break;
                     //ゲームオーバーからのリトライ
                     //シーンを呼び出さず進行状況をそのままに再開
                     case GameState.GameOver:
-                        UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
+                        UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.None);
                         WantReset = true;
                         break;
                     default:
@@ -165,14 +164,12 @@ public class GameManager : MonoBehaviour
             case "GameClear":
                 UseCursor(true);
                 PassFromState = GameState.GameClear;
-                UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Over);
-                UIManager.UIManager_Instance.PlayItemDisplay(true, UIManager.DisplayText.Clear);
+                UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.Clear);
                 break;
             case "GameOver":
                 UseCursor(true);
                 PassFromState = GameState.GameOver;
-                UIManager.UIManager_Instance.PlayItemDisplay(false, UIManager.DisplayText.Clear);
-                UIManager.UIManager_Instance.PlayItemDisplay(true, UIManager.DisplayText.Over);
+                UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.Over);
                 break;
             case "Exit":
                 Debug.LogError("不正な操作");

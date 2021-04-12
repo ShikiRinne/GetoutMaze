@@ -57,7 +57,8 @@ public class UIManager : MonoBehaviour
     {
         Title,
         Clear,
-        Over
+        Over,
+        None
     }
     public DisplayText NowDisplayText { get; set; }
 
@@ -210,52 +211,69 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="display"></param>
     /// <param name="textset"></param>
-    public void PlayItemDisplay(bool display, DisplayText textset)
+    public void PlayItemDisplay(DisplayText textset)
     {
         PassSelectCount = 0;
+
         switch (textset)
         {
             case DisplayText.Clear:
+                PlayItemCollection(true);
                 BackGround.color = new Color((float)DisplayColor.White, (float)DisplayColor.White, (float)DisplayColor.White);
-                BackGround.gameObject.SetActive(display);
-                SelectArrow.SetActive(display);
-                GameClearText.SetActive(display);
-                PlaySet.SetActive(display);
+                GameClearText.SetActive(true);
+                GameOverText.SetActive(false);
+                //ゲームクリア画面で使用するのはテキスト「ToTitle」なので「Retire」を非表示
                 foreach (Text text in PlayTextSetList)
                 {
-                    text.gameObject.SetActive(display);
-                    if (text.transform.name == "Text_ReTry")
+                    text.gameObject.SetActive(true);
+                    if (text.transform.name == "Text_Retry")
                     {
                         text.color = new Color((float)DisplayColor.Black, (float)DisplayColor.Black, (float)DisplayColor.Black);
                     }
                     if (text.transform.name == "Text_Retire")
                     {
-                        text.gameObject.SetActive(!display);
+                        text.gameObject.SetActive(false);
                     }
                 }
                 break;
             case DisplayText.Over:
+                PlayItemCollection(true);
                 BackGround.color = new Color((float)DisplayColor.Black, (float)DisplayColor.Black, (float)DisplayColor.Black);
-                BackGround.gameObject.SetActive(display);
-                GameOverText.SetActive(display);
-                SelectArrow.SetActive(display);
-                PlaySet.SetActive(display);
+                GameOverText.SetActive(true);
+                GameClearText.SetActive(false);
+                //ゲームオーバー画面で使用するのはテキスト「Retire」なので「ToTitle」を非表示
                 foreach (Text text in PlayTextSetList)
                 {
-                    text.gameObject.SetActive(display);
-                    if (text.transform.name == "Text_ReTry")
+                    text.gameObject.SetActive(true);
+                    if (text.transform.name == "Text_Retry")
                     {
                         text.color = new Color((float)DisplayColor.White, (float)DisplayColor.White, (float)DisplayColor.White);
                     }
                     if (text.transform.name == "Text_ToTitle")
                     {
-                        text.gameObject.SetActive(!display);
+                        text.gameObject.SetActive(false);
                     }
                 }
+                break;
+            case DisplayText.None:
+                PlayItemCollection(false);
+                GameOverText.SetActive(false);
+                GameClearText.SetActive(false);
                 break;
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    /// ゲームプレイ時のテキストを一括で操作するための塊
+    /// </summary>
+    /// <param name="display"></param>
+    private void PlayItemCollection(bool display)
+    {
+        BackGround.gameObject.SetActive(display);
+        SelectArrow.SetActive(display);
+        PlaySet.SetActive(display);
     }
 
     /// <summary>
