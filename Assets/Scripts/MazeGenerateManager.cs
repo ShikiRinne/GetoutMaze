@@ -26,6 +26,8 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject Memo = default;
 
+    private GameObject PlayerClone;
+
     private int MemoCount;
 
     private List<int> PlacementObjectList;
@@ -54,15 +56,23 @@ public class MazeGenerateManager: MonoBehaviour
 
     public int PassTotalSplitMemos { get; private set; } = 4;
 
-    /// <summary>
-    /// 配置した後メモを管理するKeyCodeMemoで使用するためプロパティで受け渡しできるようにする
-    /// </summary>
+    //配置した後メモを管理するKeyCodeMemoで使用するためプロパティで受け渡しできるようにする
     public List<int> NotePositionList { get; set; }
     public List<GameObject> NotesList { get; set; }
 
     void Start()
     {
         Create();
+    }
+
+    void Update()
+    {
+        //ゲームオーバーからのリセット
+        if (GameManager.GameManager_Instance.WantReset)
+        {
+            CharaPosReset();
+            GameManager.GameManager_Instance.WantReset = false;
+        }
     }
 
     /// <summary>
@@ -283,8 +293,8 @@ public class MazeGenerateManager: MonoBehaviour
                             StartDirection = -90f;
                         }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
-                        Instantiate(StartPoint, new Vector3(x, StartPoint.transform.localScale.y, y), Quaternion.identity);
                         PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y, y);
+                        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
                         break;
                     case (int)ObjectType.Exit:
                         //出口を配置
@@ -295,5 +305,15 @@ public class MazeGenerateManager: MonoBehaviour
                 Count++;
             }
         }
+    }
+
+    /// <summary>
+    /// プレイヤーの状態のリセット
+    /// </summary>
+    public void CharaPosReset()
+    {
+        PlayerClone.transform.DetachChildren();
+        Destroy(PlayerClone);
+        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
     }
 }

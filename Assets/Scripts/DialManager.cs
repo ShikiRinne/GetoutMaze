@@ -34,7 +34,6 @@ public class DialManager : MonoBehaviour
     private List<int> ExitKeyCode = new List<int>();
 
     public int GetPickMemoCount { get; set; } = 0;
-    public bool IsOperateDial { get; set; }
     public bool IsTouchiGoal { get; set; }
 
     public enum ReticleType
@@ -47,7 +46,6 @@ public class DialManager : MonoBehaviour
     void Start()
     {
         IsTouchiGoal = false;
-        IsOperateDial = false;
 
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
@@ -77,17 +75,15 @@ public class DialManager : MonoBehaviour
 
         if (IsTouchiGoal)
         {
-            GameManager.GameManager_Instance.UseCursor(true);
-            ControlManager.ControlManager_Instance.CanPlayerMove = false;
-            DialPadLock.SetActive(true);
+            DisplayHUD(true);
         }
-        else
-        {
-            GameManager.GameManager_Instance.UseCursor(false);
-            ControlManager.ControlManager_Instance.CanPlayerMove = true;
-            DialPadLock.SetActive(false);
-            IsOperateDial = false;
-        }
+    }
+
+    private void DisplayHUD(bool isdisplay)
+    {
+        GameManager.GameManager_Instance.UseCursor(isdisplay);
+        GameManager.GameManager_Instance.CanPlayerMove = !isdisplay;
+        DialPadLock.SetActive(isdisplay);
     }
 
     /// <summary>
@@ -100,7 +96,7 @@ public class DialManager : MonoBehaviour
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
         GetPickMemoCount++;
     }
-
+    
     /// <summary>
     /// レティクルの種類の切り替え
     /// </summary>
@@ -152,6 +148,7 @@ public class DialManager : MonoBehaviour
         {
             Debug.Log("Miss");
             IsTouchiGoal = false;
+            DisplayHUD(false);
         }
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     private DialManager DM;
+    private MazeGenerateManager MGM;
 
     private GameObject MainCamera;
 
@@ -24,13 +25,14 @@ public class Player : MonoBehaviour
     private Vector3 Direction_Horizontal;
     private Vector3 Direction_Vertical;
     private Vector3 PlayerRotation;
-    private Vector3 CameraRotation;
+    private float CameraRotation;
 
     private Ray PlayerHands;
 
     void Start()
     {
         DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
 
         //メインカメラをプレイヤーの視点に移動
@@ -42,15 +44,26 @@ public class Player : MonoBehaviour
         Chara = GetComponent<CharacterController>();
 
         //壁のない方向にプレイヤーを向ける
-        CameraRotation.y = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>().StartDirection;
-        transform.rotation = Quaternion.Euler(CameraRotation);
+        MainCamera.transform.localRotation = Quaternion.identity;
+        CameraRotation = MGM.StartDirection;
+        transform.Rotate(0f, CameraRotation, 0f);
     }
 
     void Update()
     {
-        PlayerMove();
-        CameraMove();
-        PickHands();
+        if (GameManager.GameManager_Instance.CanPlayerMove)
+        {
+            PlayerMove();
+            CameraMove();
+            PickHands();
+        }
+
+        //ゲームオーバー遷移（後でEnemyに接触時に変更）
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            GameManager.GameManager_Instance.CanPlayerMove = false;
+            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+        }
     }
 
     /// <summary>
@@ -80,12 +93,12 @@ public class Player : MonoBehaviour
 
         //算出した回転量をVector3に代入
         PlayerRotation.y = ControlManager.ControlManager_Instance.RotateHorizontal * SetRotateSpeed;
-        CameraRotation.x = ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
+        CameraRotation = ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
 
         //回転
         //Y軸回転はプレイヤーごと回す
         transform.Rotate(0, PlayerRotation.y, 0);
-        MainCamera.transform.Rotate(CameraRotation.x, 0, 0);
+        MainCamera.transform.Rotate(CameraRotation, 0, 0);
     }
 
     /// <summary>
