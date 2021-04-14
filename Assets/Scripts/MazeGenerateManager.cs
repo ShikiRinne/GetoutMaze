@@ -24,6 +24,8 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject ExitPoint = default;
     [SerializeField]
+    private GameObject DeadEndPoint = default;
+    [SerializeField]
     private GameObject Memo = default;
 
     private GameObject PlayerClone;
@@ -42,7 +44,7 @@ public class MazeGenerateManager: MonoBehaviour
         Wall = 1,
         Start = 2,
         Exit = 3,
-        DeadPoint = 4
+        DeadEnd = 4
     }
 
     private enum DirectionType
@@ -188,10 +190,11 @@ public class MazeGenerateManager: MonoBehaviour
                     }
                 }
 
-                //三方向に壁がある位置を行き止まりのリストに追加
+                //三方向に壁がある位置を行き止まりとする
                 if (WallCount >= 3)
                 {
-                    Maze[x, y] = (int)MazePoint.DeadPoint;
+                    //マップ上に行き止まりとして配置しリストに保存
+                    Maze[x, y] = (int)MazePoint.DeadEnd;
                     DeadendPointList.Add(MapNumber);
                     WallCount = 0;
                 }
@@ -264,7 +267,8 @@ public class MazeGenerateManager: MonoBehaviour
                         if (NotePositionList.Contains(Count))
                         {
                             MemoStorageList.Add(Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity));
-                        }                        
+                        }
+                        
                         break;
                     case (int)MazePoint.Wall:
                         //壁を配置
@@ -297,6 +301,9 @@ public class MazeGenerateManager: MonoBehaviour
                         //出口を配置
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
+                    case (int)MazePoint.DeadEnd:
+                        Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity);
+                        break;
                 }
 
                 Count++;
@@ -313,7 +320,7 @@ public class MazeGenerateManager: MonoBehaviour
         {
             for (int x = 0; x < MazeWidth; ++x)
             {
-                if (Maze[x, y] == (int)MazePoint.DeadPoint)
+                if (Maze[x, y] == (int)MazePoint.DeadEnd)
                 {
                     //突き当りの位置とプレイヤーの位置の距離の絶対値を出す
                     //一番遠い位置を保存して最終的に残った位置にエネミーを生成
