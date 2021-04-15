@@ -29,10 +29,13 @@ public class MazeGenerateManager: MonoBehaviour
     private GameObject Memo = default;
 
     private GameObject PlayerClone;
+    private GameObject FarthestPoit = null;
+    private float Distance = 0f;
 
     private List<int> PlacementObjectList;
     private List<int> DeadendPointList;
     private List<GameObject> MemoStorageList = new List<GameObject>();
+    private List<GameObject> DeadendObjectList = new List<GameObject>();
 
     public Vector3 PassRestartPos { get; private set; }
     public float StartDirection { get; private set; }
@@ -259,7 +262,6 @@ public class MazeGenerateManager: MonoBehaviour
         {
             for (int x = 0; x < MazeWidth; ++x)
             {
-                
                 switch (PlacementObjectList[Count])
                 {
                     case (int)MazePoint.Path:
@@ -302,12 +304,21 @@ public class MazeGenerateManager: MonoBehaviour
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
                     case (int)MazePoint.DeadEnd:
-                        Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity);
+                        DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity));
+                        if (FarthestPoit == null)
+                        {
+                            FarthestPoit = DeadendObjectList[0];
+                        }
                         break;
                 }
-
                 Count++;
             }
+        }
+
+        //すべてのマップ上の配置が完了した後にエネミーの位置を決定する
+        if (Count == PlacementObjectList.Count)
+        {
+            CreateEnemy();
         }
     }
 
@@ -316,15 +327,15 @@ public class MazeGenerateManager: MonoBehaviour
     /// </summary>
     public void CreateEnemy()
     {
-        for (int y = 0; y < MazeHight; ++y)
+        for (int i = 0; i < DeadendObjectList.Count; ++i)
         {
-            for (int x = 0; x < MazeWidth; ++x)
+            //行き止まりの位置とプレイヤーの位置を比較
+            Distance = Mathf.Abs((PlayerClone.transform.position - DeadendObjectList[i].transform.position).sqrMagnitude);
+
+            //現在保存している位置よりも遠い位置であれば上書き
+            if (Distance > Mathf.Abs((PlayerClone.transform.position - FarthestPoit.transform.position).sqrMagnitude))
             {
-                if (Maze[x, y] == (int)MazePoint.DeadEnd)
-                {
-                    //突き当りの位置とプレイヤーの位置の距離の絶対値を出す
-                    //一番遠い位置を保存して最終的に残った位置にエネミーを生成
-                }
+                FarthestPoit = DeadendObjectList[i];
             }
         }
     }
