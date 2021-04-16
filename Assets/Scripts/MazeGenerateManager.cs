@@ -27,6 +27,8 @@ public class MazeGenerateManager: MonoBehaviour
     private GameObject DeadEndPoint = default;
     [SerializeField]
     private GameObject Memo = default;
+    [SerializeField]
+    private GameObject Enemy = default;
 
     private GameObject PlayerClone;
     private GameObject FarthestPoit = null;
@@ -296,7 +298,7 @@ public class MazeGenerateManager: MonoBehaviour
                             StartDirection = -90f;
                         }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
-                        PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y, y);
+                        PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y + StartPoint.GetComponent<CharacterController>().skinWidth, y);
                         PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
                         break;
                     case (int)MazePoint.Exit:
@@ -338,6 +340,9 @@ public class MazeGenerateManager: MonoBehaviour
                 FarthestPoit = DeadendObjectList[i];
             }
         }
+
+        //最終的に決定した位置にエネミーを生成
+        Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
     }
 
     /// <summary>

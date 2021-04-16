@@ -13,31 +13,31 @@ public class UIManager : MonoBehaviour
     public static UIManager UIManager_Instance;
 
     [SerializeField]
-    private Image BackGround;
+    private Image BackGround = null;
     [SerializeField]
-    private GameObject TitleText;
+    private GameObject TitleText = null;
     [SerializeField]
-    private GameObject GameClearText;
+    private GameObject GameClearText = null;
     [SerializeField]
-    private GameObject GameOverText;
+    private GameObject GameOverText = null;
 
     [SerializeField]
-    private GameObject TitleSet;
+    private GameObject TitleSet = null;
     [SerializeField]
-    private GameObject PlaySet;
+    private GameObject PlaySet = null;
     [SerializeField]
-    private GameObject SelectArrow;
+    private GameObject SelectArrow = null;
 
     [SerializeField]
-    private Vector3 ArrowPos_Play;
+    private Vector3 ArrowPos_Play = default;
     [SerializeField]
-    private Vector3 ArrowPos_Tutorial;
+    private Vector3 ArrowPos_Tutorial = default;
     [SerializeField]
-    private Vector3 ArrowPos_Exit;
+    private Vector3 ArrowPos_Exit = default;
     [SerializeField]
-    private Vector3 ArrowPos_ReTry;
+    private Vector3 ArrowPos_ReTry = default;
     [SerializeField]
-    private Vector3 ArrowPos_RetireOrToTitle;
+    private Vector3 ArrowPos_RetireOrToTitle = default;
 
     [SerializeField]
     private int FontSize_Default;

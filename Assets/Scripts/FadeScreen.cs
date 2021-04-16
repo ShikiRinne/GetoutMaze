@@ -11,7 +11,7 @@ public class FadeScreen : MonoBehaviour
     private Color color;
 
     [SerializeField]
-    private Image FadeImage;
+    private Image FadeImage = null;
     [SerializeField]
     private float FadeTime;
     private float Alpha;
