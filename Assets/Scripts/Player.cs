@@ -13,11 +13,11 @@ public class Player : MonoBehaviour
     private CharacterController Chara;
 
     [SerializeField]
-    private float SetMoveSpeed;
+    private float SetMoveSpeed = 0f;
     [SerializeField]
-    private float SetRotateSpeed;
+    private float SetRotateSpeed = 0f;
     [SerializeField]
-    private float SetHandLength;
+    private float SetHandLength = 0f;
 
     private Text DefaultReticle;
 

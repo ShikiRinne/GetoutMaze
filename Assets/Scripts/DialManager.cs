@@ -15,17 +15,17 @@ using UnityEngine.UI;
 public class DialManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject DisplayMemo;
+    private GameObject DisplayMemo = default;
     [SerializeField]
-    private GameObject DialPadLock;
+    private GameObject DialPadLock = default;
     [SerializeField]
-    private GameObject ArrowSet;
+    private GameObject ArrowSet = default;
     [SerializeField]
-    private GameObject Reticle_Parent;
+    private GameObject Reticle_Parent = default;
     [SerializeField]
-    private Text Reticle_Default;
+    private Text Reticle_Default = null;
     [SerializeField]
-    private Text Reticle_Spray;
+    private Text Reticle_Spray = null;
 
     private bool MemoDisplay = false;
 
