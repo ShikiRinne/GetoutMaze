@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    private DialManager DM;
+    private HUDManager HUDM;
     private MazeGenerateManager MGM;
 
     private GameObject MainCamera;
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
 
@@ -115,7 +115,7 @@ public class Player : MonoBehaviour
                 DefaultReticle.color = Color.red;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                 {
-                    DM.PickupMemo();
+                    HUDM.PickupMemo();
                     hit.collider.gameObject.SetActive(false);
                 }
             }
@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
                 DefaultReticle.color = Color.red;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                 {
-                    DM.IsTouchiGoal = true;
+                    HUDM.IsTouchiGoal = true;
                 }
             }
             else

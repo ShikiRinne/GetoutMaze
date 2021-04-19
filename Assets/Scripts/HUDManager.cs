@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 画面に表示されるUIを管理する
 /// </summary>
-public class DialManager : MonoBehaviour
+public class HUDManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject DisplayMemo = default;
@@ -18,6 +18,9 @@ public class DialManager : MonoBehaviour
     private GameObject ArrowSet = default;
     [SerializeField]
     private GameObject Reticle_Parent = default;
+    [SerializeField]
+    private GameObject Belongings = default;
+
     [SerializeField]
     private Text Reticle_Default = null;
     [SerializeField]
