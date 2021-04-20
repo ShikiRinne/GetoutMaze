@@ -19,12 +19,21 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private GameObject Reticle_Parent = default;
     [SerializeField]
-    private GameObject Belongings = default;
+    private GameObject BelongingsUI = default;
 
     [SerializeField]
     private Text Reticle_Default = null;
     [SerializeField]
     private Text Reticle_Spray = null;
+
+    [SerializeField]
+    private float SizeExpantion = 0f;
+    [SerializeField]
+    private float SizeDefault = 0f;
+    [SerializeField]
+    private float PosDefault = 0f;
+
+    private string InputStr = null;
 
     private bool MemoDisplay = false;
 
@@ -33,7 +42,7 @@ public class HUDManager : MonoBehaviour
     private List<int> ExitKeyCode = new List<int>();
 
     public int GetPickMemoCount { get; set; } = 0;
-    public bool IsTouchiGoal { get; set; }
+    public bool IsTouchiGoal { get; set; } = false;
 
     public enum ReticleType
     {
@@ -42,10 +51,16 @@ public class HUDManager : MonoBehaviour
         DontUse
     }
 
+    public enum BelongingsType
+    {
+        Hand,
+        Psyllium,
+        Camera
+    }
+    public BelongingsType BType { get; set; }
+
     void Start()
     {
-        IsTouchiGoal = false;
-
         //メモをリストとして保存、非アクティブ化
         foreach (Transform memo in DisplayMemo.transform)
         {
@@ -72,13 +87,19 @@ public class HUDManager : MonoBehaviour
             MemoDisplay = !MemoDisplay;
         }
 
+        BelongingsUIOps();
+
         if (IsTouchiGoal)
         {
-            DisplayHUD(true);
+            DisplayDial(true);
         }
     }
 
-    private void DisplayHUD(bool isdisplay)
+    /// <summary>
+    /// ダイヤル表示処理
+    /// </summary>
+    /// <param name="isdisplay"></param>
+    private void DisplayDial(bool isdisplay)
     {
         GameManager.GameManager_Instance.UseCursor(isdisplay);
         GameManager.GameManager_Instance.CanPlayerMove = !isdisplay;
@@ -147,7 +168,75 @@ public class HUDManager : MonoBehaviour
         {
             Debug.Log("Miss");
             IsTouchiGoal = false;
-            DisplayHUD(false);
+            DisplayDial(false);
+        }
+    }
+
+    /// <summary>
+    /// 手に持つもののUI切り替え
+    /// </summary>
+    private void BelongingsUIOps()
+    {
+        if (Input.anyKeyDown)
+        {
+            InputStr = Input.inputString;
+            
+            switch (InputStr)
+            {
+                case "1":
+                    foreach (Image ui in BelongingsUI.transform)
+                    {
+                        switch (ui.name)
+                        {
+                            case "Hand":
+                                ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                ui.rectTransform.anchoredPosition = new Vector3(ui.rectTransform.anchoredPosition.x - (SizeExpantion / 2),
+                                                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
+                                break;
+                            case "Psyllium":
+                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                ui.rectTransform.anchoredPosition = new Vector3(0 + (SizeExpantion / 4), 0f, 0f);
+                                break;
+                            case "Camera":
+                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                ui.rectTransform.anchoredPosition = new Vector3(PosDefault, 0f, 0f);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    Debug.Log(InputStr);
+                    break;
+                case "2":
+                    foreach (Image ui in BelongingsUI.transform)
+                    {
+                        switch (ui.name)
+                        {
+                            case "Hand":
+                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                ui.rectTransform.anchoredPosition = new Vector3(ui.rectTransform.anchoredPosition.x - (SizeExpantion / 2), 0, 0);
+                                break;
+                            case "Psyllium":
+                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                ui.rectTransform.anchoredPosition = new Vector3(0f, 0f, 0f);
+                                break;
+                            case "Camera":
+                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                ui.rectTransform.anchoredPosition = new Vector3(PosDefault, 0f, 0f);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    Debug.Log(InputStr);
+                    break;
+                case "3":
+                    Debug.Log(InputStr);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
