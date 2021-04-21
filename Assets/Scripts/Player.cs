@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,12 @@ public class Player : MonoBehaviour
     private HUDManager HUDM;
     private MazeGenerateManager MGM;
 
-    private GameObject MainCamera;
-
     private CharacterController Chara;
+
+    private GameObject MainCamera;
+    private GameObject PsylliumClone;
+    [SerializeField]
+    private GameObject Psyllium = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -18,6 +22,8 @@ public class Player : MonoBehaviour
     private float SetRotateSpeed = 0f;
     [SerializeField]
     private float SetHandLength = 0f;
+    [SerializeField]
+    private float SlowSpeed = 0f;
 
     private Text DefaultReticle;
 
@@ -57,7 +63,18 @@ public class Player : MonoBehaviour
         {
             PlayerMove();
             CameraMove();
-            PickHands();
+
+            switch (HUDM.BType)
+            {
+                case HUDManager.BelongingsType.Hand:
+                    PickHands();
+                    break;
+                case HUDManager.BelongingsType.Psyllium:
+                    SlowPsyllium();
+                    break;
+                default:
+                    break;
+            }
         }
 
         //ゲームオーバー遷移（後でEnemyに接触時に変更）
@@ -133,6 +150,15 @@ public class Player : MonoBehaviour
             {
                 DefaultReticle.color = Color.gray;
             }
+        }
+    }
+
+    private void SlowPsyllium()
+    {
+        if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+        {
+            PsylliumClone = Instantiate(Psyllium, gameObject.transform.position, Quaternion.identity);
+            //PsylliumClone.GetComponent<Rigidbody>().AddForce(new Vector3(0f, 0f, SlowSpeed));
         }
     }
 }
