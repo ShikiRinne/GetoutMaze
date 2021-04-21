@@ -47,6 +47,8 @@ public class Player : MonoBehaviour
         MainCamera.transform.localRotation = Quaternion.identity;
         CameraRotation = MGM.StartDirection;
         transform.Rotate(0f, CameraRotation, 0f);
+
+        DefaultReticle.color = Color.gray;
     }
 
     void Update()
