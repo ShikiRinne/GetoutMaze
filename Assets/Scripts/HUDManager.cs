@@ -31,13 +31,17 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private float SizeDefault = 0f;
     [SerializeField]
-    private float PosDefault = 0f;
+    private float HandPosDefault = 0f;
+    [SerializeField]
+    private float CameraPosDefault = 0f;
 
     private string InputStr = null;
 
     private bool MemoDisplay = false;
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
+
+    private List<Image> BelongingsUIList = new List<Image>();
 
     private List<int> ExitKeyCode = new List<int>();
 
@@ -67,6 +71,11 @@ public class HUDManager : MonoBehaviour
             DisplayMemosList.Add(memo.gameObject);
             ExitKeyCode.Add(Random.Range(0, 10));
             memo.gameObject.SetActive(false);
+        }
+
+        foreach (Transform ui in BelongingsUI.transform)
+        {
+            BelongingsUIList.Add(ui.GetComponent<Image>());
         }
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
@@ -183,56 +192,91 @@ public class HUDManager : MonoBehaviour
             
             switch (InputStr)
             {
+                //手のUIを拡大し、他UIを縮小してずらす
                 case "1":
-                    foreach (Image ui in BelongingsUI.transform)
+                    if (BType != BelongingsType.Hand)
                     {
-                        switch (ui.name)
+                        foreach (Image ui in BelongingsUIList)
                         {
-                            case "Hand":
-                                ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                ui.rectTransform.anchoredPosition = new Vector3(ui.rectTransform.anchoredPosition.x - (SizeExpantion / 2),
-                                                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
-                                break;
-                            case "Psyllium":
-                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                ui.rectTransform.anchoredPosition = new Vector3(0 + (SizeExpantion / 4), 0f, 0f);
-                                break;
-                            case "Camera":
-                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                ui.rectTransform.anchoredPosition = new Vector3(PosDefault, 0f, 0f);
-                                break;
-                            default:
-                                break;
+                            switch (ui.name)
+                            {
+                                case "Hand":
+                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault + (SizeExpantion / 2),
+                                                                                    ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
+                                    break;
+                                case "Psyllium":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(SizeExpantion / 2, 0f, 0f);
+                                    break;
+                                case "Camera":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
+                        BType = BelongingsType.Hand;
                     }
-                    Debug.Log(InputStr);
                     break;
+                //サイリウムのUIを拡大し、他UIを縮小してずらす
                 case "2":
-                    foreach (Image ui in BelongingsUI.transform)
+                    if (BType != BelongingsType.Psyllium)
                     {
-                        switch (ui.name)
+                        foreach (Image ui in BelongingsUIList)
                         {
-                            case "Hand":
-                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                ui.rectTransform.anchoredPosition = new Vector3(ui.rectTransform.anchoredPosition.x - (SizeExpantion / 2), 0, 0);
-                                break;
-                            case "Psyllium":
-                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                ui.rectTransform.anchoredPosition = new Vector3(0f, 0f, 0f);
-                                break;
-                            case "Camera":
-                                ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                ui.rectTransform.anchoredPosition = new Vector3(PosDefault, 0f, 0f);
-                                break;
-                            default:
-                                break;
+                            switch (ui.name)
+                            {
+                                case "Hand":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
+                                    break;
+                                case "Psyllium":
+                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    ui.rectTransform.anchoredPosition = new Vector3(0f, SizeExpantion / 2, 0f);
+                                    break;
+                                case "Camera":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
+                        BType = BelongingsType.Psyllium;
                     }
-                    Debug.Log(InputStr);
                     break;
+                //カメラのUIを拡大し、他UIを縮小してずらす
                 case "3":
-                    Debug.Log(InputStr);
+                    if (BType != BelongingsType.Camera)
+                    {
+                        foreach (Image ui in BelongingsUIList)
+                        {
+                            switch (ui.name)
+                            {
+                                case "Hand":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
+                                    break;
+                                case "Psyllium":
+                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    ui.rectTransform.anchoredPosition = new Vector3(-SizeExpantion / 2, 0f, 0f);
+                                    break;
+                                case "Camera":
+                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault - (SizeExpantion / 2),
+                                                                                    ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        BType = BelongingsType.Camera;
+                    }
                     break;
                 default:
                     break;
