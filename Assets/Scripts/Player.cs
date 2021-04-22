@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
     private CharacterController Chara;
 
     private GameObject MainCamera;
-    private GameObject PsylliumClone;
     [SerializeField]
     private GameObject Psyllium = default;
 
@@ -22,8 +21,6 @@ public class Player : MonoBehaviour
     private float SetRotateSpeed = 0f;
     [SerializeField]
     private float SetHandLength = 0f;
-    [SerializeField]
-    private float SlowSpeed = 0f;
 
     private Text DefaultReticle;
 
@@ -61,16 +58,22 @@ public class Player : MonoBehaviour
     {
         if (GameManager.GameManager_Instance.CanPlayerMove)
         {
+            //レイの射出
+            PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+            Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
+
+            //移動
             PlayerMove();
             CameraMove();
 
+            //持ち物に対応した操作
             switch (HUDM.BType)
             {
                 case HUDManager.BelongingsType.Hand:
                     PickHands();
                     break;
                 case HUDManager.BelongingsType.Psyllium:
-                    SlowPsyllium();
+                    PutPsyllium();
                     break;
                 default:
                     break;
@@ -125,8 +128,6 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PickHands()
     {
-        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
             if (hit.collider.CompareTag("Notes"))
@@ -146,19 +147,27 @@ public class Player : MonoBehaviour
                     HUDM.IsTouchiGoal = true;
                 }
             }
-            else
-            {
-                DefaultReticle.color = Color.gray;
-            }
+        }
+        else
+        {
+            DefaultReticle.color = Color.gray;
         }
     }
 
-    private void SlowPsyllium()
+    /// <summary>
+    /// サイリウムを置く
+    /// </summary>
+    private void PutPsyllium()
     {
-        if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            PsylliumClone = Instantiate(Psyllium, gameObject.transform.position, Quaternion.identity);
-            //PsylliumClone.GetComponent<Rigidbody>().AddForce(new Vector3(0f, 0f, SlowSpeed));
+            if (hit.collider.name == "Floor(Clone)")
+            {
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                {
+                    Instantiate(Psyllium, hit.point, Quaternion.identity);
+                }
+            }
         }
     }
 }
