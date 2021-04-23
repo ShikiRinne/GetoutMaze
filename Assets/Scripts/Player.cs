@@ -130,22 +130,25 @@ public class Player : MonoBehaviour
     {
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            if (hit.collider.CompareTag("Notes"))
+            switch (hit.collider.tag)
             {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    HUDM.PickupMemo();
-                    hit.collider.gameObject.SetActive(false);
-                }
-            }
-            else if (hit.collider.CompareTag("Exit"))
-            {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    HUDM.IsTouchiGoal = true;
-                }
+                case "Notes":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.PickupMemo();
+                        hit.collider.gameObject.SetActive(false);
+                    }
+                    break;
+                case "Exit":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.IsTouchiGoal = true;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         else
@@ -165,7 +168,8 @@ public class Player : MonoBehaviour
             {
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                 {
-                    Instantiate(Psyllium, hit.point, Quaternion.identity);
+                    //サイリウムをプレイヤーに向いている方向に倒して生成
+                    Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -35,7 +36,6 @@ public class MazeGenerateManager: MonoBehaviour
 
     private List<int> PlacementObjectList;
     private List<int> DeadendPointList;
-    private List<GameObject> MemoStorageList = new List<GameObject>();
     private List<GameObject> DeadendObjectList = new List<GameObject>();
 
     public Vector3 PassRestartPos { get; private set; }
@@ -48,7 +48,8 @@ public class MazeGenerateManager: MonoBehaviour
         Wall = 1,
         Start = 2,
         Exit = 3,
-        DeadEnd = 4
+        Memo = 4,
+        DeadEnd = 5
     }
 
     private enum DirectionType
@@ -58,10 +59,6 @@ public class MazeGenerateManager: MonoBehaviour
         LEFT = 2,
         UP = 3
     }
-
-    //配置した後メモを管理するKeyCodeMemoで使用するためプロパティで受け渡しできるようにする
-    public List<int> NotePositionList { get; set; }
-    public List<GameObject> NotesList { get; set; }
 
     void Start()
     {
@@ -221,8 +218,7 @@ public class MazeGenerateManager: MonoBehaviour
             }
         }
 
-        //行き止まりの位置からランダムに選出
-        NotePositionList = new List<int>();
+        //行き止まりの位置からランダムに選出し上書き
         int RandomPoint;
         for (int i = 0; i < PassTotalSplitMemos + 2; ++i)
         {
@@ -239,7 +235,7 @@ public class MazeGenerateManager: MonoBehaviour
             }
             else
             {
-                NotePositionList.Add(DeadendPointList[RandomPoint]);
+                PlacementObjectList[DeadendPointList[RandomPoint]] = (int)MazePoint.Memo;
             }
 
             DeadendPointList.RemoveAt(RandomPoint);
@@ -266,12 +262,6 @@ public class MazeGenerateManager: MonoBehaviour
                 switch (PlacementObjectList[Count])
                 {
                     case (int)MazePoint.Path:
-                        //メモを置く位置であればメモを置く
-                        if (NotePositionList.Contains(Count))
-                        {
-                            MemoStorageList.Add(Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity));
-                        }
-                        
                         break;
                     case (int)MazePoint.Wall:
                         //壁を配置
@@ -304,12 +294,19 @@ public class MazeGenerateManager: MonoBehaviour
                         //出口を配置
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
+                    case (int)MazePoint.Memo:
+                        //メモを配置
+                        Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
+                        break;
                     case (int)MazePoint.DeadEnd:
+                        //エネミーを配置するための位置を決定
                         DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity));
                         if (FarthestPoit == null)
                         {
                             FarthestPoit = DeadendObjectList[0];
                         }
+                        break;
+                    default:
                         break;
                 }
                 Count++;
