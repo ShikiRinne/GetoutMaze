@@ -89,14 +89,16 @@ public class HUDManager : MonoBehaviour
 
     void Update()
     {
-        //スペースキーで取得済みメモの表示、非表示切り替え
         DisplayMemo.SetActive(MemoDisplay);
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (ControlManager.ControlManager_Instance.CanControl)
         {
-            MemoDisplay = !MemoDisplay;
-        }
+            BelongingsUIOps();
 
-        BelongingsUIOps();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                MemoDisplay = !MemoDisplay;
+            }
+        }
 
         if (IsTouchiGoal)
         {

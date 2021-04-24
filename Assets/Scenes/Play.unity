@@ -2415,8 +2415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a067fc021156e74dbe131f582adca23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MazeHight: 10
-  MazeWidth: 10
+  MazeHight: 15
+  MazeWidth: 15
   Floor: {fileID: 6102414519479096704, guid: 6fff2deb6d0bcb44ea6bea31d3661819, type: 3}
   Wall: {fileID: 2818591682071941582, guid: b95464e5e38b7b4498ff1d8e76591e21, type: 3}
   StartPoint: {fileID: 5048165217567034926, guid: dd2c483ccd8913347ae76c5cc312c4b4,
