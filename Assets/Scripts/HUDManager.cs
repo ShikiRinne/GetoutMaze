@@ -22,6 +22,8 @@ public class HUDManager : MonoBehaviour
     private GameObject BelongingsUI = default;
 
     [SerializeField]
+    private Text PsylliumCountText = null;
+    [SerializeField]
     private Text Reticle_Default = null;
     [SerializeField]
     private Text Reticle_Spray = null;
@@ -31,9 +33,13 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private float SizeDefault = 0f;
     [SerializeField]
+    private int SizePsylliumText = 0;
+    [SerializeField]
     private float HandPosDefault = 0f;
     [SerializeField]
     private float CameraPosDefault = 0f;
+
+    private Vector3 PsylliumTextPos;
 
     private string InputStr = null;
 
@@ -46,6 +52,7 @@ public class HUDManager : MonoBehaviour
     private List<int> ExitKeyCode = new List<int>();
 
     public int GetPickMemoCount { get; set; } = 0;
+    public int PassPsylliumCount { get; set; } = 5;
     public bool IsTouchiGoal { get; set; } = false;
 
     public enum ReticleType
@@ -78,6 +85,8 @@ public class HUDManager : MonoBehaviour
             BelongingsUIList.Add(ui.GetComponent<Image>());
         }
 
+        PsylliumTextPos = PsylliumCountText.rectTransform.anchoredPosition;
+
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
 
@@ -99,6 +108,8 @@ public class HUDManager : MonoBehaviour
                 MemoDisplay = !MemoDisplay;
             }
         }
+
+        PsylliumCountText.text = "x" + PassPsylliumCount;
 
         if (IsTouchiGoal)
         {
@@ -211,6 +222,8 @@ public class HUDManager : MonoBehaviour
                                 case "Psyllium":
                                     ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
                                     ui.rectTransform.anchoredPosition = new Vector3(SizeExpantion / 2, 0f, 0f);
+                                    PsylliumCountText.fontSize = SizePsylliumText;
+                                    PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
                                     break;
                                 case "Camera":
                                     ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
@@ -239,6 +252,10 @@ public class HUDManager : MonoBehaviour
                                     ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
                                                                              ui.rectTransform.sizeDelta.y + SizeExpantion);
                                     ui.rectTransform.anchoredPosition = new Vector3(0f, SizeExpantion / 2, 0f);
+                                    PsylliumCountText.fontSize = (int)(SizePsylliumText + SizeExpantion);
+                                    PsylliumCountText.rectTransform.anchoredPosition = new Vector3(PsylliumTextPos.x + (SizeExpantion / 2),
+                                                                                                   PsylliumTextPos.y - (SizeExpantion / 2),
+                                                                                                   PsylliumTextPos.z);
                                     break;
                                 case "Camera":
                                     ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
@@ -266,6 +283,8 @@ public class HUDManager : MonoBehaviour
                                 case "Psyllium":
                                     ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
                                     ui.rectTransform.anchoredPosition = new Vector3(-SizeExpantion / 2, 0f, 0f);
+                                    PsylliumCountText.fontSize = SizePsylliumText;
+                                    PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
                                     break;
                                 case "Camera":
                                     ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,

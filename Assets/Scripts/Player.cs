@@ -152,6 +152,7 @@ public class Player : MonoBehaviour
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
                         Destroy(hit.collider.gameObject);
+                        HUDM.PassPsylliumCount++;
                     }
                     break;
                 default:
@@ -175,10 +176,11 @@ public class Player : MonoBehaviour
             if (hit.collider.name == "Floor(Clone)")
             {
                 DefaultReticle.color = Color.green;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
                 {
                     //サイリウムをプレイヤーに向いている方向に倒して生成
                     Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
+                    HUDM.PassPsylliumCount--;                    
                 }
             }
             else
