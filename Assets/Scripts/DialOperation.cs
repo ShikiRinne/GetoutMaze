@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class DialOperation : MonoBehaviour
 {
-    private DialManager DM;
+    private HUDManager HUDM;
     private ArrowOperation AO;
 
     public List<GameObject> EachDial { get; set; } = new List<GameObject>();
@@ -58,7 +56,7 @@ public class DialOperation : MonoBehaviour
     /// </summary>
     public void StartDialSetting()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         AO = GameObject.Find("ArrowSet").GetComponent<ArrowOperation>();
 
         //リストに挿入
@@ -133,7 +131,7 @@ public class DialOperation : MonoBehaviour
         }
         else
         {
-            DM.JudgeUnlock(DialNumberList);
+            HUDM.JudgeUnlock(DialNumberList);
         }
     }
 

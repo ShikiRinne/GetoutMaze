@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    private DialManager DM;
+    private HUDManager HUDM;
     private MazeGenerateManager MGM;
 
-    private GameObject MainCamera;
-
     private CharacterController Chara;
+
+    private GameObject MainCamera;
+    [SerializeField]
+    private GameObject Psyllium = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -31,7 +34,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
 
@@ -47,15 +50,34 @@ public class Player : MonoBehaviour
         MainCamera.transform.localRotation = Quaternion.identity;
         CameraRotation = MGM.StartDirection;
         transform.Rotate(0f, CameraRotation, 0f);
+
+        DefaultReticle.color = Color.gray;
     }
 
     void Update()
     {
         if (GameManager.GameManager_Instance.CanPlayerMove)
         {
+            //レイの射出
+            PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+            Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
+
+            //移動
             PlayerMove();
             CameraMove();
-            PickHands();
+
+            //持ち物に対応した操作
+            switch (HUDM.BType)
+            {
+                case HUDManager.BelongingsType.Hand:
+                    PickHands();
+                    break;
+                case HUDManager.BelongingsType.Psyllium:
+                    PutPsyllium();
+                    break;
+                default:
+                    break;
+            }
         }
 
         //ゲームオーバー遷移（後でEnemyに接触時に変更）
@@ -106,31 +128,69 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PickHands()
     {
-        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            if (hit.collider.CompareTag("Notes"))
+            switch (hit.collider.tag)
             {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    DM.PickupMemo();
-                    hit.collider.gameObject.SetActive(false);
-                }
+                case "Notes":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.PickupMemo();
+                        hit.collider.gameObject.SetActive(false);
+                    }
+                    break;
+                case "Exit":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.IsTouchiGoal = true;
+                    }
+                    break;
+                case "Psyllium":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        Destroy(hit.collider.gameObject);
+                        HUDM.PassPsylliumCount++;
+                    }
+                    break;
+                default:
+                    DefaultReticle.color = Color.gray;
+                    break;
             }
-            else if (hit.collider.CompareTag("Exit"))
+        }
+        else
+        {
+            DefaultReticle.color = Color.gray;
+        }
+    }
+
+    /// <summary>
+    /// サイリウムを置く
+    /// </summary>
+    private void PutPsyllium()
+    {
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        {
+            if (hit.collider.name == "Floor(Clone)")
             {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                DefaultReticle.color = Color.green;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
                 {
-                    DM.IsTouchiGoal = true;
+                    //サイリウムをプレイヤーに向いている方向に倒して生成
+                    Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
+                    HUDM.PassPsylliumCount--;                    
                 }
             }
             else
             {
                 DefaultReticle.color = Color.gray;
             }
+        }
+        else
+        {
+            DefaultReticle.color = Color.gray;
         }
     }
 }
