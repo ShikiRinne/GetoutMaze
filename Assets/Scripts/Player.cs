@@ -8,12 +8,15 @@ public class Player : MonoBehaviour
 {
     private HUDManager HUDM;
     private MazeGenerateManager MGM;
+    private CameraFlash CF;
 
     private CharacterController Chara;
 
     private GameObject MainCamera;
     [SerializeField]
     private GameObject Psyllium = default;
+    [SerializeField]
+    private GameObject Camera = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -36,6 +39,7 @@ public class Player : MonoBehaviour
     {
         HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
+        CF = Camera.GetComponent<CameraFlash>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
 
         //メインカメラをプレイヤーの視点に移動
@@ -74,6 +78,9 @@ public class Player : MonoBehaviour
                     break;
                 case HUDManager.BelongingsType.Psyllium:
                     PutPsyllium();
+                    break;
+                case HUDManager.BelongingsType.Camera:
+                    CF.CameraReady();
                     break;
                 default:
                     break;
