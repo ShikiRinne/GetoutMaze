@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// カーソルでのダイヤル処理
+/// </summary>
 public class CursorDial : MonoBehaviour
 {
     private DialOperation DO;

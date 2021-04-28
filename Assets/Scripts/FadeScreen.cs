@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// シーン間のフェードイン、フェードアウト
+/// </summary>
 public class FadeScreen : MonoBehaviour
 {
     public static FadeScreen FadeScreen_Instance;
