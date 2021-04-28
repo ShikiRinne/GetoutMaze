@@ -2704,11 +2704,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 201062655869438653, guid: 0039dd90b0a594d4ab75059a796665f8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2015890658283697215, guid: 0039dd90b0a594d4ab75059a796665f8,
         type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1758862622}
+    - target: {fileID: 2015890658283697215, guid: 0039dd90b0a594d4ab75059a796665f8,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7387582879140196544, guid: 0039dd90b0a594d4ab75059a796665f8,
         type: 3}
       propertyPath: m_LocalPosition.x

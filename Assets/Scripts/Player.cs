@@ -13,10 +13,9 @@ public class Player : MonoBehaviour
     private CharacterController Chara;
 
     private GameObject MainCamera;
+    private GameObject Camera = default;
     [SerializeField]
     private GameObject Psyllium = default;
-    [SerializeField]
-    private GameObject Camera = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -39,8 +38,9 @@ public class Player : MonoBehaviour
     {
         HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
-        CF = Camera.GetComponent<CameraFlash>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
+        Camera = GameObject.Find("Camera");
+        CF = Camera.GetComponent<CameraFlash>();
 
         //メインカメラをプレイヤーの視点に移動
         MainCamera = GameObject.Find("Main Camera");
@@ -54,6 +54,8 @@ public class Player : MonoBehaviour
         MainCamera.transform.localRotation = Quaternion.identity;
         CameraRotation = MGM.StartDirection;
         transform.Rotate(0f, CameraRotation, 0f);
+
+        Camera.SetActive(false);
 
         DefaultReticle.color = Color.gray;
     }
@@ -80,7 +82,7 @@ public class Player : MonoBehaviour
                     PutPsyllium();
                     break;
                 case HUDManager.BelongingsType.Camera:
-                    CF.CameraReady();
+                    ReadyCamera();
                     break;
                 default:
                     break;
@@ -198,6 +200,30 @@ public class Player : MonoBehaviour
         else
         {
             DefaultReticle.color = Color.gray;
+        }
+    }
+
+    /// <summary>
+    /// カメラ操作
+    /// 右クリックで構えて左クリックで撮影
+    /// </summary>
+    private void ReadyCamera()
+    {
+        //フラッシュ焚いてる間はカメラを下げない
+        if (Input.GetMouseButton(1) || CF.IsFlash)
+        {
+            Camera.SetActive(true);
+            Debug.Log("Ready");
+
+            //連打不可
+            if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !CF.IsFlash)
+            {
+                StartCoroutine(CF.CameraShoot());
+            }
+        }
+        else
+        {
+            Camera.SetActive(false);
         }
     }
 }

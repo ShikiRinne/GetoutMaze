@@ -4,25 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// カメラ処理
+/// </summary>
 public class CameraFlash : MonoBehaviour
 {
     [SerializeField]
     private Image Flash = null;
-    [SerializeField]
-    private Image Finder = null;
 
     [SerializeField]
     private float AttenuateTime = 0f;
-    private float Alpha = 1f;
+    private float Alpha = 0f;
 
-    private float FlashAlpha = 0f;
+    private Color FlashColor = new Color(1f, 1f, 1f, 0f);
+
+    public bool IsFlash { get; set; } = false;
 
 
     void Start()
     {
-        FlashAlpha = Flash.color.a;
-        Finder.gameObject.SetActive(false);
-        Flash.gameObject.SetActive(false);
+        Flash.color = FlashColor;
     }
 
     void Update()
@@ -31,49 +32,31 @@ public class CameraFlash : MonoBehaviour
     }
 
     /// <summary>
-    /// カメラを構える
-    /// </summary>
-    public void CameraReady()
-    {
-        if (Input.GetMouseButton(1))
-        {
-            Finder.gameObject.SetActive(true);
-            Debug.Log("Ready");
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                Flash.gameObject.SetActive(true);
-                StartCoroutine(CameraShoot());
-                Debug.Log("Shoot");
-            }
-        }
-        else
-        {
-            Finder.gameObject.SetActive(false);
-        }
-    }
-
-    /// <summary>
     /// 撮影する
     /// </summary>
-    IEnumerator CameraShoot()
+    public IEnumerator CameraShoot()
     {
+        //最初に1を入れる（真っ白にする）
+        IsFlash = true;
         Alpha = 1f;
+        FlashColor = new Color(1f, 1f, 1f, Alpha);
+        Flash.color = FlashColor;
 
-        while (FlashAlpha > 0)
+        //徐々に透明にする（減衰させる）
+        while (Alpha > 0)
         {
             Alpha -= Time.deltaTime / AttenuateTime;
             Alpha = Mathf.Clamp01(Alpha);
-            FlashAlpha = Alpha;
+            FlashColor = new Color(1f, 1f, 1f, Alpha);
+            Flash.color = FlashColor;
 
             yield return null;
         }
 
-        //if (Flash.color.a <= 0)
-        //{
-        //    Flash.gameObject.SetActive(false);
-        //}
-
+        if (Alpha <= 0)
+        {
+            IsFlash = false;
+        }
         yield return null;
     }
 }
