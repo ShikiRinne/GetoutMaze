@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 
         //壁のない方向にプレイヤーを向ける
         MainCamera.transform.localRotation = Quaternion.identity;
-        CameraRotation = MGM.StartDirection;
+        CameraRotation = MGM.PlayerStartDir;
         transform.Rotate(0f, CameraRotation, 0f);
 
         Camera.SetActive(false);

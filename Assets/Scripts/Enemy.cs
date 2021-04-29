@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    private MazeGenerateManager MGM;
+
     private NavMeshAgent Agent;
 
     public enum EnemyState
@@ -16,7 +18,10 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
+
         Agent = gameObject.GetComponent<NavMeshAgent>();
+        transform.Rotate(0f, MGM.EnemyStartDir, 0f);
     }
 
     void Update()

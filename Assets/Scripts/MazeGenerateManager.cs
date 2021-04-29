@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// マップの生成と同時にマップ上にメモをばら撒く
@@ -34,12 +35,14 @@ public class MazeGenerateManager: MonoBehaviour
     private GameObject FarthestPoit = null;
     private float Distance = 0f;
 
+    private List<int> MemoPositionList = new List<int>();
     private List<int> PlacementObjectList;
     private List<int> DeadendPointList;
     private List<GameObject> DeadendObjectList = new List<GameObject>();
 
     public Vector3 PassRestartPos { get; private set; }
-    public float StartDirection { get; private set; }
+    public float PlayerStartDir { get; private set; }
+    public float EnemyStartDir { get; private set; }
     public int PassTotalSplitMemos { get; private set; } = 4;
 
     private enum MazePoint
@@ -48,8 +51,7 @@ public class MazeGenerateManager: MonoBehaviour
         Wall = 1,
         Start = 2,
         Exit = 3,
-        Memo = 4,
-        DeadEnd = 5
+        DeadEnd = 4
     }
 
     private enum DirectionType
@@ -235,11 +237,13 @@ public class MazeGenerateManager: MonoBehaviour
             }
             else
             {
-                PlacementObjectList[DeadendPointList[RandomPoint]] = (int)MazePoint.Memo;
+                MemoPositionList.Add(DeadendPointList[RandomPoint]);
             }
 
             DeadendPointList.RemoveAt(RandomPoint);
         }
+
+        DeadendPointList.Clear();
     }
 
     /// <summary>
@@ -252,6 +256,7 @@ public class MazeGenerateManager: MonoBehaviour
         //床をマップの大きさをもとにサイズと位置を調整して生成
         Floor.GetComponent<Transform>().localScale = new Vector3(MazeWidth * 0.1f, 1, MazeHight * 0.1f);
         Instantiate(Floor, new Vector3(Mathf.Floor(MazeWidth / 2.0f), 0, Mathf.Floor(MazeHight / 2.0f)), Quaternion.identity);
+        GameObject.Find("Floor(Clone)").GetComponent<NavMeshSurface>().BuildNavMesh();
 
         //オブジェクト配置リストに応じたオブジェクトを配置していく
         int Count = 0;
@@ -270,22 +275,7 @@ public class MazeGenerateManager: MonoBehaviour
                     case (int)MazePoint.Start:
                         //プレイヤーを配置
                         //プレイヤーが出現する向きを通路側に向ける
-                        if (Maze[x + 1, y] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 90f;
-                        }
-                        if (Maze[x, y - 1] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 180f;
-                        }
-                        if (Maze[x, y + 1] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 0f;
-                        }
-                        if (Maze[x - 1, y] == (int)MazePoint.Path)
-                        {
-                            StartDirection = -90f;
-                        }
+                        PlayerStartDir = CharaDirection(x, y);
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
                         PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y + StartPoint.GetComponent<CharacterController>().skinWidth, y);
                         PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
@@ -294,16 +284,16 @@ public class MazeGenerateManager: MonoBehaviour
                         //出口を配置
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
-                    case (int)MazePoint.Memo:
-                        //メモを配置
-                        Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
-                        break;
                     case (int)MazePoint.DeadEnd:
-                        //エネミーを配置するための位置を決定
                         DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity));
+                        DeadendPointList.Add(Count);
                         if (FarthestPoit == null)
                         {
                             FarthestPoit = DeadendObjectList[0];
+                        }
+                        if (MemoPositionList.Contains(Count))
+                        {
+                            Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
                         }
                         break;
                     default:
@@ -325,6 +315,8 @@ public class MazeGenerateManager: MonoBehaviour
     /// </summary>
     public void CreateEnemy()
     {
+        //エネミーを生成する位置の決定
+        int enemypoint = 0;
         for (int i = 0; i < DeadendObjectList.Count; ++i)
         {
             //行き止まりの位置とプレイヤーの位置を比較
@@ -334,11 +326,55 @@ public class MazeGenerateManager: MonoBehaviour
             if (Distance > Mathf.Abs((PlayerClone.transform.position - FarthestPoit.transform.position).sqrMagnitude))
             {
                 FarthestPoit = DeadendObjectList[i];
+                enemypoint = i;
+            }
+        }
+
+        //エネミーが出現する向きを通路側に向ける
+        int Count = 0;
+        for (int y = 0; y < MazeHight; ++y)
+        {
+            for (int x = 0; x < MazeWidth; ++x)
+            {
+                if (Count == DeadendPointList[enemypoint])
+                {
+                    EnemyStartDir = CharaDirection(x, y);
+                }
+                Count++;
             }
         }
 
         //最終的に決定した位置にエネミーを生成
         Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
+    }
+
+    /// <summary>
+    /// キャラクター生成時に通路側へ向かせる
+    /// </summary>
+    /// <param name="posX"></param>
+    /// <param name="posY"></param>
+    /// <returns></returns>
+    private float CharaDirection(int posX, int posY)
+    {
+        float direction = 0;
+        if (Maze[posX + 1, posY] == (int)MazePoint.Path)
+        {
+            direction = 90f;
+        }
+        if (Maze[posX, posY - 1] == (int)MazePoint.Path)
+        {
+            direction = 180f;
+        }
+        if (Maze[posX, posY + 1] == (int)MazePoint.Path)
+        {
+            direction = 0f;
+        }
+        if (Maze[posX - 1, posY] == (int)MazePoint.Path)
+        {
+            direction = -90f;
+        }
+
+        return direction;
     }
 
     /// <summary>
