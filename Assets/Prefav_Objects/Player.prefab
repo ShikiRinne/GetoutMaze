@@ -60,7 +60,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 0
   m_StepOffset: 0.3
   m_SkinWidth: 0.1
   m_MinMoveDistance: 0.001
@@ -79,7 +79,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Psyllium: {fileID: 8499749609321422941, guid: d5ddf4b6680bb07489cb6fc9ae89f8ed,
     type: 3}
-  Camera: {fileID: 201062655869438653, guid: 0039dd90b0a594d4ab75059a796665f8, type: 3}
   SetMoveSpeed: 1
   SetRotateSpeed: 1
   SetHandLength: 1

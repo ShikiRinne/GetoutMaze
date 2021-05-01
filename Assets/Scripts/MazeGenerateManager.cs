@@ -38,8 +38,8 @@ public class MazeGenerateManager: MonoBehaviour
     private List<int> MemoPositionList = new List<int>();
     private List<int> PlacementObjectList;
     private List<int> DeadendPointList;
-    private List<GameObject> DeadendObjectList = new List<GameObject>();
 
+    public List<GameObject> DeadendObjectList { get; private set; } = new List<GameObject>();
     public Vector3 PassRestartPos { get; private set; }
     public float PlayerStartDir { get; private set; }
     public float EnemyStartDir { get; private set; }
@@ -230,6 +230,8 @@ public class MazeGenerateManager: MonoBehaviour
             if (i == 0)
             {
                 PlacementObjectList[DeadendPointList[RandomPoint]] = (int)MazePoint.Start;
+                //プレイヤーを壁のない方向に向ける
+                PlayerStartDir = CharaDirection(DeadendPointList[RandomPoint]);
             }
             else if (i == 1)
             {
@@ -274,8 +276,6 @@ public class MazeGenerateManager: MonoBehaviour
                         break;
                     case (int)MazePoint.Start:
                         //プレイヤーを配置
-                        //プレイヤーが出現する向きを通路側に向ける
-                        PlayerStartDir = CharaDirection(x, y);
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
                         PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y + StartPoint.GetComponent<CharacterController>().skinWidth, y);
                         PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
@@ -330,48 +330,49 @@ public class MazeGenerateManager: MonoBehaviour
             }
         }
 
-        //エネミーが出現する向きを通路側に向ける
-        int Count = 0;
-        for (int y = 0; y < MazeHight; ++y)
-        {
-            for (int x = 0; x < MazeWidth; ++x)
-            {
-                if (Count == DeadendPointList[enemypoint])
-                {
-                    EnemyStartDir = CharaDirection(x, y);
-                }
-                Count++;
-            }
-        }
+        //エネミーが出現する向きを壁のない方向に向ける
+        EnemyStartDir = CharaDirection(DeadendPointList[enemypoint]);
 
         //最終的に決定した位置にエネミーを生成
         Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
     }
 
     /// <summary>
-    /// キャラクター生成時に通路側へ向かせる
+    /// キャラクターが出現する向きを通路側に向ける
+    /// マップを参照して引数として渡された位置の壁のない方向を判定し戻り値として渡す
     /// </summary>
-    /// <param name="posX"></param>
-    /// <param name="posY"></param>
+    /// <param name="point"></param>
     /// <returns></returns>
-    private float CharaDirection(int posX, int posY)
+    private float CharaDirection(int point)
     {
+        int count = 0;
         float direction = 0;
-        if (Maze[posX + 1, posY] == (int)MazePoint.Path)
+
+        for (int y = 0; y < MazeHight; ++y)
         {
-            direction = 90f;
-        }
-        if (Maze[posX, posY - 1] == (int)MazePoint.Path)
-        {
-            direction = 180f;
-        }
-        if (Maze[posX, posY + 1] == (int)MazePoint.Path)
-        {
-            direction = 0f;
-        }
-        if (Maze[posX - 1, posY] == (int)MazePoint.Path)
-        {
-            direction = -90f;
+            for (int x = 0; x < MazeWidth; ++x)
+            {
+                if (count == point)
+                {
+                    if (Maze[x + 1, y] == (int)MazePoint.Path)
+                    {
+                        direction = 90f;
+                    }
+                    if (Maze[x, y - 1] == (int)MazePoint.Path)
+                    {
+                        direction = 180f;
+                    }
+                    if (Maze[x, y + 1] == (int)MazePoint.Path)
+                    {
+                        direction = 0f;
+                    }
+                    if (Maze[x - 1, y] == (int)MazePoint.Path)
+                    {
+                        direction = -90f;
+                    }
+                }
+                count++;
+            }
         }
 
         return direction;

@@ -94,6 +94,12 @@ public class HUDManager : MonoBehaviour
         DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
+
+        //Debug
+        for (int i = 0; i < ExitKeyCode.Count; ++i)
+        {
+            Debug.Log("[" + i + "]:" + ExitKeyCode[i]);
+        }
     }
 
     void Update()
@@ -125,6 +131,7 @@ public class HUDManager : MonoBehaviour
     {
         GameManager.GameManager_Instance.UseCursor(isdisplay);
         GameManager.GameManager_Instance.CanPlayerMove = !isdisplay;
+        GameManager.GameManager_Instance.IsEnemyStop = isdisplay;
         DialPadLock.SetActive(isdisplay);
     }
 

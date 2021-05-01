@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public bool WantQuit { get; set; } = false;
     public bool WantReset { get; set; } = false;
     public bool CanPlayerMove { get; set; } = false;
+    public bool IsEnemyStop { get; set; } = false;
 
     public enum GameState
     {
@@ -133,6 +134,7 @@ public class GameManager : MonoBehaviour
             case "Play":
                 UseCursor(false);
                 CanPlayerMove = true;
+                IsEnemyStop = false;
                 //どこからPlayシーンが呼び出されたかで処理を変更する
                 switch (PassFromState)
                 {
