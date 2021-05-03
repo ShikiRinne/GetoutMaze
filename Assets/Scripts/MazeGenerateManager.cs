@@ -285,7 +285,7 @@ public class MazeGenerateManager: MonoBehaviour
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
                     case (int)MazePoint.DeadEnd:
-                        DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity));
+                        DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, DeadEndPoint.transform.localScale.y / 2, y), Quaternion.identity));
                         DeadendPointList.Add(Count);
                         if (FarthestPoit == null)
                         {

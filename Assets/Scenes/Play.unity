@@ -2503,7 +2503,7 @@ MonoBehaviour:
     type: 3}
   ExitPoint: {fileID: 7237107102764802551, guid: c4e43f8266a961d4cb521aa7d41b35de,
     type: 3}
-  DeadEndPoint: {fileID: 7652212605609402364, guid: c7654bd13a05be543bd343c31cfa1b39,
+  DeadEndPoint: {fileID: 1245455864961964204, guid: c7654bd13a05be543bd343c31cfa1b39,
     type: 3}
   Memo: {fileID: 1829403663928373485, guid: 9059f290a705c7742a0adfab11900ceb, type: 3}
   Enemy: {fileID: 7203852053123466202, guid: de2cd1b0872c8dd42b52c549be266a05, type: 3}

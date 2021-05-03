@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public bool WantQuit { get; set; } = false;
     public bool WantReset { get; set; } = false;
     public bool CanPlayerMove { get; set; } = false;
-    public bool IsEnemyStop { get; set; } = false;
+    public bool IsEnemyStop { get; set; } = true;
 
     public enum GameState
     {
