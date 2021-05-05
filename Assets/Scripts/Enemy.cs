@@ -19,6 +19,8 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float WaitTime = 0f;
 
+    private int NextPoint = 0;
+
     private bool IsSearchNext = false;
 
     public enum EnemyState
@@ -55,7 +57,8 @@ public class Enemy : MonoBehaviour
                 if (Agent.remainingDistance == 0f)
                 {
                     Target = null;
-                    NextTarget();
+                    NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
+                    StartCoroutine(ArriveTarget());
                 }
                 break;
             case EnemyState.Chase:
@@ -70,20 +73,23 @@ public class Enemy : MonoBehaviour
         Agent.isStopped = true;
         yield return new WaitForSeconds(WaitTime);
 
-        Agent.isStopped = false;
+        if (Agent.isStopped)
+        {
+            Target = MGM.DeadendObjectList[NextPoint];
+            Agent.SetDestination(Target.transform.position);
+            Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
+            Agent.isStopped = false;
+        }
         yield return null;
     }
 
     private void NextTarget()
     {
-        StartCoroutine(ArriveTarget());
-
-        if (Target == null)
+        if (Agent.isStopped)
         {
-            int random = Random.Range(0, MGM.DeadendObjectList.Count);
-            Target = MGM.DeadendObjectList[random];
+            Target = MGM.DeadendObjectList[NextPoint];
             Agent.SetDestination(Target.transform.position);
+            Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
         }
-        Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
     }
 }
