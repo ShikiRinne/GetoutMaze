@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// エネミーの処理
+/// </summary>
 public class Enemy : MonoBehaviour
 {
     private MazeGenerateManager MGM;
@@ -18,10 +21,9 @@ public class Enemy : MonoBehaviour
     private float ChaseLength = 0f;
     [SerializeField]
     private float WaitTime = 0f;
+    private float TimeCount = 0f;
 
     private int NextPoint = 0;
-
-    private bool IsSearchNext = false;
 
     public enum EnemyState
     {
@@ -49,6 +51,10 @@ public class Enemy : MonoBehaviour
         EnemyStateMove(NowState);
     }
 
+    /// <summary>
+    /// エネミーの状態ごとの処理
+    /// </summary>
+    /// <param name="state"></param>
     private void EnemyStateMove(EnemyState state)
     {
         switch (state)
@@ -58,7 +64,7 @@ public class Enemy : MonoBehaviour
                 {
                     Target = null;
                     NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
-                    StartCoroutine(ArriveTarget());
+                    Wait();
                 }
                 break;
             case EnemyState.Chase:
@@ -68,28 +74,31 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private IEnumerator ArriveTarget()
+    /// <summary>
+    /// 停止処理
+    /// </summary>
+    private void Wait()
     {
         Agent.isStopped = true;
-        yield return new WaitForSeconds(WaitTime);
-
-        if (Agent.isStopped)
+        TimeCount += Time.deltaTime;
+        if (TimeCount >= WaitTime)
         {
-            Target = MGM.DeadendObjectList[NextPoint];
-            Agent.SetDestination(Target.transform.position);
-            Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
-            Agent.isStopped = false;
+            TimeCount = 0f;
+            if (Agent.isStopped)
+            {
+                NextTarget();
+                Agent.isStopped = false;
+            }
         }
-        yield return null;
     }
 
+    /// <summary>
+    /// 次の移動地点を探索する
+    /// </summary>
     private void NextTarget()
     {
-        if (Agent.isStopped)
-        {
-            Target = MGM.DeadendObjectList[NextPoint];
-            Agent.SetDestination(Target.transform.position);
-            Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
-        }
+        Target = MGM.DeadendObjectList[NextPoint];
+        Agent.SetDestination(Target.transform.position);
+        Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
     }
 }
