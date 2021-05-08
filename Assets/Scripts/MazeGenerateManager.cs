@@ -258,7 +258,7 @@ public class MazeGenerateManager: MonoBehaviour
         //床をマップの大きさをもとにサイズと位置を調整して生成
         Floor.GetComponent<Transform>().localScale = new Vector3(MazeWidth * 0.1f, 1, MazeHight * 0.1f);
         Instantiate(Floor, new Vector3(Mathf.Floor(MazeWidth / 2.0f), 0, Mathf.Floor(MazeHight / 2.0f)), Quaternion.identity);
-        GameObject.Find("Floor(Clone)").GetComponent<NavMeshSurface>().BuildNavMesh();
+        GameObject.FindWithTag("Floor").GetComponent<NavMeshSurface>().BuildNavMesh();
 
         //オブジェクト配置リストに応じたオブジェクトを配置していく
         int Count = 0;
