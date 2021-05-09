@@ -33,6 +33,8 @@ public class Enemy : MonoBehaviour
 
     private Vector3 PlayerDirection;
 
+    private Ray ChaseRange;
+
     public enum EnemyState
     {
         Wandering,
@@ -79,6 +81,13 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             case EnemyState.Chase:
+                ChaseRange = new Ray(transform.position, transform.forward);
+                Debug.DrawRay(ChaseRange.origin, ChaseRange.direction, Color.red);
+                if (Physics.Raycast(ChaseRange, out RaycastHit hit, ChaseLength))
+                {
+
+                }
+
                 Agent.SetDestination(Player.transform.position);
                 break;
             case EnemyState.Illuminated:
@@ -140,6 +149,8 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
+            NextTarget();
             NowState = EnemyState.Wandering;
         }
     }

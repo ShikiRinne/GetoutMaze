@@ -182,7 +182,7 @@ public class Player : MonoBehaviour
     {
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            if (hit.collider.name == "Floor(Clone)")
+            if (hit.collider.gameObject.CompareTag("Floor"))
             {
                 DefaultReticle.color = Color.green;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
