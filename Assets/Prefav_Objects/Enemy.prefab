@@ -215,8 +215,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 7203852053123466202}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
-  m_Speed: 1
+  m_Radius: 0.5
+  m_Speed: 0.7
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RecognitionArea: {fileID: 7126117435796650503}
+  AreaCollider: {fileID: 6220458548803316450}
   LimitAngle: 90
   SearchLength: 5
   ChaseLength: 0

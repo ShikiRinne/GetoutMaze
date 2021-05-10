@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     private GameObject Target = null;
     [SerializeField]
     private GameObject RecognitionArea = null;
+    [SerializeField]
     private SphereCollider AreaCollider = null;
     
     private float SearchAngle;
@@ -73,22 +74,14 @@ public class Enemy : MonoBehaviour
         switch (state)
         {
             case EnemyState.Wandering:
-                if (Agent.remainingDistance == 0f)
+                if (Agent.remainingDistance == 0f || Target == null)
                 {
-                    Target = null;
                     NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
                     Wait();
                 }
                 break;
             case EnemyState.Chase:
-                ChaseRange = new Ray(transform.position, transform.forward);
-                Debug.DrawRay(ChaseRange.origin, ChaseRange.direction, Color.red);
-                if (Physics.Raycast(ChaseRange, out RaycastHit hit, ChaseLength))
-                {
-
-                }
-
-                Agent.SetDestination(Player.transform.position);
+                
                 break;
             case EnemyState.Illuminated:
                 break;
@@ -136,6 +129,7 @@ public class Enemy : MonoBehaviour
             SearchAngle = Vector3.Angle(transform.forward, PlayerDirection);
             if (SearchAngle <= LimitAngle)
             {
+                Agent.SetDestination(Player.transform.position);
                 NowState = EnemyState.Chase;
             }
         }
@@ -149,9 +143,14 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
-            NextTarget();
+            Target = null;
             NowState = EnemyState.Wandering;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Handles.color = Color.red;
+        Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0f, -LimitAngle, 0f) * transform.forward, LimitAngle * 2f, AreaCollider.radius);
     }
 }
