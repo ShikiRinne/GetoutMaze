@@ -27,14 +27,18 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float ChaseLength = 0f;
     [SerializeField]
+    private float AttackLength = 0f;
+    [SerializeField]
+    private float AttackSpeed = 0f;
+    [SerializeField]
     private float WaitTime = 0f;
     private float TimeCount = 0f;
 
     private int NextPoint = 0;
 
-    private Vector3 PlayerDirection;
+    private bool IsAttack = false;
 
-    private Ray ChaseRange;
+    private Vector3 PlayerDirection;
 
     public enum EnemyState
     {
@@ -81,7 +85,10 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             case EnemyState.Chase:
-                
+                if (Agent.remainingDistance <= AttackLength)
+                {
+                    Attack();
+                }
                 break;
             case EnemyState.Illuminated:
                 break;
@@ -113,7 +120,13 @@ public class Enemy : MonoBehaviour
     {
         Target = MGM.DeadendObjectList[NextPoint];
         Agent.SetDestination(Target.transform.position);
-        Debug.Log("nextpos:(" + Target.transform.position.x + ", " + Target.transform.position.z + ")");
+    }
+
+    private void Attack()
+    {
+        IsAttack = true;
+        Agent.speed = AttackSpeed;
+        gameObject.GetComponent<Material>().color = Color.red;
     }
 
     /// <summary>
