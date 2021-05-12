@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     private GameObject RecognitionArea = null;
     [SerializeField]
     private SphereCollider AreaCollider = null;
+
+    private Renderer EnemyRenderer;
     
     private float SearchAngle;
     [SerializeField]
@@ -25,9 +27,11 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float SearchLength = 0f;
     [SerializeField]
-    private float ChaseLength = 0f;
-    [SerializeField]
     private float AttackLength = 0f;
+    [SerializeField]
+    private float WanderingSpeed = 0f;
+    [SerializeField]
+    private float ChaseSpeed = 0f;
     [SerializeField]
     private float AttackSpeed = 0f;
     [SerializeField]
@@ -36,9 +40,9 @@ public class Enemy : MonoBehaviour
 
     private int NextPoint = 0;
 
-    private bool IsAttack = false;
-
     private Vector3 PlayerDirection;
+    
+    private bool IsAttack { get; set; } = false;
 
     public enum EnemyState
     {
@@ -57,6 +61,8 @@ public class Enemy : MonoBehaviour
 
         Agent = gameObject.GetComponent<NavMeshAgent>();
         transform.Rotate(0f, MGM.EnemyStartDir, 0f);
+
+        EnemyRenderer = gameObject.GetComponent<Renderer>();
 
         NextTarget();
         NowState = EnemyState.Wandering;
@@ -77,14 +83,20 @@ public class Enemy : MonoBehaviour
     {
         switch (state)
         {
+            //徘徊
             case EnemyState.Wandering:
+                Agent.speed = WanderingSpeed;
+                //目的地到着時か目的地未設定時に再設定
                 if (Agent.remainingDistance == 0f || Target == null)
                 {
                     NextPoint = Random.Range(0, MGM.DeadendObjectList.Count);
                     Wait();
                 }
                 break;
+            //追跡
             case EnemyState.Chase:
+                Agent.speed = ChaseSpeed;
+                //目的地（＝プレイヤー）までの距離が一定距離以下で攻撃
                 if (Agent.remainingDistance <= AttackLength)
                 {
                     Attack();
@@ -122,11 +134,14 @@ public class Enemy : MonoBehaviour
         Agent.SetDestination(Target.transform.position);
     }
 
+    /// <summary>
+    /// プレイヤーを攻撃
+    /// </summary>
     private void Attack()
     {
         IsAttack = true;
         Agent.speed = AttackSpeed;
-        gameObject.GetComponent<Material>().color = Color.red;
+        EnemyRenderer.material.color = Color.red;
     }
 
     /// <summary>
@@ -161,9 +176,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    /// <summary>
+    /// 被フラッシュ時
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator FlashIlluminated()
     {
-        Handles.color = Color.red;
-        Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0f, -LimitAngle, 0f) * transform.forward, LimitAngle * 2f, AreaCollider.radius);
+        yield return null;
     }
+
+    //private void OnDrawGizmos()
+    //{
+    //    Handles.color = Color.red;
+    //    Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0f, -LimitAngle, 0f) * transform.forward, LimitAngle * 2f, AreaCollider.radius);
+    //}
 }

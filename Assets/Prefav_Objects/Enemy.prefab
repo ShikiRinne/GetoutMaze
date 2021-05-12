@@ -156,7 +156,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 8a94d6ce80a17ef4cae880e70083d260, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -244,6 +244,9 @@ MonoBehaviour:
   AreaCollider: {fileID: 6220458548803316450}
   LimitAngle: 90
   SearchLength: 5
-  ChaseLength: 0
+  AttackLength: 1.5
+  WanderingSpeed: 1
+  ChaseSpeed: 1.2
+  AttackSpeed: 1.5
   WaitTime: 3
   NowState: 0
