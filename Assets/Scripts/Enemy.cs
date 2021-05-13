@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
 {
     private MazeGenerateManager MGM;
     private NavMeshAgent Agent;
+    private CameraFlash CF;
 
     private GameObject Player;
     private GameObject Target = null;
@@ -35,14 +36,19 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float AttackSpeed = 0f;
     [SerializeField]
+    private float DisappearTime = 0f;
+    [SerializeField]
     private float WaitTime = 0f;
     private float TimeCount = 0f;
 
     private int NextPoint = 0;
 
     private Vector3 PlayerDirection;
+
+    private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
     
-    private bool IsAttack { get; set; } = false;
+    public bool IsAttack { get; set; } = false;
+    public bool IsReGeneration { get; set; } = false;
 
     public enum EnemyState
     {
@@ -55,6 +61,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
+        CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         Player = GameObject.FindWithTag("Player");
         AreaCollider = RecognitionArea.GetComponent<SphereCollider>();
         AreaCollider.radius = SearchLength;
@@ -66,6 +73,7 @@ public class Enemy : MonoBehaviour
 
         NextTarget();
         NowState = EnemyState.Wandering;
+        IsReGeneration = false;
     }
 
     void Update()
@@ -182,6 +190,22 @@ public class Enemy : MonoBehaviour
     /// <returns></returns>
     public IEnumerator FlashIlluminated()
     {
+        Debug.Log("Illuminated");
+        Agent.isStopped = true;
+
+        while (EnemyColor.a > 0)
+        {
+            EnemyColor.a -= Time.deltaTime / DisappearTime;
+            EnemyColor.a = Mathf.Clamp01(EnemyColor.a);
+
+            yield return null;
+        }
+
+        if (EnemyColor.a <= 0)
+        {
+            IsReGeneration = true;
+        }
+
         yield return null;
     }
 

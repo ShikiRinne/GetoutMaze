@@ -248,5 +248,6 @@ MonoBehaviour:
   WanderingSpeed: 1
   ChaseSpeed: 1.2
   AttackSpeed: 1.5
+  DisappearTime: 1
   WaitTime: 3
   NowState: 0

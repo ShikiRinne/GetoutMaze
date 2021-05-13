@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private HUDManager HUDM;
     private MazeGenerateManager MGM;
     private CameraFlash CF;
+    private Enemy EnemyCS;
 
     private CharacterController Chara;
 
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     private GameObject Camera = default;
     [SerializeField]
     private GameObject Psyllium = default;
+    private GameObject Enemy = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -39,6 +41,8 @@ public class Player : MonoBehaviour
         HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
+        Enemy = GameObject.FindWithTag("Enemy");
+        EnemyCS = Enemy.GetComponent<Enemy>();
         Camera = GameObject.Find("Camera");
         CF = Camera.GetComponent<CameraFlash>();
 
@@ -62,6 +66,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (Enemy == null)
+        {
+            Enemy = GameObject.FindWithTag("Enemy");
+            EnemyCS = Enemy.GetComponent<Enemy>();
+            Debug.Log("ReGenerate");
+        }
+
         if (GameManager.GameManager_Instance.CanPlayerMove)
         {
             //レイの射出
@@ -219,6 +230,18 @@ public class Player : MonoBehaviour
             if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !CF.IsFlash)
             {
                 StartCoroutine(CF.CameraShoot());
+                
+                //エネミー攻撃時にフラッシュを焚いた場合の処理
+                if (EnemyCS.IsAttack)
+                {
+                    StartCoroutine(EnemyCS.FlashIlluminated());
+
+                    if (EnemyCS.IsReGeneration)
+                    {
+                        Destroy(Enemy);
+                        MGM.CreateEnemy();
+                    }
+                }
             }
         }
         else
