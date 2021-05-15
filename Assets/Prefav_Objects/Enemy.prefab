@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1394723871446301862}
-  - component: {fileID: 9191734034972570835}
-  - component: {fileID: 7140343872887225699}
   - component: {fileID: 6220458548803316450}
   m_Layer: 0
   m_Name: RecognitionArea
@@ -33,53 +31,6 @@ Transform:
   m_Father: {fileID: 1695094320921349936}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &9191734034972570835
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7126117435796650503}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &7140343872887225699
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7126117435796650503}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!135 &6220458548803316450
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -105,7 +56,7 @@ GameObject:
   - component: {fileID: 7049730002565925285}
   - component: {fileID: 3675412302617353307}
   - component: {fileID: 5828281075112680282}
-  - component: {fileID: 4597474016583084028}
+  - component: {fileID: 3409615193873458387}
   - component: {fileID: 252571180454248192}
   - component: {fileID: -2223466293916595764}
   m_Layer: 0
@@ -190,7 +141,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &4597474016583084028
+--- !u!54 &3409615193873458387
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,6 +199,6 @@ MonoBehaviour:
   WanderingSpeed: 1
   ChaseSpeed: 1.2
   AttackSpeed: 1.5
-  DisappearTime: 1
+  DisappearTime: 2
   WaitTime: 3
   NowState: 0

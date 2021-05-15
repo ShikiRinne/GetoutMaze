@@ -235,12 +235,6 @@ public class Player : MonoBehaviour
                 if (EnemyCS.IsAttack)
                 {
                     StartCoroutine(EnemyCS.FlashIlluminated());
-
-                    if (EnemyCS.IsReGeneration)
-                    {
-                        Destroy(Enemy);
-                        MGM.CreateEnemy();
-                    }
                 }
             }
         }

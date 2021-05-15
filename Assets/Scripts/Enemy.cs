@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -40,6 +42,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float WaitTime = 0f;
     private float TimeCount = 0f;
+    private float EnemyAlpha = 0f;
 
     private int NextPoint = 0;
 
@@ -56,7 +59,7 @@ public class Enemy : MonoBehaviour
         Chase,
         Illuminated
     }
-    public EnemyState NowState;
+    public EnemyState NowState { get; set; }
 
     void Start()
     {
@@ -71,16 +74,23 @@ public class Enemy : MonoBehaviour
 
         EnemyRenderer = gameObject.GetComponent<Renderer>();
 
-        NextTarget();
+        Wait();
         NowState = EnemyState.Wandering;
         IsReGeneration = false;
     }
 
     void Update()
     {
-        Agent.isStopped = GameManager.GameManager_Instance.IsEnemyStop;
+        //Agent.isStopped = GameManager.GameManager_Instance.IsEnemyStop;
 
         EnemyStateMove(NowState);
+
+        Debug.Log(EnemyRenderer.material.color.a);
+
+        if (IsReGeneration)
+        {
+            Destroy(gameObject);
+        }
     }
 
     /// <summary>
@@ -120,16 +130,11 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void Wait()
     {
-        Agent.isStopped = true;
         TimeCount += Time.deltaTime;
         if (TimeCount >= WaitTime)
         {
             TimeCount = 0f;
-            if (Agent.isStopped)
-            {
-                NextTarget();
-                Agent.isStopped = false;
-            }
+            NextTarget();
         }
     }
 
@@ -192,16 +197,22 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("Illuminated");
         Agent.isStopped = true;
+        Target = null;
+        EnemyAlpha = EnemyRenderer.material.color.a;
+        yield return null;
 
         while (EnemyColor.a > 0)
         {
-            EnemyColor.a -= Time.deltaTime / DisappearTime;
-            EnemyColor.a = Mathf.Clamp01(EnemyColor.a);
+            EnemyAlpha -= Time.deltaTime / DisappearTime;
+            EnemyAlpha = Mathf.Clamp01(EnemyAlpha);
+            EnemyColor = new Color(EnemyRenderer.material.color.r, EnemyRenderer.material.color.g, EnemyRenderer.material.color.b, EnemyAlpha);
+            EnemyRenderer.material.color = EnemyColor;
 
             yield return null;
         }
 
-        if (EnemyColor.a <= 0)
+        //たぶんIsAttackで赤くする処理が止まってないからアルファ値が0にならなくてここに入らない
+        if (EnemyRenderer.material.color.a <= 0)
         {
             IsReGeneration = true;
         }
