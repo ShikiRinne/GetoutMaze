@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
 
     private Ray PlayerHands;
 
+    public bool IsShoot { get; set; } = false;
+
     void Start()
     {
         HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
@@ -224,18 +226,22 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButton(1) || CF.IsFlash)
         {
             Camera.SetActive(true);
-            Debug.Log("Ready");
 
             //連打不可
             if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !CF.IsFlash)
             {
+                IsShoot = true;
                 StartCoroutine(CF.CameraShoot());
                 
                 //エネミー攻撃時にフラッシュを焚いた場合の処理
-                if (EnemyCS.IsAttack)
-                {
-                    StartCoroutine(EnemyCS.FlashIlluminated());
-                }
+                //if (EnemyCS.IsAttack)
+                //{
+                    
+                //}
+            }
+            else
+            {
+                IsShoot = false;
             }
         }
         else

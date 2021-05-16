@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
 {
     private MazeGenerateManager MGM;
     private NavMeshAgent Agent;
-    private CameraFlash CF;
+    private Player PlayerCS;
 
     private GameObject Player;
     private GameObject Target = null;
@@ -64,8 +64,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
-        CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         Player = GameObject.FindWithTag("Player");
+        PlayerCS = Player.GetComponent<Player>();
         AreaCollider = RecognitionArea.GetComponent<SphereCollider>();
         AreaCollider.radius = SearchLength;
 
@@ -81,8 +81,6 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        //Agent.isStopped = GameManager.GameManager_Instance.IsEnemyStop;
-
         EnemyStateMove(NowState);
 
         Debug.Log(EnemyRenderer.material.color.a);
@@ -121,6 +119,7 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             case EnemyState.Illuminated:
+                StartCoroutine(FlashIlluminated());
                 break;
         }
     }
@@ -155,6 +154,11 @@ public class Enemy : MonoBehaviour
         IsAttack = true;
         Agent.speed = AttackSpeed;
         EnemyRenderer.material.color = Color.red;
+
+        if (PlayerCS.IsShoot)
+        {
+            NowState = EnemyState.Illuminated;
+        }
     }
 
     /// <summary>
