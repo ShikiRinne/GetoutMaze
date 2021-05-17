@@ -13,9 +13,9 @@ public class Enemy : MonoBehaviour
 {
     private MazeGenerateManager MGM;
     private NavMeshAgent Agent;
-    private Player PlayerCS;
+    private CameraFlash CF;
 
-    private GameObject Player;
+    private GameObject Player = null;
     private GameObject Target = null;
     [SerializeField]
     private GameObject RecognitionArea = null;
@@ -64,8 +64,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
+        CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         Player = GameObject.FindWithTag("Player");
-        PlayerCS = Player.GetComponent<Player>();
         AreaCollider = RecognitionArea.GetComponent<SphereCollider>();
         AreaCollider.radius = SearchLength;
 
@@ -155,7 +155,7 @@ public class Enemy : MonoBehaviour
         Agent.speed = AttackSpeed;
         EnemyRenderer.material.color = Color.red;
 
-        if (PlayerCS.IsShoot)
+        if (CF.IsShoot)
         {
             NowState = EnemyState.Illuminated;
         }
