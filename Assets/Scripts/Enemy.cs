@@ -83,11 +83,10 @@ public class Enemy : MonoBehaviour
     {
         EnemyStateMove(NowState);
 
-        Debug.Log(EnemyRenderer.material.color.a);
-
-        if (IsReGeneration)
+        if (Player == null)
         {
-            Destroy(gameObject);
+            Player = GameObject.FindWithTag("Player");
+            Debug.Log("PlayerReFind");
         }
     }
 
@@ -219,14 +218,9 @@ public class Enemy : MonoBehaviour
         if (EnemyRenderer.material.color.a <= 0)
         {
             IsReGeneration = true;
+            //MGM.CharaPosReset(MazeGenerateManager.ResetState.EnemyOnly);
         }
 
         yield return null;
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    Handles.color = Color.red;
-    //    Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0f, -LimitAngle, 0f) * transform.forward, LimitAngle * 2f, AreaCollider.radius);
-    //}
 }

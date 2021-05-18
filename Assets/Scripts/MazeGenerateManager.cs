@@ -32,6 +32,7 @@ public class MazeGenerateManager: MonoBehaviour
     private GameObject Enemy = default;
 
     private GameObject PlayerClone;
+    private GameObject EnemyClone;
     private GameObject FarthestPoit = null;
     private float Distance = 0f;
 
@@ -62,6 +63,12 @@ public class MazeGenerateManager: MonoBehaviour
         UP = 3
     }
 
+    public enum ResetState
+    {
+        GameOver,
+        EnemyOnly
+    }
+
     void Start()
     {
         Create();
@@ -72,7 +79,7 @@ public class MazeGenerateManager: MonoBehaviour
         //ゲームオーバーからのリセット
         if (GameManager.GameManager_Instance.WantReset)
         {
-            CharaPosReset();
+            CharaPosReset(ResetState.GameOver);
             GameManager.GameManager_Instance.WantReset = false;
         }
     }
@@ -334,7 +341,7 @@ public class MazeGenerateManager: MonoBehaviour
         EnemyStartDir = CharaDirection(DeadendPointList[enemypoint]);
 
         //最終的に決定した位置にエネミーを生成
-        Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
+        EnemyClone = Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
     }
 
     /// <summary>
@@ -381,13 +388,26 @@ public class MazeGenerateManager: MonoBehaviour
     /// <summary>
     /// プレイヤーの状態のリセット
     /// </summary>
-    public void CharaPosReset()
+    public void CharaPosReset(ResetState state)
     {
-        //プレイヤーとの親子関係（MainCamera）を解除
-        PlayerClone.transform.DetachChildren();
-
-        //ステージ上のプレイヤーを一旦削除し再生成
-        Destroy(PlayerClone);
-        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
+        switch (state)
+        {
+            case ResetState.GameOver:
+                //プレイヤーとの親子関係（MainCamera）を解除
+                PlayerClone.transform.DetachChildren();
+                //ステージ上のキャラクターを一旦削除し再生成
+                Destroy(PlayerClone);
+                Destroy(EnemyClone);
+                PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
+                CreateEnemy();
+                break;
+            case ResetState.EnemyOnly:
+                //エネミーのみを一旦削除し再生成
+                Destroy(EnemyClone);
+                CreateEnemy();
+                break;
+            default:
+                break;
+        }
     }
 }
