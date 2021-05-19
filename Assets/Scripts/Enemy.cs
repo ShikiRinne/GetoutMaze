@@ -50,9 +50,6 @@ public class Enemy : MonoBehaviour
 
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
     
-    public bool IsAttack { get; set; } = false;
-    public bool IsReGeneration { get; set; } = false;
-
     public enum EnemyState
     {
         Wandering,
@@ -76,7 +73,6 @@ public class Enemy : MonoBehaviour
 
         Wait();
         NowState = EnemyState.Wandering;
-        IsReGeneration = false;
     }
 
     void Update()
@@ -117,8 +113,7 @@ public class Enemy : MonoBehaviour
                     Attack();
                 }
                 break;
-            case EnemyState.Illuminated:
-                StartCoroutine(FlashIlluminated());
+            default:
                 break;
         }
     }
@@ -150,13 +145,11 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void Attack()
     {
-        IsAttack = true;
         Agent.speed = AttackSpeed;
-        EnemyRenderer.material.color = Color.red;
 
         if (CF.IsShoot)
         {
-            NowState = EnemyState.Illuminated;
+            StartCoroutine(FlashIlluminated());
         }
     }
 
@@ -217,8 +210,7 @@ public class Enemy : MonoBehaviour
         //たぶんIsAttackで赤くする処理が止まってないからアルファ値が0にならなくてここに入らない
         if (EnemyRenderer.material.color.a <= 0)
         {
-            IsReGeneration = true;
-            //MGM.CharaPosReset(MazeGenerateManager.ResetState.EnemyOnly);
+            MGM.CharaPosReset(MazeGenerateManager.ResetState.EnemyOnly);
         }
 
         yield return null;
