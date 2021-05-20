@@ -46,6 +46,8 @@ public class Enemy : MonoBehaviour
 
     private int NextPoint = 0;
 
+    private bool IsStop = false;
+
     private Vector3 PlayerDirection;
 
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
@@ -83,6 +85,19 @@ public class Enemy : MonoBehaviour
         {
             Player = GameObject.FindWithTag("Player");
             Debug.Log("PlayerReFind");
+        }
+
+        if (IsStop)
+        {
+            Agent.isStopped = IsStop;
+        }
+        else if (GameManager.GameManager_Instance.IsEnemyStop)
+        {
+            Agent.isStopped = GameManager.GameManager_Instance.IsEnemyStop;
+        }
+        else
+        {
+            Agent.isStopped = false;
         }
     }
 
@@ -192,7 +207,7 @@ public class Enemy : MonoBehaviour
     public IEnumerator FlashIlluminated()
     {
         Debug.Log("Illuminated");
-        Agent.isStopped = true;
+        IsStop = true;
         Target = null;
         EnemyAlpha = EnemyRenderer.material.color.a;
         yield return null;

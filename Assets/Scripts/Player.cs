@@ -90,11 +90,11 @@ public class Player : MonoBehaviour
         }
 
         //ゲームオーバー遷移（後でEnemyに接触時に変更）
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            GameManager.GameManager_Instance.CanPlayerMove = false;
-            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-        }
+        //if (Input.GetKeyDown(KeyCode.F1))
+        //{
+        //    GameManager.GameManager_Instance.CanPlayerMove = false;
+        //    GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+        //}
     }
 
     /// <summary>
@@ -204,36 +204,15 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// カメラ操作
-    /// 右クリックで構えて左クリックで撮影
+    /// エネミーとの接触判定
     /// </summary>
-    private void ReadyCamera()
+    /// <param name="hit"></param>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        ////フラッシュ焚いてる間はカメラを下げない
-        //if (Input.GetMouseButton(1) || CF.IsFlash)
-        //{
-        //    Camera.SetActive(true);
-
-        //    //連打不可
-        //    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !CF.IsFlash)
-        //    {
-        //        IsShoot = true;
-        //        StartCoroutine(CF.CameraShoot());
-                
-        //        //エネミー攻撃時にフラッシュを焚いた場合の処理
-        //        //if (EnemyCS.IsAttack)
-        //        //{
-                    
-        //        //}
-        //    }
-        //    else
-        //    {
-        //        IsShoot = false;
-        //    }
-        //}
-        //else
-        //{
-        //    Camera.SetActive(false);
-        //}
+        if (hit.gameObject.CompareTag("Enemy"))
+        {
+            GameManager.GameManager_Instance.CanPlayerMove = false;
+            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+        }
     }
 }
