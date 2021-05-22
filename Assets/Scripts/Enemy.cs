@@ -212,6 +212,7 @@ public class Enemy : MonoBehaviour
         EnemyAlpha = EnemyRenderer.material.color.a;
         yield return null;
 
+        //アルファ値を徐々に減算
         while (EnemyColor.a > 0)
         {
             EnemyAlpha -= Time.deltaTime / DisappearTime;
@@ -222,12 +223,27 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
 
-        //たぶんIsAttackで赤くする処理が止まってないからアルファ値が0にならなくてここに入らない
+        //エネミーを再生成
         if (EnemyRenderer.material.color.a <= 0)
         {
             MGM.CharaPosReset(MazeGenerateManager.ResetState.EnemyOnly);
         }
 
         yield return null;
+    }
+
+    /// <summary>
+    /// プレイヤーとの衝突判定
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            IsStop = true;
+            GameManager.GameManager_Instance.CanPlayerMove = false;
+            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+            Debug.Log("hit_player");
+        }
     }
 }

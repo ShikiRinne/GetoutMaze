@@ -201,4 +201,3 @@ MonoBehaviour:
   AttackSpeed: 1.5
   DisappearTime: 2
   WaitTime: 3
-  NowState: 0

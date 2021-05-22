@@ -207,12 +207,41 @@ public class Player : MonoBehaviour
     /// エネミーとの接触判定
     /// </summary>
     /// <param name="hit"></param>
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (hit.gameObject.CompareTag("Enemy"))
-        {
-            GameManager.GameManager_Instance.CanPlayerMove = false;
-            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-        }
-    }
+    //private void OnControllerColliderHit(ControllerColliderHit hit)
+    //{
+    //    if (hit.gameObject.CompareTag("Enemy"))
+    //    {
+    //        Debug.Log("ControllerCollider_Enemy");
+    //        //GameManager.GameManager_Instance.CanPlayerMove = false;
+    //        //GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+    //    }
+
+    //    if (hit.gameObject.name == "Wall(Clone)")
+    //    {
+    //        Debug.Log("ControllerCollider_Wall");
+    //    }
+
+    //    if (hit.gameObject.CompareTag("Exit"))
+    //    {
+    //        Debug.Log("ControllerCollider_Exit");
+    //    }
+    //}
+
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Enemy"))
+    //    {
+    //        Debug.Log("OnCollision_Enemy");
+    //    }
+
+    //    if (collision.gameObject.name == "Wall(Clone)")
+    //    {
+    //        Debug.Log("OnCollision_Wall");
+    //    }
+
+    //    if (collision.gameObject.CompareTag("Exit"))
+    //    {
+    //        Debug.Log("OnCollision_Exit");
+    //    }
+    //}
 }
