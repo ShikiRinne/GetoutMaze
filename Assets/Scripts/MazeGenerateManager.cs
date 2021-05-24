@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// マップの生成と同時にマップ上にメモをばら撒く
@@ -31,15 +32,18 @@ public class MazeGenerateManager: MonoBehaviour
     private GameObject Enemy = default;
 
     private GameObject PlayerClone;
+    private GameObject EnemyClone;
     private GameObject FarthestPoit = null;
     private float Distance = 0f;
 
+    private List<int> MemoPositionList = new List<int>();
     private List<int> PlacementObjectList;
     private List<int> DeadendPointList;
-    private List<GameObject> DeadendObjectList = new List<GameObject>();
 
+    public List<GameObject> DeadendObjectList { get; private set; } = new List<GameObject>();
     public Vector3 PassRestartPos { get; private set; }
-    public float StartDirection { get; private set; }
+    public float PlayerStartDir { get; private set; }
+    public float EnemyStartDir { get; private set; }
     public int PassTotalSplitMemos { get; private set; } = 4;
 
     private enum MazePoint
@@ -48,8 +52,7 @@ public class MazeGenerateManager: MonoBehaviour
         Wall = 1,
         Start = 2,
         Exit = 3,
-        Memo = 4,
-        DeadEnd = 5
+        DeadEnd = 4
     }
 
     private enum DirectionType
@@ -58,6 +61,12 @@ public class MazeGenerateManager: MonoBehaviour
         DOWN = 1,
         LEFT = 2,
         UP = 3
+    }
+
+    public enum ResetState
+    {
+        GameOver,
+        EnemyOnly
     }
 
     void Start()
@@ -70,7 +79,7 @@ public class MazeGenerateManager: MonoBehaviour
         //ゲームオーバーからのリセット
         if (GameManager.GameManager_Instance.WantReset)
         {
-            CharaPosReset();
+            CharaPosReset(ResetState.GameOver);
             GameManager.GameManager_Instance.WantReset = false;
         }
     }
@@ -228,6 +237,8 @@ public class MazeGenerateManager: MonoBehaviour
             if (i == 0)
             {
                 PlacementObjectList[DeadendPointList[RandomPoint]] = (int)MazePoint.Start;
+                //プレイヤーを壁のない方向に向ける
+                PlayerStartDir = CharaDirection(DeadendPointList[RandomPoint]);
             }
             else if (i == 1)
             {
@@ -235,11 +246,13 @@ public class MazeGenerateManager: MonoBehaviour
             }
             else
             {
-                PlacementObjectList[DeadendPointList[RandomPoint]] = (int)MazePoint.Memo;
+                MemoPositionList.Add(DeadendPointList[RandomPoint]);
             }
 
             DeadendPointList.RemoveAt(RandomPoint);
         }
+
+        DeadendPointList.Clear();
     }
 
     /// <summary>
@@ -252,6 +265,7 @@ public class MazeGenerateManager: MonoBehaviour
         //床をマップの大きさをもとにサイズと位置を調整して生成
         Floor.GetComponent<Transform>().localScale = new Vector3(MazeWidth * 0.1f, 1, MazeHight * 0.1f);
         Instantiate(Floor, new Vector3(Mathf.Floor(MazeWidth / 2.0f), 0, Mathf.Floor(MazeHight / 2.0f)), Quaternion.identity);
+        GameObject.FindWithTag("Floor").GetComponent<NavMeshSurface>().BuildNavMesh();
 
         //オブジェクト配置リストに応じたオブジェクトを配置していく
         int Count = 0;
@@ -269,23 +283,6 @@ public class MazeGenerateManager: MonoBehaviour
                         break;
                     case (int)MazePoint.Start:
                         //プレイヤーを配置
-                        //プレイヤーが出現する向きを通路側に向ける
-                        if (Maze[x + 1, y] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 90f;
-                        }
-                        if (Maze[x, y - 1] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 180f;
-                        }
-                        if (Maze[x, y + 1] == (int)MazePoint.Path)
-                        {
-                            StartDirection = 0f;
-                        }
-                        if (Maze[x - 1, y] == (int)MazePoint.Path)
-                        {
-                            StartDirection = -90f;
-                        }
                         //プレイヤーの出現位置をプレイヤーの高さに合わせる
                         PassRestartPos = new Vector3(x, StartPoint.transform.localScale.y + StartPoint.GetComponent<CharacterController>().skinWidth, y);
                         PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
@@ -294,16 +291,16 @@ public class MazeGenerateManager: MonoBehaviour
                         //出口を配置
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
-                    case (int)MazePoint.Memo:
-                        //メモを配置
-                        Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
-                        break;
                     case (int)MazePoint.DeadEnd:
-                        //エネミーを配置するための位置を決定
-                        DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, 0, y), Quaternion.identity));
+                        DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, DeadEndPoint.transform.localScale.y / 2, y), Quaternion.identity));
+                        DeadendPointList.Add(Count);
                         if (FarthestPoit == null)
                         {
                             FarthestPoit = DeadendObjectList[0];
+                        }
+                        if (MemoPositionList.Contains(Count))
+                        {
+                            Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
                         }
                         break;
                     default:
@@ -325,6 +322,8 @@ public class MazeGenerateManager: MonoBehaviour
     /// </summary>
     public void CreateEnemy()
     {
+        //エネミーを生成する位置の決定
+        int enemypoint = 0;
         for (int i = 0; i < DeadendObjectList.Count; ++i)
         {
             //行き止まりの位置とプレイヤーの位置を比較
@@ -334,23 +333,81 @@ public class MazeGenerateManager: MonoBehaviour
             if (Distance > Mathf.Abs((PlayerClone.transform.position - FarthestPoit.transform.position).sqrMagnitude))
             {
                 FarthestPoit = DeadendObjectList[i];
+                enemypoint = i;
             }
         }
 
+        //エネミーが出現する向きを壁のない方向に向ける
+        EnemyStartDir = CharaDirection(DeadendPointList[enemypoint]);
+
         //最終的に決定した位置にエネミーを生成
-        Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
+        EnemyClone = Instantiate(Enemy, new Vector3(FarthestPoit.transform.position.x, Enemy.transform.localScale.y / 2, FarthestPoit.transform.position.z), Quaternion.identity);
+    }
+
+    /// <summary>
+    /// キャラクターが出現する向きを通路側に向ける
+    /// マップを参照して引数として渡された位置の壁のない方向を判定し戻り値として渡す
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    private float CharaDirection(int point)
+    {
+        int count = 0;
+        float direction = 0;
+
+        for (int y = 0; y < MazeHight; ++y)
+        {
+            for (int x = 0; x < MazeWidth; ++x)
+            {
+                if (count == point)
+                {
+                    if (Maze[x + 1, y] == (int)MazePoint.Path)
+                    {
+                        direction = 90f;
+                    }
+                    if (Maze[x, y - 1] == (int)MazePoint.Path)
+                    {
+                        direction = 180f;
+                    }
+                    if (Maze[x, y + 1] == (int)MazePoint.Path)
+                    {
+                        direction = 0f;
+                    }
+                    if (Maze[x - 1, y] == (int)MazePoint.Path)
+                    {
+                        direction = -90f;
+                    }
+                }
+                count++;
+            }
+        }
+
+        return direction;
     }
 
     /// <summary>
     /// プレイヤーの状態のリセット
     /// </summary>
-    public void CharaPosReset()
+    public void CharaPosReset(ResetState state)
     {
-        //プレイヤーとの親子関係（MainCamera）を解除
-        PlayerClone.transform.DetachChildren();
-
-        //ステージ上のプレイヤーを一旦削除し再生成
-        Destroy(PlayerClone);
-        PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
+        switch (state)
+        {
+            case ResetState.GameOver:
+                //プレイヤーとの親子関係（MainCamera）を解除
+                PlayerClone.transform.DetachChildren();
+                //ステージ上のキャラクターを一旦削除し再生成
+                Destroy(PlayerClone);
+                Destroy(EnemyClone);
+                PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
+                CreateEnemy();
+                break;
+            case ResetState.EnemyOnly:
+                //エネミーのみを一旦削除し再生成
+                Destroy(EnemyClone);
+                CreateEnemy();
+                break;
+            default:
+                break;
+        }
     }
 }

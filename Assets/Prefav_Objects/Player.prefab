@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7402251774582303422}
-  - component: {fileID: 8515013682356342970}
   - component: {fileID: 2379738543127008953}
   - component: {fileID: -294929639119202626}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,20 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &8515013682356342970
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5048165217567034926}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &2379738543127008953
 CharacterController:
   m_ObjectHideFlags: 0
@@ -60,7 +45,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 0
   m_StepOffset: 0.3
   m_SkinWidth: 0.1
   m_MinMoveDistance: 0.001
@@ -79,7 +64,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Psyllium: {fileID: 8499749609321422941, guid: d5ddf4b6680bb07489cb6fc9ae89f8ed,
     type: 3}
-  Camera: {fileID: 201062655869438653, guid: 0039dd90b0a594d4ab75059a796665f8, type: 3}
   SetMoveSpeed: 1
   SetRotateSpeed: 1
   SetHandLength: 1

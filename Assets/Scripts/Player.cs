@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
 
     private Ray PlayerHands;
 
+    public bool IsShoot { get; set; } = false;
+
     void Start()
     {
         HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
@@ -52,10 +54,8 @@ public class Player : MonoBehaviour
 
         //壁のない方向にプレイヤーを向ける
         MainCamera.transform.localRotation = Quaternion.identity;
-        CameraRotation = MGM.StartDirection;
+        CameraRotation = MGM.PlayerStartDir;
         transform.Rotate(0f, CameraRotation, 0f);
-
-        Camera.SetActive(false);
 
         DefaultReticle.color = Color.gray;
     }
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
                     PutPsyllium();
                     break;
                 case HUDManager.BelongingsType.Camera:
-                    ReadyCamera();
+                    CF.CameraShoot();
                     break;
                 default:
                     break;
@@ -90,11 +90,11 @@ public class Player : MonoBehaviour
         }
 
         //ゲームオーバー遷移（後でEnemyに接触時に変更）
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            GameManager.GameManager_Instance.CanPlayerMove = false;
-            GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-        }
+        //if (Input.GetKeyDown(KeyCode.F1))
+        //{
+        //    GameManager.GameManager_Instance.CanPlayerMove = false;
+        //    GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+        //}
     }
 
     /// <summary>
@@ -182,7 +182,7 @@ public class Player : MonoBehaviour
     {
         if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
         {
-            if (hit.collider.name == "Floor(Clone)")
+            if (hit.collider.gameObject.CompareTag("Floor"))
             {
                 DefaultReticle.color = Color.green;
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
@@ -204,26 +204,44 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// カメラ操作
-    /// 右クリックで構えて左クリックで撮影
+    /// エネミーとの接触判定
     /// </summary>
-    private void ReadyCamera()
-    {
-        //フラッシュ焚いてる間はカメラを下げない
-        if (Input.GetMouseButton(1) || CF.IsFlash)
-        {
-            Camera.SetActive(true);
-            Debug.Log("Ready");
+    /// <param name="hit"></param>
+    //private void OnControllerColliderHit(ControllerColliderHit hit)
+    //{
+    //    if (hit.gameObject.CompareTag("Enemy"))
+    //    {
+    //        Debug.Log("ControllerCollider_Enemy");
+    //        //GameManager.GameManager_Instance.CanPlayerMove = false;
+    //        //GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
+    //    }
 
-            //連打不可
-            if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !CF.IsFlash)
-            {
-                StartCoroutine(CF.CameraShoot());
-            }
-        }
-        else
-        {
-            Camera.SetActive(false);
-        }
-    }
+    //    if (hit.gameObject.name == "Wall(Clone)")
+    //    {
+    //        Debug.Log("ControllerCollider_Wall");
+    //    }
+
+    //    if (hit.gameObject.CompareTag("Exit"))
+    //    {
+    //        Debug.Log("ControllerCollider_Exit");
+    //    }
+    //}
+
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Enemy"))
+    //    {
+    //        Debug.Log("OnCollision_Enemy");
+    //    }
+
+    //    if (collision.gameObject.name == "Wall(Clone)")
+    //    {
+    //        Debug.Log("OnCollision_Wall");
+    //    }
+
+    //    if (collision.gameObject.CompareTag("Exit"))
+    //    {
+    //        Debug.Log("OnCollision_Exit");
+    //    }
+    //}
 }
