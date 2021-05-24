@@ -47,6 +47,7 @@ public class Enemy : MonoBehaviour
     private int NextPoint = 0;
 
     private bool IsStop = false;
+    private bool IsIlluminated = false;
 
     private Vector3 PlayerDirection;
 
@@ -72,6 +73,8 @@ public class Enemy : MonoBehaviour
         transform.Rotate(0f, MGM.EnemyStartDir, 0f);
 
         EnemyRenderer = gameObject.GetComponent<Renderer>();
+        EnemyColor = EnemyRenderer.material.color;
+        Debug.Log(EnemyColor);
 
         Wait();
         NowState = EnemyState.Wandering;
@@ -123,7 +126,7 @@ public class Enemy : MonoBehaviour
             case EnemyState.Chase:
                 Agent.speed = ChaseSpeed;
                 //目的地（＝プレイヤー）までの距離が一定距離以下で攻撃
-                if (Agent.remainingDistance <= AttackLength)
+                if (Agent.remainingDistance <= AttackLength && !IsIlluminated)
                 {
                     Attack();
                 }
@@ -161,9 +164,11 @@ public class Enemy : MonoBehaviour
     private void Attack()
     {
         Agent.speed = AttackSpeed;
+        EnemyRenderer.material.color = Color.red;
 
         if (CF.IsShoot)
         {
+            IsIlluminated = true;
             StartCoroutine(FlashIlluminated());
         }
     }

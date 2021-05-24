@@ -292,12 +292,15 @@ public class MazeGenerateManager: MonoBehaviour
                         Instantiate(ExitPoint, new Vector3(x, 0, y), Quaternion.identity);
                         break;
                     case (int)MazePoint.DeadEnd:
+                        //行き止まりの配置
                         DeadendObjectList.Add(Instantiate(DeadEndPoint, new Vector3(x, DeadEndPoint.transform.localScale.y / 2, y), Quaternion.identity));
                         DeadendPointList.Add(Count);
+                        //一番遠い地点を一時的に保存
                         if (FarthestPoit == null)
                         {
                             FarthestPoit = DeadendObjectList[0];
                         }
+                        //メモを置く位置であればメモを配置
                         if (MemoPositionList.Contains(Count))
                         {
                             Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
@@ -392,17 +395,19 @@ public class MazeGenerateManager: MonoBehaviour
     {
         switch (state)
         {
+            //ゲームオーバー時
+            //プレイヤーとエネミーの両方を再生成
             case ResetState.GameOver:
-                //プレイヤーとの親子関係（MainCamera）を解除
+                //メインカメラとプレイヤーの親子関係を解除
                 PlayerClone.transform.DetachChildren();
-                //ステージ上のキャラクターを一旦削除し再生成
+                //再生成
                 Destroy(PlayerClone);
                 Destroy(EnemyClone);
                 PlayerClone = Instantiate(StartPoint, PassRestartPos, Quaternion.identity);
                 CreateEnemy();
                 break;
+            //エネミーのみの再生成
             case ResetState.EnemyOnly:
-                //エネミーのみを一旦削除し再生成
                 Destroy(EnemyClone);
                 CreateEnemy();
                 break;

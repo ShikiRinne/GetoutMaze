@@ -9,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class CameraFlash : MonoBehaviour
 {
+    private GameObject HUD;
+
     private Image Flash = null;
     private Image Finder = null;
 
@@ -24,6 +26,8 @@ public class CameraFlash : MonoBehaviour
 
     void Start()
     {
+        HUD = GameObject.Find("PlayerHUD");
+
         foreach (Transform camera in gameObject.transform)
         {
             switch (camera.name)
@@ -43,11 +47,6 @@ public class CameraFlash : MonoBehaviour
         Flash.color = FlashColor;
     }
 
-    void Update()
-    {
-        
-    }
-
     /// <summary>
     /// 撮影する
     /// </summary>
@@ -56,6 +55,8 @@ public class CameraFlash : MonoBehaviour
         //フラッシュ焚いてる間はカメラを下げない
         if (Input.GetMouseButton(1) || IsFlash)
         {
+            //構えている間はカメラ以外のUIを非表示
+            HUD.SetActive(false);
             Finder.gameObject.SetActive(true);
             Flash.gameObject.SetActive(true);
 
@@ -72,6 +73,7 @@ public class CameraFlash : MonoBehaviour
         }
         else
         {
+            HUD.SetActive(true);
             Finder.gameObject.SetActive(false);
         }
     }
@@ -98,6 +100,7 @@ public class CameraFlash : MonoBehaviour
             yield return null;
         }
 
+        //フラッシュのイメージを非表示に
         if (Alpha <= 0)
         {
             IsFlash = false;

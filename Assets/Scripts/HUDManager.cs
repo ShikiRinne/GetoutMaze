@@ -44,6 +44,7 @@ public class HUDManager : MonoBehaviour
     private string InputStr = null;
 
     private bool MemoDisplay = false;
+    private bool HaveMemo = false;
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
 
@@ -104,12 +105,13 @@ public class HUDManager : MonoBehaviour
 
     void Update()
     {
+        //メモの表示・非表示切り替え
         DisplayMemo.SetActive(MemoDisplay);
         if (ControlManager.ControlManager_Instance.CanControl)
         {
             BelongingsUIOps();
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
             {
                 MemoDisplay = !MemoDisplay;
             }
@@ -141,6 +143,11 @@ public class HUDManager : MonoBehaviour
     /// <param name="Pickup"></param>
     public void PickupMemo()
     {
+        if (!HaveMemo)
+        {
+            HaveMemo = true;
+        }
+
         DisplayMemo.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
         GetPickMemoCount++;
