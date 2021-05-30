@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// シーン間のフェードイン、フェードアウト
+/// </summary>
 public class FadeScreen : MonoBehaviour
 {
     public static FadeScreen FadeScreen_Instance;
     private Color color;
 
     [SerializeField]
-    private Image FadeImage;
+    private Image FadeImage = null;
     [SerializeField]
     private float FadeTime;
     private float Alpha;

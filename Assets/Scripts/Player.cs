@@ -1,29 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    private DialManager DM;
-
-    private GameObject MainCamera;
-    [SerializeField]
-    private GameObject Spray;
-    [SerializeField]
-    private GameObject Phone;
+    private HUDManager HUDM;
+    private MazeGenerateManager MGM;
+    private CameraFlash CF;
 
     private CharacterController Chara;
 
+    private GameObject MainCamera;
+    private GameObject Camera = default;
     [SerializeField]
-    private float SetMoveSpeed;
-    [SerializeField]
-    private float SetRotateSpeed;
-    [SerializeField]
-    private float SetHandLength;
+    private GameObject Psyllium = default;
 
-    private bool isdial = false;
-    private string Tag = null;
+    [SerializeField]
+    private float SetMoveSpeed = 0f;
+    [SerializeField]
+    private float SetRotateSpeed = 0f;
+    [SerializeField]
+    private float SetHandLength = 0f;
 
     private Text DefaultReticle;
 
@@ -31,14 +30,19 @@ public class Player : MonoBehaviour
     private Vector3 Direction_Horizontal;
     private Vector3 Direction_Vertical;
     private Vector3 PlayerRotation;
-    private Vector3 CameraRotation;
+    private float CameraRotation;
 
     private Ray PlayerHands;
 
+    public bool IsShoot { get; set; } = false;
+
     void Start()
     {
-        DM = GameObject.Find("PlaySceneManager").GetComponent<DialManager>();
+        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
+        MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
+        Camera = GameObject.Find("Camera");
+        CF = Camera.GetComponent<CameraFlash>();
 
         //メインカメラをプレイヤーの視点に移動
         MainCamera = GameObject.Find("Main Camera");
@@ -49,71 +53,39 @@ public class Player : MonoBehaviour
         Chara = GetComponent<CharacterController>();
 
         //壁のない方向にプレイヤーを向ける
-        CameraRotation.y = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>().StartDirection;
-        transform.rotation = Quaternion.Euler(CameraRotation);
+        MainCamera.transform.localRotation = Quaternion.identity;
+        CameraRotation = MGM.PlayerStartDir;
+        transform.Rotate(0f, CameraRotation, 0f);
+
+        DefaultReticle.color = Color.gray;
     }
 
     void Update()
     {
-        if (DM.PassCanControl)
+        if (GameManager.GameManager_Instance.CanPlayerMove)
         {
+            //レイの射出
+            PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+            Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
+
+            //移動
             PlayerMove();
             CameraMove();
-        }
 
-        PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-        Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
-        DefaultReticle.color = Color.gray;
-        //取得関連
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
-        {
-            //Tag = hit.collider.gameObject.tag;
-            //switch (Tag)
-            //{
-            //    case "Notes":
-            //        DefaultReticle.color = Color.red;
-            //        if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-            //        {
-            //            DM.PickupMemo();
-            //            hit.transform.gameObject.SetActive(false);
-            //        }
-            //        break;
-            //    case "Exit":
-            //        DefaultReticle.color = Color.red;
-            //        if (!DM.IsOperateDial)
-            //        {
-            //            if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-            //            {
-            //                DM.IsOperateDial = true;
-            //            }
-            //        }
-            //        break;
-            //}
-
-            //メモの取得
-            if (hit.collider.gameObject.CompareTag("Notes"))
+            //持ち物に対応した操作
+            switch (HUDM.BType)
             {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    DM.PickupMemo();
-                    hit.transform.gameObject.SetActive(false);
-                }
-            }
-            //ゴールとの接触
-            else if (hit.collider.gameObject.CompareTag("Exit")/* && !DM.IsOperateDial*/)
-            {
-                DefaultReticle.color = Color.red;
-                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                {
-                    DM.IsTouchiGoal = true;
-                    DM.IsOperateDial = true;
-                }
-            }
-            //非接触
-            else
-            {
-                DefaultReticle.color = Color.gray;
+                case HUDManager.BelongingsType.Hand:
+                    PickHands();
+                    break;
+                case HUDManager.BelongingsType.Psyllium:
+                    PutPsyllium();
+                    break;
+                case HUDManager.BelongingsType.Camera:
+                    CF.CameraShoot();
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -145,11 +117,82 @@ public class Player : MonoBehaviour
 
         //算出した回転量をVector3に代入
         PlayerRotation.y = ControlManager.ControlManager_Instance.RotateHorizontal * SetRotateSpeed;
-        CameraRotation.x = ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
+        CameraRotation = ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
 
         //回転
         //Y軸回転はプレイヤーごと回す
         transform.Rotate(0, PlayerRotation.y, 0);
-        MainCamera.transform.Rotate(CameraRotation.x, 0, 0);
+        MainCamera.transform.Rotate(CameraRotation, 0, 0);
+    }
+
+    /// <summary>
+    /// 拾得処理
+    /// </summary>
+    private void PickHands()
+    {
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        {
+            switch (hit.collider.tag)
+            {
+                case "Notes":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.PickupMemo();
+                        hit.collider.gameObject.SetActive(false);
+                    }
+                    break;
+                case "Exit":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        HUDM.IsTouchiGoal = true;
+                    }
+                    break;
+                case "Psyllium":
+                    DefaultReticle.color = Color.red;
+                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+                    {
+                        Destroy(hit.collider.gameObject);
+                        HUDM.PassPsylliumCount++;
+                    }
+                    break;
+                default:
+                    DefaultReticle.color = Color.gray;
+                    break;
+            }
+        }
+        else
+        {
+            DefaultReticle.color = Color.gray;
+        }
+    }
+
+    /// <summary>
+    /// サイリウムを置く
+    /// </summary>
+    private void PutPsyllium()
+    {
+        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        {
+            if (hit.collider.gameObject.CompareTag("Floor"))
+            {
+                DefaultReticle.color = Color.green;
+                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
+                {
+                    //サイリウムをプレイヤーに向いている方向に倒して生成
+                    Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
+                    HUDM.PassPsylliumCount--;                    
+                }
+            }
+            else
+            {
+                DefaultReticle.color = Color.gray;
+            }
+        }
+        else
+        {
+            DefaultReticle.color = Color.gray;
+        }
     }
 }

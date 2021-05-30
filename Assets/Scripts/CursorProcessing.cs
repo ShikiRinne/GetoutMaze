@@ -11,7 +11,8 @@ public class CursorProcessing : MonoBehaviour
 
     /// <summary>
     /// マウスでのタイトル処理
-    /// 項目にカーソルが重なったとき
+    /// カーソルが重なったテキストのサイズを変更
+    /// EventTrigger_PointerEnter
     /// </summary>
     public void TitleItemOverLap()
     {
@@ -33,7 +34,8 @@ public class CursorProcessing : MonoBehaviour
 
     /// <summary>
     /// マウスでのタイトル処理
-    /// 項目をクリックしたとき
+    /// クリックした項目ごとにシーンを遷移
+    /// EventTrigger_PointerClick
     /// </summary>
     public void TitleItemClick()
     {
@@ -52,6 +54,11 @@ public class CursorProcessing : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// マウスでのプレイシーン処理
+    /// ゲームオーバー、ゲームクリア時のテキストのサイズを変更
+    /// EventTrigger_PointerEnter
+    /// </summary>
     public void PlayItemOverLap()
     {
         switch (gameObject.name)
@@ -68,14 +75,21 @@ public class CursorProcessing : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// マウスでのプレイシーン処理
+    /// ゲームオーバー、ゲームクリア時の項目ごとにシーン処理
+    /// EventTrigger_PointerClick
+    /// </summary>
     public void PlayItemClick()
     {
         switch (gameObject.name)
         {
             case "Text_Retry":
+                GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.Play);
                 Debug.Log("ReTry");
                 break;
             case "Text_Retire":
+                GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.Title);
                 Debug.Log("Retire");
                 break;
             case "Text_ToTitle":

@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -13,31 +11,31 @@ public class UIManager : MonoBehaviour
     public static UIManager UIManager_Instance;
 
     [SerializeField]
-    private Image BackGround;
+    private Image BackGround = null;
     [SerializeField]
-    private GameObject TitleText;
+    private GameObject TitleText = null;
     [SerializeField]
-    private GameObject GameClearText;
+    private GameObject GameClearText = null;
     [SerializeField]
-    private GameObject GameOverText;
+    private GameObject GameOverText = null;
 
     [SerializeField]
-    private GameObject TitleSet;
+    private GameObject TitleSet = null;
     [SerializeField]
-    private GameObject PlaySet;
+    private GameObject PlaySet = null;
     [SerializeField]
-    private GameObject SelectArrow;
+    private GameObject SelectArrow = null;
 
     [SerializeField]
-    private Vector3 ArrowPos_Play;
+    private Vector3 ArrowPos_Play = default;
     [SerializeField]
-    private Vector3 ArrowPos_Tutorial;
+    private Vector3 ArrowPos_Tutorial = default;
     [SerializeField]
-    private Vector3 ArrowPos_Exit;
+    private Vector3 ArrowPos_Exit = default;
     [SerializeField]
-    private Vector3 ArrowPos_ReTry;
+    private Vector3 ArrowPos_ReTry = default;
     [SerializeField]
-    private Vector3 ArrowPos_RetireOrToTitle;
+    private Vector3 ArrowPos_RetireOrToTitle = default;
 
     [SerializeField]
     private int FontSize_Default;
@@ -57,7 +55,8 @@ public class UIManager : MonoBehaviour
     {
         Title,
         Clear,
-        Over
+        Over,
+        None
     }
     public DisplayText NowDisplayText { get; set; }
 
@@ -210,51 +209,69 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="display"></param>
     /// <param name="textset"></param>
-    public void PlayItemDisplay(bool display, DisplayText textset)
+    public void PlayItemDisplay(DisplayText textset)
     {
         PassSelectCount = 0;
+
         switch (textset)
         {
             case DisplayText.Clear:
+                PlayItemCollection(true);
                 BackGround.color = new Color((float)DisplayColor.White, (float)DisplayColor.White, (float)DisplayColor.White);
-                BackGround.gameObject.SetActive(display);
-                SelectArrow.SetActive(display);
-                GameClearText.SetActive(display);
-                PlaySet.SetActive(display);
+                GameClearText.SetActive(true);
+                GameOverText.SetActive(false);
+                //ゲームクリア画面で使用するのはテキスト「ToTitle」なので「Retire」を非表示
                 foreach (Text text in PlayTextSetList)
                 {
-                    text.gameObject.SetActive(display);
-                    if (text.transform.name == "Text_ReTry")
+                    text.gameObject.SetActive(true);
+                    if (text.transform.name == "Text_Retry")
                     {
                         text.color = new Color((float)DisplayColor.Black, (float)DisplayColor.Black, (float)DisplayColor.Black);
                     }
                     if (text.transform.name == "Text_Retire")
                     {
-                        text.gameObject.SetActive(!display);
+                        text.gameObject.SetActive(false);
                     }
                 }
                 break;
             case DisplayText.Over:
+                PlayItemCollection(true);
                 BackGround.color = new Color((float)DisplayColor.Black, (float)DisplayColor.Black, (float)DisplayColor.Black);
-                GameOverText.SetActive(display);
-                SelectArrow.SetActive(display);
-                PlaySet.SetActive(display);
+                GameOverText.SetActive(true);
+                GameClearText.SetActive(false);
+                //ゲームオーバー画面で使用するのはテキスト「Retire」なので「ToTitle」を非表示
                 foreach (Text text in PlayTextSetList)
                 {
-                    text.gameObject.SetActive(display);
-                    if (text.transform.name == "Text_ReTry")
+                    text.gameObject.SetActive(true);
+                    if (text.transform.name == "Text_Retry")
                     {
                         text.color = new Color((float)DisplayColor.White, (float)DisplayColor.White, (float)DisplayColor.White);
                     }
                     if (text.transform.name == "Text_ToTitle")
                     {
-                        text.gameObject.SetActive(!display);
+                        text.gameObject.SetActive(false);
                     }
                 }
+                break;
+            case DisplayText.None:
+                PlayItemCollection(false);
+                GameOverText.SetActive(false);
+                GameClearText.SetActive(false);
                 break;
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    /// ゲームプレイ時のテキストを一括で操作するための塊
+    /// </summary>
+    /// <param name="display"></param>
+    private void PlayItemCollection(bool display)
+    {
+        BackGround.gameObject.SetActive(display);
+        SelectArrow.SetActive(display);
+        PlaySet.SetActive(display);
     }
 
     /// <summary>
