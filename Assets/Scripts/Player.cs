@@ -105,6 +105,11 @@ public class Player : MonoBehaviour
 
         //移動
         Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
+
+        if (Chara.velocity != Vector3.zero)
+        {
+
+        }
     }
 
     /// <summary>
