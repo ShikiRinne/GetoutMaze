@@ -34,6 +34,15 @@ public class Player : MonoBehaviour
 
     private Ray PlayerHands;
 
+    [SerializeField]
+    private AudioSource PlayerAudio;
+    [SerializeField]
+    private AudioSource HandSE;
+    [SerializeField]
+    private AudioClip Walk;
+    [SerializeField]
+    private AudioClip PickMemo;
+
     public bool IsShoot { get; set; } = false;
 
     void Start()
@@ -58,6 +67,8 @@ public class Player : MonoBehaviour
         transform.Rotate(0f, CameraRotation, 0f);
 
         DefaultReticle.color = Color.gray;
+
+        PlayerAudio.Play();
     }
 
     void Update()
@@ -106,10 +117,14 @@ public class Player : MonoBehaviour
         //移動
         Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
 
-        if (Chara.velocity != Vector3.zero)
-        {
-
-        }
+        //if (Chara.velocity != Vector3.zero)
+        //{
+        //    PlayerAudio.Play();
+        //}
+        //else
+        //{
+        //    PlayerAudio.Stop();
+        //}
     }
 
     /// <summary>
