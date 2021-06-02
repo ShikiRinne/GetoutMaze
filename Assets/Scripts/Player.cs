@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip PickMemo;
 
+    private bool isWalk = false;
+
     public bool IsShoot { get; set; } = false;
 
     void Start()
@@ -67,8 +69,6 @@ public class Player : MonoBehaviour
         transform.Rotate(0f, CameraRotation, 0f);
 
         DefaultReticle.color = Color.gray;
-
-        PlayerAudio.Play();
     }
 
     void Update()
@@ -117,14 +117,18 @@ public class Player : MonoBehaviour
         //移動
         Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
 
-        //if (Chara.velocity != Vector3.zero)
-        //{
-        //    PlayerAudio.Play();
-        //}
-        //else
-        //{
-        //    PlayerAudio.Stop();
-        //}
+        //歩行音を鳴らす
+        if (Chara.velocity != Vector3.zero)
+        {
+            if (!PlayerAudio.isPlaying)
+            {
+                PlayerAudio.Play();
+            }
+        }
+        else
+        {
+            PlayerAudio.Stop();
+        }
     }
 
     /// <summary>

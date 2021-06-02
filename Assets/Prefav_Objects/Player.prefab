@@ -71,7 +71,7 @@ MonoBehaviour:
   SetHandLength: 1
   PlayerAudio: {fileID: 3668970801688183909}
   HandSE: {fileID: 6675212271758499446}
-  Walk: {fileID: 8300000, guid: 66cd7a219ea401f4c8e35ec5b173d2dc, type: 3}
+  Walk: {fileID: 8300000, guid: fcce5e38540eab1409f854b433397f4e, type: 3}
   PickMemo: {fileID: 8300000, guid: df838c25f19e1344d925dde706e448c4, type: 3}
 --- !u!82 &3668970801688183909
 AudioSource:
@@ -83,7 +83,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 66cd7a219ea401f4c8e35ec5b173d2dc, type: 3}
+  m_audioClip: {fileID: 8300000, guid: fcce5e38540eab1409f854b433397f4e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
