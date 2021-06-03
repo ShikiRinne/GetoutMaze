@@ -118,7 +118,8 @@ public class Player : MonoBehaviour
         Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
 
         //歩行音を鳴らす
-        if (Chara.velocity != Vector3.zero)
+        //操作不可時（ゲームオーバー時）に停止
+        if (Chara.velocity != Vector3.zero && GameManager.GameManager_Instance.CanPlayerMove)
         {
             if (!PlayerAudio.isPlaying)
             {
@@ -164,6 +165,7 @@ public class Player : MonoBehaviour
                     {
                         HUDM.PickupMemo();
                         hit.collider.gameObject.SetActive(false);
+                        HandSE.PlayOneShot(PickMemo);
                     }
                     break;
                 case "Exit":

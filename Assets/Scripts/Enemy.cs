@@ -169,6 +169,7 @@ public class Enemy : MonoBehaviour
         if (CF.IsShoot)
         {
             IsIlluminated = true;
+            gameObject.GetComponent<SphereCollider>().enabled = false;
             StartCoroutine(FlashIlluminated());
         }
     }
