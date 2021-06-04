@@ -52,6 +52,8 @@ public class Enemy : MonoBehaviour
     private Vector3 PlayerDirection;
 
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
+
+    public bool IsPlayerFind { get; set; } = false;
     
     public enum EnemyState
     {
@@ -190,6 +192,12 @@ public class Enemy : MonoBehaviour
                 Agent.SetDestination(Player.transform.position);
                 NowState = EnemyState.Chase;
             }
+
+            if (!IsPlayerFind)
+            {
+                IsPlayerFind = true;
+                //プレイヤー発見時ノイズ再生
+            }
         }
     }
 
@@ -202,6 +210,7 @@ public class Enemy : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             Target = null;
+            IsPlayerFind = false;
             NowState = EnemyState.Wandering;
         }
     }
