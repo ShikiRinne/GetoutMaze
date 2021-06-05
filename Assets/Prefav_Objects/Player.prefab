@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6361549553694533178}
   - component: {fileID: 7112259721974534965}
-  - component: {fileID: 5448873680900580245}
-  - component: {fileID: 2437618521762748393}
+  - component: {fileID: 3401004711930384632}
+  - component: {fileID: 2310096316562533756}
   m_Layer: 0
   m_Name: Redio
   m_TagString: Untagged
@@ -45,8 +45,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 2054519405858007250, guid: db0249cb997dcde4c80656a44c7247e3,
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 58e3ef52723732649a473236f44d6ff7, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -130,7 +130,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!82 &5448873680900580245
+--- !u!82 &3401004711930384632
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,13 +139,12 @@ AudioSource:
   m_GameObject: {fileID: 2507966566235859178}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -5632407615200665127, guid: db0249cb997dcde4c80656a44c7247e3,
-    type: 2}
-  m_audioClip: {fileID: 8300000, guid: 08a3d5e4bebc3534eb916a0bef8d142c, type: 3}
-  m_PlayOnAwake: 1
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -227,103 +226,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!82 &2437618521762748393
-AudioSource:
+--- !u!114 &2310096316562533756
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2507966566235859178}
   m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -3632442942159218434, guid: db0249cb997dcde4c80656a44c7247e3,
-    type: 2}
-  m_audioClip: {fileID: 8300000, guid: 598be8fb4a5000f46a6dcf0c348570b4, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 1
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc200f34103d2d0409c4d4d80635e83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseMixer: {fileID: 24100000, guid: db0249cb997dcde4c80656a44c7247e3, type: 2}
+  ChaseSource: {fileID: 7112259721974534965}
+  FoundSource: {fileID: 3401004711930384632}
+  FoundSE: {fileID: 8300000, guid: 49642f10a773e8a4db19f791ed455e88, type: 3}
+  MinVolume: 0
+  MaxVolume: 1
 --- !u!1 &5048165217567034926
 GameObject:
   m_ObjectHideFlags: 0

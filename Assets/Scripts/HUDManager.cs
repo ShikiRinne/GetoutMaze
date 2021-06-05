@@ -178,7 +178,7 @@ public class HUDManager : MonoBehaviour
                 Reticle_Spray.gameObject.SetActive(true);
                 break;
             case ReticleType.DontUse:
-                Reticle_Parent.gameObject.SetActive(false);
+                Reticle_Parent.SetActive(false);
                 break;
             default:
                 break;

@@ -54,6 +54,10 @@ public class Enemy : MonoBehaviour
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
 
     public bool IsPlayerFind { get; set; } = false;
+
+    public float PassPlayerDistance { get; private set; } = 0f;
+
+    public float PassRemainDistance { get; private set; } = 0f;
     
     public enum EnemyState
     {
@@ -127,6 +131,7 @@ public class Enemy : MonoBehaviour
             //追跡
             case EnemyState.Chase:
                 Agent.speed = ChaseSpeed;
+                PassRemainDistance = Agent.remainingDistance;
                 //目的地（＝プレイヤー）までの距離が一定距離以下で攻撃
                 if (Agent.remainingDistance <= AttackLength && !IsIlluminated)
                 {
@@ -196,7 +201,7 @@ public class Enemy : MonoBehaviour
             if (!IsPlayerFind)
             {
                 IsPlayerFind = true;
-                //プレイヤー発見時ノイズ再生
+                PassPlayerDistance = Agent.remainingDistance;
             }
         }
     }

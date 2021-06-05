@@ -43,8 +43,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip PickMemo;
 
-    private bool isWalk = false;
-
     public bool IsShoot { get; set; } = false;
 
     void Start()
@@ -115,7 +113,7 @@ public class Player : MonoBehaviour
         PlayerDirection = Direction_Horizontal + Direction_Vertical;
 
         //移動
-        Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
+        Chara.Move(SetMoveSpeed * Time.deltaTime * PlayerDirection.normalized);
 
         //歩行音を鳴らす
         //操作不可時（ゲームオーバー時）に停止
