@@ -21,8 +21,6 @@ public class RadioNoise : MonoBehaviour
     [SerializeField]
     private float MaxVolume = 0f;
 
-    private float PtoEDistance = 0f;
-
     private bool IsFound = false;
 
     void Start()
@@ -36,12 +34,18 @@ public class RadioNoise : MonoBehaviour
         {
             EnemyCS = GameObject.FindWithTag("Enemy").GetComponent<Enemy>();
         }
+    }
 
-        if (EnemyCS.NowState == Enemy.EnemyState.Chase)
+    /// <summary>
+    /// エネミーがプレイヤーを発見したときに鳴らす
+    /// </summary>
+    public void PlayChaseSound()
+    {
+        if (EnemyCS.IsPlayerFind)
         {
             if (!IsFound)
             {
-                Debug.Log("Found");
+                Debug.Log("Noise");
                 IsFound = true;
                 FoundSource.PlayOneShot(FoundSE);
                 ChaseSource.Play();

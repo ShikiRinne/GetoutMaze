@@ -144,13 +144,13 @@ public class GameManager : MonoBehaviour
                         SceneManager.LoadScene(state);
                         break;
                     //ゲームクリアからのリトライ
-                    //シーンを再度呼び出して新たなステージで再開
+                    //シーンをリロードして新たなステージで再開
                     case GameState.GameClear:
                         UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.None);
                         SceneManager.LoadScene(state);
                         break;
                     //ゲームオーバーからのリトライ
-                    //シーンを呼び出さず進行状況をそのままに再開
+                    //シーンをリロードせず進行状況をそのままに再開
                     case GameState.GameOver:
                         UIManager.UIManager_Instance.PlayItemDisplay(UIManager.DisplayText.None);
                         WantReset = true;

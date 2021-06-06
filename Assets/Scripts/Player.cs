@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
         CameraRotation = MGM.PlayerStartDir;
         transform.Rotate(0f, CameraRotation, 0f);
 
+        //レティクルの色をグレーに設定
         DefaultReticle.color = Color.gray;
     }
 

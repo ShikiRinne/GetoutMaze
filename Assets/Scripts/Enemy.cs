@@ -17,18 +17,12 @@ public class Enemy : MonoBehaviour
 
     private GameObject Player = null;
     private GameObject Target = null;
-    [SerializeField]
-    private GameObject RecognitionArea = null;
-    [SerializeField]
-    private SphereCollider AreaCollider = null;
 
     private Renderer EnemyRenderer;
     
     private float SearchAngle;
     [SerializeField]
     private float LimitAngle = 0f;
-    [SerializeField]
-    private float SearchLength = 0f;
     [SerializeField]
     private float AttackLength = 0f;
     [SerializeField]
@@ -63,7 +57,6 @@ public class Enemy : MonoBehaviour
     {
         Wandering,
         Chase,
-        Illuminated
     }
     public EnemyState NowState { get; set; }
 
@@ -72,8 +65,6 @@ public class Enemy : MonoBehaviour
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         Player = GameObject.FindWithTag("Player");
-        AreaCollider = RecognitionArea.GetComponent<SphereCollider>();
-        AreaCollider.radius = SearchLength;
 
         Agent = gameObject.GetComponent<NavMeshAgent>();
         transform.Rotate(0f, MGM.EnemyStartDir, 0f);
@@ -93,7 +84,6 @@ public class Enemy : MonoBehaviour
         if (Player == null)
         {
             Player = GameObject.FindWithTag("Player");
-            Debug.Log("PlayerReFind");
         }
 
         if (IsStop)
@@ -184,40 +174,32 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// プレイヤー探知
     /// </summary>
-    /// <param name="other"></param>
-    private void OnTriggerStay(Collider other)
+    public void PlayerChase(GameObject player)
     {
-        if (other.gameObject.CompareTag("Player"))
+        //探知する角度内であれば探知
+        PlayerDirection = player.transform.position - transform.position;
+        SearchAngle = Vector3.Angle(transform.forward, PlayerDirection);
+        if (SearchAngle <= LimitAngle)
         {
-            //探知する角度内であれば探知
-            PlayerDirection = other.transform.position - transform.position;
-            SearchAngle = Vector3.Angle(transform.forward, PlayerDirection);
-            if (SearchAngle <= LimitAngle)
-            {
-                Agent.SetDestination(Player.transform.position);
-                NowState = EnemyState.Chase;
-            }
+            Agent.SetDestination(Player.transform.position);
+            NowState = EnemyState.Chase;
+        }
 
-            if (!IsPlayerFind)
-            {
-                IsPlayerFind = true;
-                PassPlayerDistance = Agent.remainingDistance;
-            }
+        if (!IsPlayerFind)
+        {
+            IsPlayerFind = true;
+            PassPlayerDistance = Agent.remainingDistance;
         }
     }
 
     /// <summary>
     /// プレイヤー非探知
     /// </summary>
-    /// <param name="other"></param>
-    private void OnTriggerExit(Collider other)
+    public void StopChase()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            Target = null;
-            IsPlayerFind = false;
-            NowState = EnemyState.Wandering;
-        }
+        Target = null;
+        IsPlayerFind = false;
+        NowState = EnemyState.Wandering;
     }
 
     /// <summary>
@@ -226,7 +208,6 @@ public class Enemy : MonoBehaviour
     /// <returns></returns>
     public IEnumerator FlashIlluminated()
     {
-        Debug.Log("Illuminated");
         IsStop = true;
         Target = null;
         EnemyAlpha = EnemyRenderer.material.color.a;
@@ -263,7 +244,6 @@ public class Enemy : MonoBehaviour
             IsStop = true;
             GameManager.GameManager_Instance.CanPlayerMove = false;
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-            Debug.Log("hit_player");
         }
     }
 }
