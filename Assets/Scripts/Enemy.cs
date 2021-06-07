@@ -46,12 +46,6 @@ public class Enemy : MonoBehaviour
     private Vector3 PlayerDirection;
 
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
-
-    public bool IsPlayerFind { get; set; } = false;
-
-    public float PassPlayerDistance { get; private set; } = 0f;
-
-    public float PassRemainDistance { get; private set; } = 0f;
     
     public enum EnemyState
     {
@@ -121,7 +115,6 @@ public class Enemy : MonoBehaviour
             //追跡
             case EnemyState.Chase:
                 Agent.speed = ChaseSpeed;
-                PassRemainDistance = Agent.remainingDistance;
                 //目的地（＝プレイヤー）までの距離が一定距離以下で攻撃
                 if (Agent.remainingDistance <= AttackLength && !IsIlluminated)
                 {
@@ -172,7 +165,7 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// プレイヤー探知
+    /// プレイヤーを追跡
     /// </summary>
     public void PlayerChase(GameObject player)
     {
@@ -184,21 +177,14 @@ public class Enemy : MonoBehaviour
             Agent.SetDestination(Player.transform.position);
             NowState = EnemyState.Chase;
         }
-
-        if (!IsPlayerFind)
-        {
-            IsPlayerFind = true;
-            PassPlayerDistance = Agent.remainingDistance;
-        }
     }
 
     /// <summary>
-    /// プレイヤー非探知
+    /// プレイヤーの追跡を中断
     /// </summary>
     public void StopChase()
     {
         Target = null;
-        IsPlayerFind = false;
         NowState = EnemyState.Wandering;
     }
 

@@ -5,10 +5,10 @@ using UnityEngine.Audio;
 
 public class RadioNoise : MonoBehaviour
 {
-    private Enemy EnemyCS;
-
     [SerializeField]
     private AudioMixer NoiseMixer;
+    [SerializeField]
+    private AudioSource WarningSource;
     [SerializeField]
     private AudioSource ChaseSource;
     [SerializeField]
@@ -21,39 +21,46 @@ public class RadioNoise : MonoBehaviour
     [SerializeField]
     private float MaxVolume = 0f;
 
-    private bool IsFound = false;
-
     void Start()
     {
-        EnemyCS = GameObject.FindWithTag("Enemy").GetComponent<Enemy>();
+        
     }
 
     void Update()
     {
-        if (EnemyCS == null)
+        
+    }
+
+    /// <summary>
+    /// プレイヤーとエネミーの距離が近い場合に鳴らす
+    /// </summary>
+    /// <param name="isWarning"></param>
+    public void PlayWarningSound(bool isWarning)
+    {
+        if (isWarning)
         {
-            EnemyCS = GameObject.FindWithTag("Enemy").GetComponent<Enemy>();
+            WarningSource.Play();
+        }
+        else
+        {
+            WarningSource.Stop();
         }
     }
 
     /// <summary>
     /// エネミーがプレイヤーを発見したときに鳴らす
     /// </summary>
-    public void PlayChaseSound()
+    public void PlayChaseSound(bool isChase)
     {
-        if (EnemyCS.IsPlayerFind)
+        if (isChase)
         {
-            if (!IsFound)
-            {
-                Debug.Log("Noise");
-                IsFound = true;
-                FoundSource.PlayOneShot(FoundSE);
-                ChaseSource.Play();
-            }
+            //警告音を停止して追跡音のみを再生させる
+            WarningSource.Stop();
+            ChaseSource.Play();
+            FoundSource.PlayOneShot(FoundSE);
         }
         else
         {
-            IsFound = false;
             ChaseSource.Stop();
         }
     }

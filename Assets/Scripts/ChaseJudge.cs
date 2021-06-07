@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class ChaseJudge : MonoBehaviour
 {
+    private RadioNoise RN = null;
     private Enemy EnemyCS = null;
     private SphereCollider ChaseCollider = null;
 
@@ -16,6 +17,7 @@ public class ChaseJudge : MonoBehaviour
 
     void Start()
     {
+        RN = GameObject.FindWithTag("Player").transform.Find("Ragio").GetComponent<RadioNoise>();
         EnemyCS = transform.parent.GetComponent<Enemy>();
         ChaseCollider = GetComponent<SphereCollider>();
         ChaseCollider.radius = ChaseRange;
@@ -23,9 +25,16 @@ public class ChaseJudge : MonoBehaviour
 
     void Update()
     {
-        
+        if (RN == null)
+        {
+            RN = GameObject.FindWithTag("Player").transform.Find("Ragio").GetComponent<RadioNoise>();
+        }
     }
 
+    /// <summary>
+    /// プレイヤーが範囲内に存在する場合エネミーに追跡させる
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -34,11 +43,26 @@ public class ChaseJudge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// プレイヤーが範囲内に侵入したとき追跡音を再生する
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerEnter(Collider other)
+    {
+        RN.PlayChaseSound(true);
+    }
+
+    /// <summary>
+    /// 範囲外にプレイヤーが出た場合エネミーに追跡をやめさせる
+    /// 追跡音を停止する
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             EnemyCS.StopChase();
+            RN.PlayChaseSound(false);
         }
     }
 }
