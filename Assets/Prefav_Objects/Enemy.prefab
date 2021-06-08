@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd3ec88e115e2044da674211d9730163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChaseRange: 1.5
+  ChaseRange: 3
 --- !u!1 &7203852053123466202
 GameObject:
   m_ObjectHideFlags: 0

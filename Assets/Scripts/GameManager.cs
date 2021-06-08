@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public bool WantReset { get; set; } = false;
     public bool CanPlayerMove { get; set; } = false;
     public bool IsEnemyStop { get; set; } = false;
+    public bool IsAudioStop { get; set; } = false;
 
     public enum GameState
     {
@@ -123,6 +124,9 @@ public class GameManager : MonoBehaviour
         //フェードしている時間待機
         yield return new WaitForSeconds(FadeScreen.FadeScreen_Instance.PassFadeTime);
 
+        //オーディオの停止
+        IsAudioStop = true;
+        //次シーンごとの処理
         switch (state)
         {
             case "Title":
@@ -183,6 +187,7 @@ public class GameManager : MonoBehaviour
 
         ControlManager.ControlManager_Instance.CanControl = true;
         FadeScreen.FadeScreen_Instance.PassFadeObject.SetActive(false);
+        IsAudioStop = false;
     }
 
     /// <summary>

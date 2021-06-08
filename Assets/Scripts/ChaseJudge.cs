@@ -17,7 +17,7 @@ public class ChaseJudge : MonoBehaviour
 
     void Start()
     {
-        RN = GameObject.FindWithTag("Player").transform.Find("Ragio").GetComponent<RadioNoise>();
+        RN = GameObject.FindWithTag("Player").transform.GetChild(0).GetComponent<RadioNoise>();
         EnemyCS = transform.parent.GetComponent<Enemy>();
         ChaseCollider = GetComponent<SphereCollider>();
         ChaseCollider.radius = ChaseRange;
@@ -27,7 +27,7 @@ public class ChaseJudge : MonoBehaviour
     {
         if (RN == null)
         {
-            RN = GameObject.FindWithTag("Player").transform.Find("Ragio").GetComponent<RadioNoise>();
+            RN = GameObject.FindWithTag("Player").transform.GetChild(0).GetComponent<RadioNoise>();
         }
     }
 
@@ -40,6 +40,12 @@ public class ChaseJudge : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             EnemyCS.PlayerChase(other.gameObject);
+
+            //エネミーがフラッシュを受けた場合追跡音を停止する
+            if (EnemyCS.IsntPlayAudio)
+            {
+                RN.PlayChaseSound(false);
+            }
         }
     }
 
@@ -49,7 +55,10 @@ public class ChaseJudge : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        RN.PlayChaseSound(true);
+        if (other.gameObject.CompareTag("Player"))
+        {
+            RN.PlayChaseSound(true);
+        }
     }
 
     /// <summary>
@@ -64,5 +73,11 @@ public class ChaseJudge : MonoBehaviour
             EnemyCS.StopChase();
             RN.PlayChaseSound(false);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position, ChaseRange);
     }
 }

@@ -28,7 +28,15 @@ public class RadioNoise : MonoBehaviour
 
     void Update()
     {
-        
+        //シーン遷移のフェード時にオーディオを停止する
+        if (GameManager.GameManager_Instance.IsAudioStop)
+        {
+            WarningSource.Stop();
+            ChaseSource.Stop();
+        }
+
+        Debug.Log("Warning:" + WarningSource.isPlaying);
+        Debug.Log("Chase:" + ChaseSource.isPlaying);
     }
 
     /// <summary>

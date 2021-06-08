@@ -46,6 +46,8 @@ public class Enemy : MonoBehaviour
     private Vector3 PlayerDirection;
 
     private Color EnemyColor = new Color(1f, 1f, 1f, 1f);
+
+    public bool IsntPlayAudio { get; set; } = false;
     
     public enum EnemyState
     {
@@ -67,7 +69,8 @@ public class Enemy : MonoBehaviour
         EnemyColor = EnemyRenderer.material.color;
         Debug.Log(EnemyColor);
 
-        Wait();
+        //Wait();
+        NextTarget();
         NowState = EnemyState.Wandering;
     }
 
@@ -195,6 +198,7 @@ public class Enemy : MonoBehaviour
     public IEnumerator FlashIlluminated()
     {
         IsStop = true;
+        IsntPlayAudio = true;
         Target = null;
         EnemyAlpha = EnemyRenderer.material.color.a;
         yield return null;

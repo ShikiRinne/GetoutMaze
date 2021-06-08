@@ -12,6 +12,7 @@ public class WarningJudge : MonoBehaviour
 
     void Start()
     {
+        RN = transform.parent.GetChild(0).GetComponent<RadioNoise>();
         WarningCollider = GetComponent<SphereCollider>();
         WarningCollider.radius = WarningRange;
     }
@@ -43,5 +44,11 @@ public class WarningJudge : MonoBehaviour
         {
             RN.PlayWarningSound(false);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawSphere(transform.position, WarningRange);
     }
 }
