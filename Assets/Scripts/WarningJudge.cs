@@ -31,6 +31,7 @@ public class WarningJudge : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             RN.PlayWarningSound(true);
+            Debug.Log("NearEnemy");
         }
     }
 
