@@ -31,7 +31,6 @@ public class WarningJudge : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             RN.PlayWarningSound(true);
-            Debug.Log("NearEnemy");
         }
     }
 
@@ -45,11 +44,5 @@ public class WarningJudge : MonoBehaviour
         {
             RN.PlayWarningSound(false);
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-        Gizmos.DrawSphere(transform.position, WarningRange);
     }
 }

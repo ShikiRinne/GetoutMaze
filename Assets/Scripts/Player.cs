@@ -98,6 +98,10 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+        else
+        {
+            PlayWalkSound(false);
+        }
     }
 
     /// <summary>
@@ -118,16 +122,16 @@ public class Player : MonoBehaviour
 
         //歩行音を鳴らす
         //操作不可時（ゲームオーバー時）に停止
-        if (Chara.velocity != Vector3.zero && GameManager.GameManager_Instance.CanPlayerMove)
+        if (Chara.velocity != Vector3.zero)
         {
             if (!PlayerAudio.isPlaying)
             {
-                PlayerAudio.Play();
+                PlayWalkSound(true);
             }
         }
         else
         {
-            PlayerAudio.Stop();
+            PlayWalkSound(false);
         }
     }
 
@@ -218,6 +222,22 @@ public class Player : MonoBehaviour
         else
         {
             DefaultReticle.color = Color.gray;
+        }
+    }
+
+    /// <summary>
+    /// 歩行音の再生
+    /// </summary>
+    /// <param name="isplay"></param>
+    private void PlayWalkSound(bool isplay)
+    {
+        if (isplay)
+        {
+            PlayerAudio.Play();
+        }
+        else
+        {
+            PlayerAudio.Stop();
         }
     }
 }

@@ -42,7 +42,7 @@ public class ChaseJudge : MonoBehaviour
             EnemyCS.PlayerChase(other.gameObject);
 
             //エネミーがフラッシュを受けた場合追跡音を停止する
-            if (EnemyCS.IsntPlayAudio)
+            if (EnemyCS.IsIlluminated)
             {
                 RN.PlayChaseSound(false);
             }
@@ -73,11 +73,5 @@ public class ChaseJudge : MonoBehaviour
             EnemyCS.StopChase();
             RN.PlayChaseSound(false);
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position, ChaseRange);
     }
 }

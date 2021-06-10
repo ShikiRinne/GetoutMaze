@@ -34,9 +34,6 @@ public class RadioNoise : MonoBehaviour
             WarningSource.Stop();
             ChaseSource.Stop();
         }
-
-        Debug.Log("Warning:" + WarningSource.isPlaying);
-        Debug.Log("Chase:" + ChaseSource.isPlaying);
     }
 
     /// <summary>
