@@ -37,11 +37,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioSource PlayerAudio;
     [SerializeField]
-    private AudioSource HandSE;
+    private AudioSource PickMemoSource;
+    [SerializeField]
+    private AudioSource PsylliumSource;
     [SerializeField]
     private AudioClip Walk;
     [SerializeField]
-    private AudioClip PickMemo;
+    private AudioClip PickMemoClip;
+    [SerializeField]
+    private AudioClip PsylliumClip;
 
     public bool IsShoot { get; set; } = false;
 
@@ -177,7 +181,7 @@ public class Player : MonoBehaviour
                     {
                         HUDM.PickupMemo();
                         hit.collider.gameObject.SetActive(false);
-                        HandSE.PlayOneShot(PickMemo);
+                        PickMemoSource.PlayOneShot(PickMemoClip);
                     }
                     break;
                 case "Exit":
@@ -193,6 +197,7 @@ public class Player : MonoBehaviour
                     {
                         Destroy(hit.collider.gameObject);
                         HUDM.PassPsylliumCount++;
+                        PsylliumSource.PlayOneShot(PsylliumClip);
                     }
                     break;
                 default:
@@ -220,6 +225,7 @@ public class Player : MonoBehaviour
                 {
                     //サイリウムをプレイヤーに向いている方向に倒して生成
                     Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
+                    PsylliumSource.PlayOneShot(PsylliumClip);
                     HUDM.PassPsylliumCount--;                    
                 }
             }
