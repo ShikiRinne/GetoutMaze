@@ -95,6 +95,9 @@ public class HUDManager : MonoBehaviour
         DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
+
+        //debug
+        Debug.Log("KeyCode:" + ExitKeyCode[0] + ExitKeyCode[1] + ExitKeyCode[2] + ExitKeyCode[3]);
     }
 
     void Update()
@@ -190,6 +193,7 @@ public class HUDManager : MonoBehaviour
         //一致ならGameClear、不一致ならそのまま非表示にして再開
         if (isUnlock)
         {
+            DialPadLock.GetComponent<DialOperation>().PlayShackleSound();
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameClear);
         }
         else
