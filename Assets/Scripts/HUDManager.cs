@@ -96,11 +96,8 @@ public class HUDManager : MonoBehaviour
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
 
-        //Debug
-        for (int i = 0; i < ExitKeyCode.Count; ++i)
-        {
-            Debug.Log("[" + i + "]:" + ExitKeyCode[i]);
-        }
+        //debug
+        Debug.Log("KeyCode:" + ExitKeyCode[0] + ExitKeyCode[1] + ExitKeyCode[2] + ExitKeyCode[3]);
     }
 
     void Update()
@@ -178,7 +175,7 @@ public class HUDManager : MonoBehaviour
                 Reticle_Spray.gameObject.SetActive(true);
                 break;
             case ReticleType.DontUse:
-                Reticle_Parent.gameObject.SetActive(false);
+                Reticle_Parent.SetActive(false);
                 break;
             default:
                 break;
@@ -192,17 +189,15 @@ public class HUDManager : MonoBehaviour
     {
         //ダイヤルの数値と脱出するキーコードが一致しているか判定
         bool isUnlock = dialnum.SequenceEqual(ExitKeyCode);
-        Debug.Log("isUnlock = " + isUnlock);
 
         //一致ならGameClear、不一致ならそのまま非表示にして再開
         if (isUnlock)
         {
+            DialPadLock.GetComponent<DialOperation>().PlayShackleSound();
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameClear);
-            Debug.Log("Unlock");
         }
         else
         {
-            Debug.Log("Miss");
             IsTouchiGoal = false;
             DisplayDial(false);
         }
