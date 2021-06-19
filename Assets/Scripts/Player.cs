@@ -34,6 +34,19 @@ public class Player : MonoBehaviour
 
     private Ray PlayerHands;
 
+    [SerializeField]
+    private AudioSource PlayerAudio;
+    [SerializeField]
+    private AudioSource PickMemoSource;
+    [SerializeField]
+    private AudioSource PsylliumSource;
+    [SerializeField]
+    private AudioClip Walk;
+    [SerializeField]
+    private AudioClip PickMemoClip;
+    [SerializeField]
+    private AudioClip PsylliumClip;
+
     public bool IsShoot { get; set; } = false;
 
     void Start()
@@ -54,9 +67,10 @@ public class Player : MonoBehaviour
 
         //壁のない方向にプレイヤーを向ける
         MainCamera.transform.localRotation = Quaternion.identity;
-        CameraRotation = MGM.PlayerStartDir;
-        transform.Rotate(0f, CameraRotation, 0f);
+        //CameraRotation = MGM.PlayerStartDir;
+        transform.Rotate(0f, MGM.PlayerStartDir, 0f);
 
+        //レティクルの色をグレーに設定
         DefaultReticle.color = Color.gray;
     }
 
@@ -88,6 +102,10 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+        else
+        {
+            PlayWalkSound(false);
+        }
     }
 
     /// <summary>
@@ -104,7 +122,21 @@ public class Player : MonoBehaviour
         PlayerDirection = Direction_Horizontal + Direction_Vertical;
 
         //移動
-        Chara.Move(PlayerDirection.normalized * SetMoveSpeed * Time.deltaTime);
+        Chara.Move(SetMoveSpeed * Time.deltaTime * PlayerDirection.normalized);
+
+        //歩行音を鳴らす
+        //操作不可時（ゲームオーバー時）に停止
+        if (Chara.velocity != Vector3.zero)
+        {
+            if (!PlayerAudio.isPlaying)
+            {
+                PlayWalkSound(true);
+            }
+        }
+        else
+        {
+            PlayWalkSound(false);
+        }
     }
 
     /// <summary>
@@ -117,12 +149,21 @@ public class Player : MonoBehaviour
 
         //算出した回転量をVector3に代入
         PlayerRotation.y = ControlManager.ControlManager_Instance.RotateHorizontal * SetRotateSpeed;
-        CameraRotation = ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
+        CameraRotation += ControlManager.ControlManager_Instance.RotateVertical * -SetRotateSpeed;
+        //カメラの上下方向の制限
+        if (CameraRotation > 90f)
+        {
+            CameraRotation = 90f;
+        }
+        if (CameraRotation < -90f)
+        {
+            CameraRotation = -90f;
+        }
 
         //回転
         //Y軸回転はプレイヤーごと回す
         transform.Rotate(0, PlayerRotation.y, 0);
-        MainCamera.transform.Rotate(CameraRotation, 0, 0);
+        MainCamera.transform.localEulerAngles = new Vector3(CameraRotation, 0f, 0f);
     }
 
     /// <summary>
@@ -140,6 +181,7 @@ public class Player : MonoBehaviour
                     {
                         HUDM.PickupMemo();
                         hit.collider.gameObject.SetActive(false);
+                        PickMemoSource.PlayOneShot(PickMemoClip);
                     }
                     break;
                 case "Exit":
@@ -155,6 +197,7 @@ public class Player : MonoBehaviour
                     {
                         Destroy(hit.collider.gameObject);
                         HUDM.PassPsylliumCount++;
+                        PsylliumSource.PlayOneShot(PsylliumClip);
                     }
                     break;
                 default:
@@ -182,6 +225,7 @@ public class Player : MonoBehaviour
                 {
                     //サイリウムをプレイヤーに向いている方向に倒して生成
                     Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
+                    PsylliumSource.PlayOneShot(PsylliumClip);
                     HUDM.PassPsylliumCount--;                    
                 }
             }
@@ -193,6 +237,22 @@ public class Player : MonoBehaviour
         else
         {
             DefaultReticle.color = Color.gray;
+        }
+    }
+
+    /// <summary>
+    /// 歩行音の再生
+    /// </summary>
+    /// <param name="isplay"></param>
+    private void PlayWalkSound(bool isplay)
+    {
+        if (isplay)
+        {
+            PlayerAudio.Play();
+        }
+        else
+        {
+            PlayerAudio.Stop();
         }
     }
 }

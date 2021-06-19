@@ -7,6 +7,15 @@ public class DialOperation : MonoBehaviour
     private HUDManager HUDM;
     private ArrowOperation AO;
 
+    [SerializeField]
+    private AudioSource DialAudio;
+    [SerializeField]
+    private AudioSource ShackleAudio;
+    [SerializeField]
+    private AudioClip DialClip;
+    [SerializeField]
+    private AudioClip ShackleClip;
+
     public List<GameObject> EachDial { get; set; } = new List<GameObject>();
     public List<MeshRenderer> RendererList { get; private set; } = new List<MeshRenderer>();
     public List<int> DialNumberList { get; set; } = new List<int>();
@@ -171,6 +180,7 @@ public class DialOperation : MonoBehaviour
     /// <param name="direction"></param>
     public void DialRotation(RotateDirType direction)
     {
+        DialAudio.PlayOneShot(DialClip);
         switch (direction)
         {
             case RotateDirType.Up:
@@ -202,5 +212,13 @@ public class DialOperation : MonoBehaviour
                 num.material.SetColor("_EmissionColor", DefaultColor);
             }
         }
+    }
+
+    /// <summary>
+    /// ロック解除音を外部で鳴らす
+    /// </summary>
+    public void PlayShackleSound()
+    {
+        ShackleAudio.PlayOneShot(ShackleClip);
     }
 }

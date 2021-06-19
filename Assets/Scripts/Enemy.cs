@@ -17,18 +17,12 @@ public class Enemy : MonoBehaviour
 
     private GameObject Player = null;
     private GameObject Target = null;
-    [SerializeField]
-    private GameObject RecognitionArea = null;
-    [SerializeField]
-    private SphereCollider AreaCollider = null;
 
     private Renderer EnemyRenderer;
     
     private float SearchAngle;
     [SerializeField]
     private float LimitAngle = 0f;
-    [SerializeField]
-    private float SearchLength = 0f;
     [SerializeField]
     private float AttackLength = 0f;
     [SerializeField]
@@ -47,7 +41,7 @@ public class Enemy : MonoBehaviour
     private int NextPoint = 0;
 
     private bool IsStop = false;
-    private bool IsIlluminated = false;
+    public bool IsIlluminated { get; set; } = false;
 
     private Vector3 PlayerDirection;
 
@@ -57,7 +51,6 @@ public class Enemy : MonoBehaviour
     {
         Wandering,
         Chase,
-        Illuminated
     }
     public EnemyState NowState { get; set; }
 
@@ -66,17 +59,14 @@ public class Enemy : MonoBehaviour
         MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
         CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         Player = GameObject.FindWithTag("Player");
-        AreaCollider = RecognitionArea.GetComponent<SphereCollider>();
-        AreaCollider.radius = SearchLength;
 
         Agent = gameObject.GetComponent<NavMeshAgent>();
         transform.Rotate(0f, MGM.EnemyStartDir, 0f);
 
         EnemyRenderer = gameObject.GetComponent<Renderer>();
         EnemyColor = EnemyRenderer.material.color;
-        Debug.Log(EnemyColor);
 
-        Wait();
+        NextTarget();
         NowState = EnemyState.Wandering;
     }
 
@@ -87,7 +77,6 @@ public class Enemy : MonoBehaviour
         if (Player == null)
         {
             Player = GameObject.FindWithTag("Player");
-            Debug.Log("PlayerReFind");
         }
 
         if (IsStop)
@@ -169,40 +158,33 @@ public class Enemy : MonoBehaviour
         if (CF.IsShoot)
         {
             IsIlluminated = true;
+            gameObject.GetComponent<SphereCollider>().enabled = false;
             StartCoroutine(FlashIlluminated());
         }
     }
 
     /// <summary>
-    /// プレイヤー探知
+    /// プレイヤーを追跡
     /// </summary>
-    /// <param name="other"></param>
-    private void OnTriggerStay(Collider other)
+    public void PlayerChase(GameObject player)
     {
-        if (other.gameObject.CompareTag("Player"))
+        //探知する角度内であれば探知
+        PlayerDirection = player.transform.position - transform.position;
+        SearchAngle = Vector3.Angle(transform.forward, PlayerDirection);
+        if (SearchAngle <= LimitAngle)
         {
-            //探知する角度内であれば探知
-            PlayerDirection = other.transform.position - transform.position;
-            SearchAngle = Vector3.Angle(transform.forward, PlayerDirection);
-            if (SearchAngle <= LimitAngle)
-            {
-                Agent.SetDestination(Player.transform.position);
-                NowState = EnemyState.Chase;
-            }
+            Agent.SetDestination(Player.transform.position);
+            NowState = EnemyState.Chase;
         }
     }
 
     /// <summary>
-    /// プレイヤー非探知
+    /// プレイヤーの追跡を中断
     /// </summary>
-    /// <param name="other"></param>
-    private void OnTriggerExit(Collider other)
+    public void StopChase()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            Target = null;
-            NowState = EnemyState.Wandering;
-        }
+        Target = null;
+        NowState = EnemyState.Wandering;
     }
 
     /// <summary>
@@ -211,7 +193,6 @@ public class Enemy : MonoBehaviour
     /// <returns></returns>
     public IEnumerator FlashIlluminated()
     {
-        Debug.Log("Illuminated");
         IsStop = true;
         Target = null;
         EnemyAlpha = EnemyRenderer.material.color.a;
@@ -248,7 +229,6 @@ public class Enemy : MonoBehaviour
             IsStop = true;
             GameManager.GameManager_Instance.CanPlayerMove = false;
             GameManager.GameManager_Instance.TransitionGameState(GameManager.GameState.GameOver);
-            Debug.Log("hit_player");
         }
     }
 }

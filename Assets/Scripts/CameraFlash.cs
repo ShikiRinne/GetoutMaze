@@ -15,11 +15,21 @@ public class CameraFlash : MonoBehaviour
     private Image Finder = null;
 
     [SerializeField]
+    private AudioSource ReadySource;
+    [SerializeField]
+    private AudioSource ShootSource;
+    [SerializeField]
+    private AudioClip ReadyClip;
+    [SerializeField]
+    private AudioClip ShootClip;
+
+    [SerializeField]
     private float AttenuateTime = 0f;
     private float Alpha = 0f;
 
     private Color FlashColor = new Color(1f, 1f, 1f, 0f);
 
+    private bool IsReady = false;
     public bool IsShoot { get; set; } = false;
     public bool IsFlash { get; set; } = false;
 
@@ -55,6 +65,12 @@ public class CameraFlash : MonoBehaviour
         //フラッシュ焚いてる間はカメラを下げない
         if (Input.GetMouseButton(1) || IsFlash)
         {
+            if (!IsReady)
+            {
+                IsReady = true;
+                ReadySource.PlayOneShot(ReadyClip);
+            }
+
             //構えている間はカメラ以外のUIを非表示
             HUD.SetActive(false);
             Finder.gameObject.SetActive(true);
@@ -64,6 +80,7 @@ public class CameraFlash : MonoBehaviour
             if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && !IsFlash)
             {
                 IsShoot = true;
+                ShootSource.PlayOneShot(ShootClip);
                 StartCoroutine(FlashAttenuation());
             }
             else
@@ -73,6 +90,7 @@ public class CameraFlash : MonoBehaviour
         }
         else
         {
+            IsReady = false;
             HUD.SetActive(true);
             Finder.gameObject.SetActive(false);
         }
