@@ -30,16 +30,6 @@ public class HUDManager : MonoBehaviour
 
     [SerializeField]
     private float SizeExpantion = 0f;
-    [SerializeField]
-    private float SizeDefault = 0f;
-    [SerializeField]
-    private int SizePsylliumText = 0;
-    [SerializeField]
-    private float HandPosDefault = 0f;
-    [SerializeField]
-    private float CameraPosDefault = 0f;
-
-    private Vector3 PsylliumTextPos;
 
     private string InputStr = null;
 
@@ -47,10 +37,10 @@ public class HUDManager : MonoBehaviour
     private bool HaveMemo = false;
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
-
     private List<Image> BelongingsUIList = new List<Image>();
-
     private List<int> ExitKeyCode = new List<int>();
+
+    private Vector2 RectPos = new Vector2(0f, 0f);
 
     public int GetPickMemoCount { get; set; } = 0;
     public int PassPsylliumCount { get; set; } = 5;
@@ -71,6 +61,13 @@ public class HUDManager : MonoBehaviour
     }
     public BelongingsType BType { get; set; }
 
+    private enum UIShift
+    {
+        RShift,
+        LShift,
+        None
+    }
+
     void Start()
     {
         //メモをリストとして保存、非アクティブ化
@@ -85,8 +82,6 @@ public class HUDManager : MonoBehaviour
         {
             BelongingsUIList.Add(ui.GetComponent<Image>());
         }
-
-        PsylliumTextPos = PsylliumCountText.rectTransform.anchoredPosition;
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
@@ -223,20 +218,20 @@ public class HUDManager : MonoBehaviour
                             switch (ui.name)
                             {
                                 case "Hand":
-                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault + (SizeExpantion / 2),
-                                                                                    ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
+                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault + (SizeExpantion / 2),
+                                    //                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
                                     break;
                                 case "Psyllium":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(SizeExpantion / 2, 0f, 0f);
-                                    PsylliumCountText.fontSize = SizePsylliumText;
-                                    PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(SizeExpantion / 2, 0f, 0f);
+                                    //PsylliumCountText.fontSize = SizePsylliumText;
+                                    //PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
                                     break;
                                 case "Camera":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
                                     break;
                                 default:
                                     break;
@@ -254,21 +249,21 @@ public class HUDManager : MonoBehaviour
                             switch (ui.name)
                             {
                                 case "Hand":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
                                     break;
                                 case "Psyllium":
-                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    ui.rectTransform.anchoredPosition = new Vector3(0f, SizeExpantion / 2, 0f);
-                                    PsylliumCountText.fontSize = (int)(SizePsylliumText + SizeExpantion);
-                                    PsylliumCountText.rectTransform.anchoredPosition = new Vector3(PsylliumTextPos.x + (SizeExpantion / 2),
-                                                                                                   PsylliumTextPos.y - (SizeExpantion / 2),
-                                                                                                   PsylliumTextPos.z);
+                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(0f, SizeExpantion / 2, 0f);
+                                    //PsylliumCountText.fontSize = (int)(SizePsylliumText + SizeExpantion);
+                                    //PsylliumCountText.rectTransform.anchoredPosition = new Vector3(PsylliumTextPos.x + (SizeExpantion / 2),
+                                    //                                                               PsylliumTextPos.y - (SizeExpantion / 2),
+                                    //                                                               PsylliumTextPos.z);
                                     break;
                                 case "Camera":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
                                     break;
                                 default:
                                     break;
@@ -286,20 +281,20 @@ public class HUDManager : MonoBehaviour
                             switch (ui.name)
                             {
                                 case "Hand":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
                                     break;
                                 case "Psyllium":
-                                    ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    ui.rectTransform.anchoredPosition = new Vector3(-SizeExpantion / 2, 0f, 0f);
-                                    PsylliumCountText.fontSize = SizePsylliumText;
-                                    PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
+                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(-SizeExpantion / 2, 0f, 0f);
+                                    //PsylliumCountText.fontSize = SizePsylliumText;
+                                    //PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
                                     break;
                                 case "Camera":
-                                    ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                                                             ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault - (SizeExpantion / 2),
-                                                                                    ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
+                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
+                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
+                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault - (SizeExpantion / 2),
+                                    //                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
                                     break;
                                 default:
                                     break;
@@ -312,5 +307,45 @@ public class HUDManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// 各UIの変形
+    /// </summary>
+    /// <param name="ui"></param>
+    /// <param name="expantion"></param>
+    /// <param name="shift"></param>
+    private void UITransform(Image ui, bool expantion, UIShift shift)
+    {
+        //現在のUIの位置を取得
+        RectPos = ui.rectTransform.anchoredPosition;
+
+        //拡大
+        if (expantion)
+        {
+            ui.rectTransform.localScale *= 1 + SizeExpantion;
+            RectPos.y += (ui.rectTransform.sizeDelta.y * SizeExpantion) / 2;
+        }
+        else
+        {
+            ui.rectTransform.sizeDelta *= 1f;
+            RectPos.y -= (ui.rectTransform.sizeDelta.y * SizeExpantion) / 2;
+        }
+
+        //移動
+        switch (shift)
+        {
+            case UIShift.RShift:
+                break;
+            case UIShift.LShift:
+                break;
+            case UIShift.None:
+                break;
+            default:
+                break;
+        }
+
+        //編集後の位置を反映
+        ui.rectTransform.anchoredPosition = RectPos;
     }
 }
