@@ -30,6 +30,11 @@ public class HUDManager : MonoBehaviour
 
     [SerializeField]
     private float SizeExpantion = 0f;
+    private float ExpandedUIPos = 0f;
+    private float ShiftedUIPos = 0f;
+    private float HandDefaultPos = 0f;
+    private float PsylliumDefaultPos = 0f;
+    private float CameraDefaultPos = 0f;
 
     private string InputStr = null;
 
@@ -39,8 +44,6 @@ public class HUDManager : MonoBehaviour
     private List<GameObject> DisplayMemosList = new List<GameObject>();
     private List<Image> BelongingsUIList = new List<Image>();
     private List<int> ExitKeyCode = new List<int>();
-
-    private Vector2 RectPos = new Vector2(0f, 0f);
 
     public int GetPickMemoCount { get; set; } = 0;
     public int PassPsylliumCount { get; set; } = 5;
@@ -61,7 +64,7 @@ public class HUDManager : MonoBehaviour
     }
     public BelongingsType BType { get; set; }
 
-    private enum UIShift
+    private enum ShiftDirection
     {
         RShift,
         LShift,
@@ -78,10 +81,28 @@ public class HUDManager : MonoBehaviour
             memo.gameObject.SetActive(false);
         }
 
+        //所持品UIをリストとして保存、各UIのデフォルト位置を各変数に保存
         foreach (Transform ui in BelongingsUI.transform)
         {
             BelongingsUIList.Add(ui.GetComponent<Image>());
+
+            switch (ui.name)
+            {
+                case "Hand":
+                    HandDefaultPos = ui.GetComponent<Image>().rectTransform.anchoredPosition.x;
+                    break;
+                case "Psyllium":
+                    PsylliumDefaultPos = ui.GetComponent<Image>().rectTransform.anchoredPosition.x;
+                    break;
+                case "Camera":
+                    CameraDefaultPos = ui.GetComponent<Image>().rectTransform.anchoredPosition.x;
+                    break;
+                default:
+                    break;
+            }
         }
+        //初期値を1（Hand）にする
+        BelongingsUIOps("1");
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
@@ -97,20 +118,27 @@ public class HUDManager : MonoBehaviour
 
     void Update()
     {
-        //メモの表示・非表示切り替え
         DisplayMemo.SetActive(MemoDisplay);
         if (ControlManager.ControlManager_Instance.CanControl)
         {
-            BelongingsUIOps();
+            //所持品の切り替え
+            if (Input.anyKeyDown)
+            {
+                InputStr = Input.inputString;
+                BelongingsUIOps(InputStr);
+            }
 
+            //メモの表示非表示切り替え
             if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
             {
                 MemoDisplay = !MemoDisplay;
             }
         }
 
+        //サイリウムの所持本数表示
         PsylliumCountText.text = "x" + PassPsylliumCount;
 
+        //ゴール到達時
         if (IsTouchiGoal)
         {
             DisplayDial(true);
@@ -201,111 +229,84 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// 手に持つもののUI切り替え
     /// </summary>
-    private void BelongingsUIOps()
+    private void BelongingsUIOps(string str)
     {
-        if (Input.anyKeyDown)
+        switch (str)
         {
-            InputStr = Input.inputString;
-            
-            switch (InputStr)
-            {
-                //手のUIを拡大し、他UIを縮小してずらす
-                case "1":
-                    if (BType != BelongingsType.Hand)
+            //手のUIを拡大し、他UIを縮小してずらす
+            case "1":
+                if (BType != BelongingsType.Hand)
+                {
+                    foreach (Image ui in BelongingsUIList)
                     {
-                        foreach (Image ui in BelongingsUIList)
+                        switch (ui.name)
                         {
-                            switch (ui.name)
-                            {
-                                case "Hand":
-                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault + (SizeExpantion / 2),
-                                    //                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
-                                    break;
-                                case "Psyllium":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(SizeExpantion / 2, 0f, 0f);
-                                    //PsylliumCountText.fontSize = SizePsylliumText;
-                                    //PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
-                                    break;
-                                case "Camera":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            case "Hand":
+                                UITransform(ui, true, ShiftDirection.RShift, HandDefaultPos);
+                                break;
+                            case "Psyllium":
+                                UITransform(ui, false, ShiftDirection.RShift, PsylliumDefaultPos);
+                                break;
+                            case "Camera":
+                                UITransform(ui, false, ShiftDirection.None, CameraDefaultPos);
+                                break;
+                            default:
+                                break;
                         }
-                        BType = BelongingsType.Hand;
                     }
-                    break;
-                //サイリウムのUIを拡大し、他UIを縮小してずらす
-                case "2":
-                    if (BType != BelongingsType.Psyllium)
+                    BType = BelongingsType.Hand;
+                }
+                break;
+            //サイリウムのUIを拡大し、他UIを縮小してずらす
+            case "2":
+                if (BType != BelongingsType.Psyllium)
+                {
+                    foreach (Image ui in BelongingsUIList)
                     {
-                        foreach (Image ui in BelongingsUIList)
+                        switch (ui.name)
                         {
-                            switch (ui.name)
-                            {
-                                case "Hand":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
-                                    break;
-                                case "Psyllium":
-                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(0f, SizeExpantion / 2, 0f);
-                                    //PsylliumCountText.fontSize = (int)(SizePsylliumText + SizeExpantion);
-                                    //PsylliumCountText.rectTransform.anchoredPosition = new Vector3(PsylliumTextPos.x + (SizeExpantion / 2),
-                                    //                                                               PsylliumTextPos.y - (SizeExpantion / 2),
-                                    //                                                               PsylliumTextPos.z);
-                                    break;
-                                case "Camera":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault, 0f, 0f);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            case "Hand":
+                                UITransform(ui, false, ShiftDirection.None, HandDefaultPos);
+                                break;
+                            case "Psyllium":
+                                UITransform(ui, true, ShiftDirection.None, PsylliumDefaultPos);
+                                break;
+                            case "Camera":
+                                UITransform(ui, false, ShiftDirection.None, CameraDefaultPos);
+                                break;
+                            default:
+                                break;
                         }
-                        BType = BelongingsType.Psyllium;
                     }
-                    break;
-                //カメラのUIを拡大し、他UIを縮小してずらす
-                case "3":
-                    if (BType != BelongingsType.Camera)
+                    BType = BelongingsType.Psyllium;
+                }
+                break;
+            //カメラのUIを拡大し、他UIを縮小してずらす
+            case "3":
+                if (BType != BelongingsType.Camera)
+                {
+                    foreach (Image ui in BelongingsUIList)
                     {
-                        foreach (Image ui in BelongingsUIList)
+                        switch (ui.name)
                         {
-                            switch (ui.name)
-                            {
-                                case "Hand":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(HandPosDefault, 0f, 0f);
-                                    break;
-                                case "Psyllium":
-                                    //ui.rectTransform.sizeDelta = new Vector2(SizeDefault, SizeDefault);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(-SizeExpantion / 2, 0f, 0f);
-                                    //PsylliumCountText.fontSize = SizePsylliumText;
-                                    //PsylliumCountText.rectTransform.anchoredPosition = PsylliumTextPos;
-                                    break;
-                                case "Camera":
-                                    //ui.rectTransform.sizeDelta = new Vector2(ui.rectTransform.sizeDelta.x + SizeExpantion,
-                                    //                                         ui.rectTransform.sizeDelta.y + SizeExpantion);
-                                    //ui.rectTransform.anchoredPosition = new Vector3(CameraPosDefault - (SizeExpantion / 2),
-                                    //                                                ui.rectTransform.anchoredPosition.y + (SizeExpantion / 2), 0);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            case "Hand":
+                                UITransform(ui, false, ShiftDirection.None, HandDefaultPos);
+                                break;
+                            case "Psyllium":
+                                UITransform(ui, false, ShiftDirection.LShift, PsylliumDefaultPos);
+                                break;
+                            case "Camera":
+                                UITransform(ui, true, ShiftDirection.LShift, CameraDefaultPos);
+                                break;
+                            default:
+                                break;
                         }
-                        BType = BelongingsType.Camera;
                     }
-                    break;
-                default:
-                    break;
-            }
+                    BType = BelongingsType.Camera;
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -315,37 +316,37 @@ public class HUDManager : MonoBehaviour
     /// <param name="ui"></param>
     /// <param name="expantion"></param>
     /// <param name="shift"></param>
-    private void UITransform(Image ui, bool expantion, UIShift shift)
+    private void UITransform(Image ui, bool expantion, ShiftDirection shift, float basepos)
     {
-        //現在のUIの位置を取得
-        RectPos = ui.rectTransform.anchoredPosition;
-
-        //拡大
+        //拡大し、拡大した分だけ上にずらしてY軸の変数に保存
         if (expantion)
         {
             ui.rectTransform.localScale *= 1 + SizeExpantion;
-            RectPos.y += (ui.rectTransform.sizeDelta.y * SizeExpantion) / 2;
+            ExpandedUIPos = ui.rectTransform.anchoredPosition.y + (ui.rectTransform.sizeDelta.y * SizeExpantion / 2);
         }
         else
         {
             ui.rectTransform.sizeDelta *= 1f;
-            RectPos.y -= (ui.rectTransform.sizeDelta.y * SizeExpantion) / 2;
+            ExpandedUIPos = 0;
         }
 
-        //移動
+        //左右どちらかにずらしてX軸の変数に保存
         switch (shift)
         {
-            case UIShift.RShift:
+            case ShiftDirection.RShift:
+                ShiftedUIPos = basepos + (ui.rectTransform.sizeDelta.x * SizeExpantion / 2);
                 break;
-            case UIShift.LShift:
+            case ShiftDirection.LShift:
+                ShiftedUIPos = basepos - (ui.rectTransform.sizeDelta.x * SizeExpantion / 2);
                 break;
-            case UIShift.None:
+            case ShiftDirection.None:
+                ShiftedUIPos = basepos;
                 break;
             default:
                 break;
         }
 
-        //編集後の位置を反映
-        ui.rectTransform.anchoredPosition = RectPos;
+        //保存したX軸とY軸の値をUIの位置に反映
+        ui.rectTransform.anchoredPosition = new Vector2(ShiftedUIPos, ExpandedUIPos);
     }
 }
