@@ -60,9 +60,10 @@ public class HUDManager : MonoBehaviour
     {
         Hand,
         Psyllium,
-        Camera
+        Camera,
+        None
     }
-    public BelongingsType BType { get; set; }
+    public BelongingsType BType { get; set; } = BelongingsType.None;
 
     private enum ShiftDirection
     {
@@ -101,8 +102,10 @@ public class HUDManager : MonoBehaviour
                     break;
             }
         }
-        //初期値を1（Hand）にする
-        BelongingsUIOps("1");
+
+        //初期値を1（Hand）に設定
+        InputStr = "1";
+        BelongingsUIOps(InputStr);
 
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
@@ -321,12 +324,12 @@ public class HUDManager : MonoBehaviour
         //拡大し、拡大した分だけ上にずらしてY軸の変数に保存
         if (expantion)
         {
-            ui.rectTransform.localScale *= 1 + SizeExpantion;
+            ui.rectTransform.localScale = new Vector3(1f + SizeExpantion, 1f + SizeExpantion, 1f);
             ExpandedUIPos = ui.rectTransform.anchoredPosition.y + (ui.rectTransform.sizeDelta.y * SizeExpantion / 2);
         }
         else
         {
-            ui.rectTransform.sizeDelta *= 1f;
+            ui.rectTransform.localScale = new Vector3(1f, 1f, 1f);
             ExpandedUIPos = 0;
         }
 

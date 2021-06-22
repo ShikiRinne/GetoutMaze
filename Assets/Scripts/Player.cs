@@ -98,6 +98,9 @@ public class Player : MonoBehaviour
                 case HUDManager.BelongingsType.Camera:
                     CF.CameraShoot();
                     break;
+                case HUDManager.BelongingsType.None:
+                    Debug.LogError("不正な操作");
+                    break;
                 default:
                     break;
             }
