@@ -2555,6 +2555,7 @@ MonoBehaviour:
   MazeWidth: 15
   Floor: {fileID: 6102414519479096704, guid: 6fff2deb6d0bcb44ea6bea31d3661819, type: 3}
   Wall: {fileID: 2818591682071941582, guid: b95464e5e38b7b4498ff1d8e76591e21, type: 3}
+  Celling: {fileID: 4783257338555282967, guid: 13fd2388eb0bb8849ace7d14cbd1ae2d, type: 3}
   StartPoint: {fileID: 5048165217567034926, guid: dd2c483ccd8913347ae76c5cc312c4b4,
     type: 3}
   ExitPoint: {fileID: 7237107102764802551, guid: c4e43f8266a961d4cb521aa7d41b35de,

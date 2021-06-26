@@ -21,6 +21,8 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject Wall = default;
     [SerializeField]
+    private GameObject Celling = default;
+    [SerializeField]
     private GameObject StartPoint = default;
     [SerializeField]
     private GameObject ExitPoint = default;
@@ -273,6 +275,13 @@ public class MazeGenerateManager: MonoBehaviour
         {
             for (int x = 0; x < MazeWidth; ++x)
             {
+                //壁以外の位置に天井を配置
+                if (PlacementObjectList[Count] != (int)MazePoint.Wall)
+                {
+                    Instantiate(Celling, new Vector3(x, 1, y), Quaternion.identity);
+                }
+
+                //各位置にオブジェクトを配置
                 switch (PlacementObjectList[Count])
                 {
                     case (int)MazePoint.Path:
