@@ -269,7 +269,7 @@ public class MazeGenerateManager: MonoBehaviour
         Instantiate(Floor, new Vector3(Mathf.Floor(MazeWidth / 2.0f), 0, Mathf.Floor(MazeHight / 2.0f)), Quaternion.identity);
 
         //マップの大きさを元にテクスチャのタイリングを調整
-        GameObject.FindWithTag("Floor").GetComponent<Renderer>().material.mainTextureScale = new Vector2(MazeWidth, MazeHight);
+        GameObject.FindWithTag("Floor").GetComponent<Renderer>().material.mainTextureScale = new Vector2(MazeWidth * 2f, MazeHight * 2f);
 
         //ナビメッシュの適用
         GameObject.FindWithTag("Floor").GetComponent<NavMeshSurface>().BuildNavMesh();

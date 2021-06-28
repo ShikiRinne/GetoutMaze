@@ -415,7 +415,7 @@ MonoBehaviour:
     type: 3}
   SetMoveSpeed: 1
   SetRotateSpeed: 1
-  SetHandLength: 1
+  SetHandLength: 2
   PlayerAudio: {fileID: 3668970801688183909}
   PickMemoSource: {fileID: 6675212271758499446}
   PsylliumSource: {fileID: 2352579596022459168}

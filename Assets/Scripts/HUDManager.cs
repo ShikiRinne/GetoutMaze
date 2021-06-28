@@ -10,6 +10,8 @@ using UnityEngine.UI;
 /// </summary>
 public class HUDManager : MonoBehaviour
 {
+    private CameraFlash CF;
+
     [SerializeField]
     private GameObject DisplayMemo = default;
     [SerializeField]
@@ -107,6 +109,7 @@ public class HUDManager : MonoBehaviour
         InputStr = "1";
         BelongingsUIOps(InputStr);
 
+        CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
 
@@ -125,7 +128,7 @@ public class HUDManager : MonoBehaviour
         if (ControlManager.ControlManager_Instance.CanControl)
         {
             //所持品の切り替え
-            if (Input.anyKeyDown)
+            if (Input.anyKeyDown && !CF.IsReady)
             {
                 InputStr = Input.inputString;
                 BelongingsUIOps(InputStr);

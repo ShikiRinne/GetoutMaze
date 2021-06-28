@@ -29,9 +29,9 @@ public class CameraFlash : MonoBehaviour
 
     private Color FlashColor = new Color(1f, 1f, 1f, 0f);
 
-    private bool IsReady = false;
-    public bool IsShoot { get; set; } = false;
-    public bool IsFlash { get; set; } = false;
+    private bool IsFlash = false;
+    public bool IsReady { get; private set; } = false;
+    public bool IsShoot { get; private set; } = false;
 
 
     void Start()
