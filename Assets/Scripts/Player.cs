@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     private GameObject MainCamera;
     [SerializeField]
     private GameObject Psyllium = default;
+    [SerializeField]
+    private GameObject HandArea = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
