@@ -135,6 +135,7 @@ public class HUDManager : MonoBehaviour
             }
 
             //メモの表示非表示切り替え
+            //メモを持っていなければ処理しない
             if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
             {
                 MemoDisplay = !MemoDisplay;
@@ -174,8 +175,11 @@ public class HUDManager : MonoBehaviour
             HaveMemo = true;
         }
 
+        //メモ用紙のアクティブ化
         DisplayMemo.transform.GetChild(GetPickMemoCount).gameObject.SetActive(true);
+        //キーコードをメモに反映
         DisplayMemosList[GetPickMemoCount].transform.GetChild(0).GetComponent<Text>().text = ExitKeyCode[GetPickMemoCount].ToString();
+        //カウントの追加
         GetPickMemoCount++;
     }
     
