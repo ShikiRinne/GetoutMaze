@@ -254,6 +254,7 @@ public class MazeGenerateManager: MonoBehaviour
             DeadendPointList.RemoveAt(RandomPoint);
         }
 
+        //再度スタート、ゴール、メモを除いた行き止まりを格納するため一度クリア
         DeadendPointList.Clear();
     }
 
