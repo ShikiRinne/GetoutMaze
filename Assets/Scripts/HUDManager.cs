@@ -117,9 +117,6 @@ public class HUDManager : MonoBehaviour
         DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
-
-        //debug
-        Debug.Log("KeyCode:" + ExitKeyCode[0] + ExitKeyCode[1] + ExitKeyCode[2] + ExitKeyCode[3]);
     }
 
     void Update()
