@@ -45,7 +45,7 @@ public class HUDManager : MonoBehaviour
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
     private List<Image> BelongingsUIList = new List<Image>();
-    private List<int> ExitKeyCode = new List<int>();
+    public List<int> ExitKeyCode { get; private set; } = new List<int>();
 
     public int GetPickMemoCount { get; set; } = 0;
     public int PassPsylliumCount { get; set; } = 5;

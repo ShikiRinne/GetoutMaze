@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MemoManager : MonoBehaviour
 {
+    private HUDManager HUDM;
+    private MazeGenerateManager MGM;
+
+    private GameObject PSM = default;
     private GameObject MemoDisplayArea = default;
     private GameObject Memos = default;
 
@@ -11,6 +15,7 @@ public class MemoManager : MonoBehaviour
     private float MemoDistance = 0f;
 
     private int MemoCounts = 0;
+    private int PickNum = 0;
 
     private bool IsMemoDisplay = false;
     private bool HaveMemo = false;
@@ -22,7 +27,14 @@ public class MemoManager : MonoBehaviour
 
     void Start()
     {
-        
+        PSM = GameObject.Find("PlaySceneManager");
+        HUDM = PSM.GetComponent<HUDManager>();
+        MGM = PSM.GetComponent<MazeGenerateManager>();
+
+        for (int i = 0; i < MGM.PassTotalSplitMemos; ++i)
+        {
+            OrderList.Add(i);
+        }
     }
 
     void Update()
@@ -38,5 +50,10 @@ public class MemoManager : MonoBehaviour
                 IsMemoDisplay = !IsMemoDisplay;
             }
         }
+    }
+
+    public void PickMemos()
+    {
+
     }
 }
