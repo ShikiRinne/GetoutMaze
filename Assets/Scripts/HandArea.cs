@@ -11,7 +11,8 @@ public class HandArea : MonoBehaviour
 
     void Start()
     {
-        
+        transform.localScale = new Vector3(HandAreaSize, HandAreaSize, HandAreaLength);
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, HandAreaLength / 2f);
     }
 
     void Update()
@@ -19,5 +20,8 @@ public class HandArea : MonoBehaviour
         
     }
 
-
+    private void OnTriggerEnter(Collider other)
+    {
+        
+    }
 }

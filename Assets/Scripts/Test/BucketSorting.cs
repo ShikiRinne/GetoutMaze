@@ -56,7 +56,10 @@ public class BucketSorting : MonoBehaviour
     private void Sort(List<int> items)
     {
         //リストをソート
-        items.Sort();
+        if (items.Count < 2)
+        {
+            items.Sort();
+        }
 
         //ソートされたリストを配列番号として参照し、NumberListを順に表示
         for (int i = 0; i < SortList.Count; ++i)
