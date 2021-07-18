@@ -73,9 +73,18 @@ public class MemoManager : MonoBehaviour
 
         SortAndDisplay(PickList);
     }
-
+    /// <summary>
+    /// 拾ったメモをソートして並べる
+    /// </summary>
+    /// <param name="memos"></param>
     private void SortAndDisplay(List<int> memos)
     {
+        //メモを所持状態にする
+        if (!HaveMemo)
+        {
+            HaveMemo = true;
+        }
+
         //リストをソート
         memos.Sort();
 
