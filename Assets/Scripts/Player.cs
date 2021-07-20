@@ -90,10 +90,10 @@ public class Player : MonoBehaviour
             switch (HUDM.BType)
             {
                 case HUDManager.BelongingsType.Hand:
-                    PickHands();
+                    //PickHands();
                     break;
                 case HUDManager.BelongingsType.Psyllium:
-                    PutPsyllium();
+                    //PutPsyllium();
                     break;
                 case HUDManager.BelongingsType.Camera:
                     CF.CameraShoot();
@@ -229,7 +229,7 @@ public class Player : MonoBehaviour
                     //サイリウムをプレイヤーに向いている方向に倒して生成
                     Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
                     PsylliumSource.PlayOneShot(PsylliumClip);
-                    HUDM.PassPsylliumCount--;                    
+                    HUDM.PassPsylliumCount--;
                 }
             }
             else

@@ -77,12 +77,12 @@ public class HUDManager : MonoBehaviour
     void Start()
     {
         //メモをリストとして保存、非アクティブ化
-        foreach (Transform memo in DisplayMemo.transform)
-        {
-            DisplayMemosList.Add(memo.gameObject);
-            ExitKeyCode.Add(Random.Range(0, 10));
-            memo.gameObject.SetActive(false);
-        }
+        //foreach (Transform memo in DisplayMemo.transform)
+        //{
+        //    DisplayMemosList.Add(memo.gameObject);
+        //    ExitKeyCode.Add(Random.Range(0, 10));
+        //    memo.gameObject.SetActive(false);
+        //}
 
         //所持品UIをリストとして保存、各UIのデフォルト位置を各変数に保存
         foreach (Transform ui in BelongingsUI.transform)
@@ -114,14 +114,14 @@ public class HUDManager : MonoBehaviour
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
 
         //不要なオブジェクトを非アクティブ化
-        DisplayMemo.SetActive(false);
+        //DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
     }
 
     void Update()
     {
-        DisplayMemo.SetActive(MemoDisplay);
+        //DisplayMemo.SetActive(MemoDisplay);
         if (ControlManager.ControlManager_Instance.CanControl)
         {
             //所持品の切り替え
@@ -133,10 +133,10 @@ public class HUDManager : MonoBehaviour
 
             //メモの表示非表示切り替え
             //メモを持っていなければ処理しない
-            if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
-            {
-                MemoDisplay = !MemoDisplay;
-            }
+            //if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
+            //{
+            //    MemoDisplay = !MemoDisplay;
+            //}
         }
 
         //サイリウムの所持本数表示
