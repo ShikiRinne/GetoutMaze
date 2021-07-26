@@ -6,6 +6,10 @@ public class move_test : MonoBehaviour
 {
     private CharacterController chara;
 
+    private Vector3 Horizontal;
+    private Vector3 Vertical;
+    private Vector3 Direction;
+
     void Start()
     {
         chara = GetComponent<CharacterController>();
@@ -13,21 +17,15 @@ public class move_test : MonoBehaviour
 
     void Update()
     {
-        chara.SimpleMove(Input.GetAxis("Vertical") * transform.forward);
+        PlayerMove();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void PlayerMove()
     {
-        switch (other.name)
-        {
-            case "GameObject":
-                Debug.Log("object hit");
-                break;
-            case "GameObject (1)":
-                Debug.Log("object(1) hit");
-                break;
-            default:
-                break;
-        }
+        Horizontal = transform.TransformDirection(Vector3.right) * Input.GetAxisRaw("Horizontal");
+        Vertical = transform.TransformDirection(Vector3.forward) * Input.GetAxisRaw("Vertical");
+        Direction = Horizontal + Vertical;
+
+        chara.Move(Time.deltaTime * Direction.normalized);
     }
 }
