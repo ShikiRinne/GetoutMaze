@@ -12,6 +12,12 @@ public class move_test : MonoBehaviour
     private Vector3 Direction;
 
     private float CameraRotate;
+    [SerializeField]
+    private float HandSize = 0f;
+    [SerializeField]
+    private float HandLength = 0f;
+
+    RaycastHit hit;
 
     void Start()
     {
@@ -45,5 +51,23 @@ public class move_test : MonoBehaviour
 
         transform.Rotate(0, Input.GetAxisRaw("Mouse X"), 0);
         MainCamera.transform.localEulerAngles = new Vector3(CameraRotate, 0, 0);
+    }
+
+    private void OnDrawGizmos()
+    {
+        bool isHit = Physics.BoxCast(MainCamera.transform.position, Vector3.one * (HandSize / 2f), MainCamera.transform.forward, out hit, Quaternion.identity, HandLength);
+
+        if (isHit)
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * hit.distance);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * hit.distance, Vector3.one * (HandSize));
+
+            Debug.Log(hit.collider.tag);
+        }
+        else
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * HandLength);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * HandLength, Vector3.one * (HandSize));
+        }
     }
 }
