@@ -6,6 +6,7 @@ public class move_test : MonoBehaviour
 {
     private CharacterController chara;
     private GameObject MainCamera;
+    private GenerateNotes_test GN_test;
 
     private Vector3 Horizontal;
     private Vector3 Vertical;
@@ -17,11 +18,16 @@ public class move_test : MonoBehaviour
     [SerializeField]
     private float HandLength = 0f;
 
+    private bool HandHit = false;
+
     RaycastHit hit;
 
     void Start()
     {
         chara = GetComponent<CharacterController>();
+
+        GN_test = GameObject.Find("Canvas").GetComponent<GenerateNotes_test>();
+
         MainCamera = GameObject.Find("Main Camera");
         MainCamera.transform.parent = gameObject.transform;
         MainCamera.transform.localPosition = new Vector3(MainCamera.transform.localPosition.x, MainCamera.transform.localPosition.y, 0.1f);
@@ -34,6 +40,13 @@ public class move_test : MonoBehaviour
     {
         PlayerMove();
         PlayerRotate();
+
+        HandHit = Physics.BoxCast(MainCamera.transform.position, Vector3.one * (HandSize / 2f), MainCamera.transform.forward, out hit, Quaternion.identity, HandLength);
+
+        if (HandHit && hit.collider.tag == "Notes")
+        {
+            GN_test.PickNotes();
+        }
     }
 
     private void PlayerMove()
@@ -51,23 +64,5 @@ public class move_test : MonoBehaviour
 
         transform.Rotate(0, Input.GetAxisRaw("Mouse X"), 0);
         MainCamera.transform.localEulerAngles = new Vector3(CameraRotate, 0, 0);
-    }
-
-    private void OnDrawGizmos()
-    {
-        bool isHit = Physics.BoxCast(MainCamera.transform.position, Vector3.one * (HandSize / 2f), MainCamera.transform.forward, out hit, Quaternion.identity, HandLength);
-
-        if (isHit)
-        {
-            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * hit.distance);
-            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * hit.distance, Vector3.one * (HandSize));
-
-            Debug.Log(hit.collider.tag);
-        }
-        else
-        {
-            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * HandLength);
-            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * HandLength, Vector3.one * (HandSize));
-        }
     }
 }
