@@ -56,7 +56,7 @@ public class BucketSorting : MonoBehaviour
     private void Sort(List<int> items)
     {
         //リストをソート
-        if (items.Count < 2)
+        if (items.Count > 1)
         {
             items.Sort();
         }
