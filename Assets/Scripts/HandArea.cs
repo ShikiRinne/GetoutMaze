@@ -68,34 +68,34 @@ public class HandArea : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (GameManager.GameManager_Instance.CanPlayerMove && HUDM.BType == HUDManager.BelongingsType.Hand)
-        {
-            switch (other.tag)
-            {
-                case "Notes":
-                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                    {
-                        PickMemo = Random.Range(0, MGM.PassTotalSplitMemos);
-                        MM.PickMemos(PickMemo);
-                        other.gameObject.SetActive(false);
-                    }
-                    break;
-                case "Exit":
-                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                    {
-                        HUDM.IsTouchiGoal = true;
-                    }
-                    break;
-                case "Psyllium":
-                    if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
-                    {
-                        Destroy(other.gameObject);
-                        HUDM.PassPsylliumCount++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+        //    if (GameManager.GameManager_Instance.CanPlayerMove && HUDM.BType == HUDManager.BelongingsType.Hand)
+        //    {
+        //        switch (other.tag)
+        //        {
+        //            case "Notes":
+        //                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+        //                {
+        //                    PickMemo = Random.Range(0, MGM.PassTotalSplitMemos);
+        //                    MM.PickMemos(PickMemo);
+        //                    other.gameObject.SetActive(false);
+        //                }
+        //                break;
+        //            case "Exit":
+        //                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+        //                {
+        //                    HUDM.IsTouchiGoal = true;
+        //                }
+        //                break;
+        //            case "Psyllium":
+        //                if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
+        //                {
+        //                    Destroy(other.gameObject);
+        //                    HUDM.PassPsylliumCount++;
+        //                }
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
     }
 }

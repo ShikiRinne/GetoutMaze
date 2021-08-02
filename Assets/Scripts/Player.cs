@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     private HUDManager HUDM;
     private MazeGenerateManager MGM;
+    private MemoManager MM;
     private CameraFlash CF;
 
     private CharacterController Chara;
@@ -15,8 +16,6 @@ public class Player : MonoBehaviour
     private GameObject MainCamera;
     [SerializeField]
     private GameObject Psyllium = default;
-    [SerializeField]
-    private GameObject HandArea = default;
 
     [SerializeField]
     private float SetMoveSpeed = 0f;
@@ -24,8 +23,10 @@ public class Player : MonoBehaviour
     private float SetRotateSpeed = 0f;
     [SerializeField]
     private float SetHandLength = 0f;
+    [SerializeField]
+    private float SetHandSize = 0f;
 
-    private Text DefaultReticle;
+    private Image DefaultReticle;
 
     private Vector3 PlayerDirection;
     private Vector3 Direction_Horizontal;
@@ -33,7 +34,8 @@ public class Player : MonoBehaviour
     private Vector3 PlayerRotation;
     private float CameraRotation;
 
-    private Ray PlayerHands;
+    private Ray HandRay;
+    private RaycastHit Touch;
 
     [SerializeField]
     private AudioSource PlayerAudio;
@@ -48,13 +50,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip PsylliumClip;
 
+    private bool BoxCast = false;
     public bool IsShoot { get; set; } = false;
 
     void Start()
     {
-        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
-        MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
-        DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
+        GameObject psm = GameObject.Find("PlaySceneManager");
+        HUDM = psm.GetComponent<HUDManager>();
+        MGM = psm.GetComponent<MazeGenerateManager>();
+        MM = psm.GetComponent<MemoManager>();
+        DefaultReticle = GameObject.Find("Default").GetComponent<Image>();
         CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
 
         //メインカメラをプレイヤーの視点に移動
@@ -78,10 +83,6 @@ public class Player : MonoBehaviour
     {
         if (GameManager.GameManager_Instance.CanPlayerMove)
         {
-            //レイの射出
-            PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-            Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
-
             //移動
             PlayerMove();
             CameraMove();
@@ -90,10 +91,23 @@ public class Player : MonoBehaviour
             switch (HUDM.BType)
             {
                 case HUDManager.BelongingsType.Hand:
-                    //PickHands();
+                    //ボックスレイの射出
+                    BoxCast = Physics.BoxCast(MainCamera.transform.position,
+                                              Vector3.one * (SetHandSize / 2f),
+                                              MainCamera.transform.forward,
+                                              out Touch,
+                                              Quaternion.identity, SetHandLength);
+                    //メモの拾得
+                    if (BoxCast)
+                    {
+                        PickHands();
+                    }
                     break;
                 case HUDManager.BelongingsType.Psyllium:
-                    //PutPsyllium();
+                    //レイの射出
+                    HandRay = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+                    Debug.DrawRay(HandRay.origin, HandRay.direction, Color.red);
+                    PutPsyllium();
                     break;
                 case HUDManager.BelongingsType.Camera:
                     CF.CameraShoot();
@@ -174,7 +188,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PickHands()
     {
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        if (Physics.Raycast(HandRay, out RaycastHit hit, SetHandLength))
         {
             switch (hit.collider.tag)
             {
@@ -182,7 +196,7 @@ public class Player : MonoBehaviour
                     DefaultReticle.color = Color.red;
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
-                        HUDM.PickupMemo();
+                        MM.PickMemos(Random.Range(0, MGM.PassTotalSplitMemos));
                         hit.collider.gameObject.SetActive(false);
                         PickMemoSource.PlayOneShot(PickMemoClip);
                     }
@@ -219,7 +233,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PutPsyllium()
     {
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        if (Physics.Raycast(HandRay, out RaycastHit hit, SetHandLength))
         {
             if (hit.collider.gameObject.CompareTag("Floor"))
             {

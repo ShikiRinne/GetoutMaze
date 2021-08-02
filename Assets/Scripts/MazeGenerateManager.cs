@@ -331,7 +331,7 @@ public class MazeGenerateManager: MonoBehaviour
         //すべてのマップ上の配置が完了した後にエネミーの位置を決定する
         if (Count == PlacementObjectList.Count)
         {
-            CreateEnemy();
+            //CreateEnemy();
         }
     }
 

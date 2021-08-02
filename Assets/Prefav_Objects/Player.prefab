@@ -413,10 +413,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Psyllium: {fileID: 8499749609321422941, guid: d5ddf4b6680bb07489cb6fc9ae89f8ed,
     type: 3}
-  HandArea: {fileID: 0}
   SetMoveSpeed: 1
   SetRotateSpeed: 1
   SetHandLength: 2
+  SetHandSize: 0.5
   PlayerAudio: {fileID: 3668970801688183909}
   PickMemoSource: {fileID: 6675212271758499446}
   PsylliumSource: {fileID: 2352579596022459168}

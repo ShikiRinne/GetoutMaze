@@ -26,9 +26,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private Text PsylliumCountText = null;
     [SerializeField]
-    private Text Reticle_Default = null;
-    [SerializeField]
-    private Text Reticle_Spray = null;
+    private Image Reticle_Default = null;
 
     [SerializeField]
     private float SizeExpantion = 0f;
@@ -193,7 +191,7 @@ public class HUDManager : MonoBehaviour
                 {
                     Reticle_Parent.SetActive(true);
                 }
-                Reticle_Spray.gameObject.SetActive(false);
+                //Reticle_Spray.gameObject.SetActive(false);
                 Reticle_Default.gameObject.SetActive(true);
                 break;
             case ReticleType.SprayType:
@@ -202,7 +200,7 @@ public class HUDManager : MonoBehaviour
                     Reticle_Parent.SetActive(true);
                 }
                 Reticle_Default.gameObject.SetActive(false);
-                Reticle_Spray.gameObject.SetActive(true);
+                //Reticle_Spray.gameObject.SetActive(true);
                 break;
             case ReticleType.DontUse:
                 Reticle_Parent.SetActive(false);
