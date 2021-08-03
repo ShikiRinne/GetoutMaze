@@ -38,7 +38,6 @@ public class HUDManager : MonoBehaviour
 
     private string InputStr = null;
 
-    private bool MemoDisplay = false;
     private bool HaveMemo = false;
 
     private List<GameObject> DisplayMemosList = new List<GameObject>();
@@ -74,13 +73,12 @@ public class HUDManager : MonoBehaviour
 
     void Start()
     {
-        //メモをリストとして保存、非アクティブ化
-        //foreach (Transform memo in DisplayMemo.transform)
-        //{
-        //    DisplayMemosList.Add(memo.gameObject);
-        //    ExitKeyCode.Add(Random.Range(0, 10));
-        //    memo.gameObject.SetActive(false);
-        //}
+        //脱出用キーコードの設定
+        for (int i = 0; i < 4; ++i)
+        {
+            ExitKeyCode.Add(Random.Range(0, 10));
+            Debug.Log("keycode[" + (i + 1) + "]=" + ExitKeyCode[i]);
+        }
 
         //所持品UIをリストとして保存、各UIのデフォルト位置を各変数に保存
         foreach (Transform ui in BelongingsUI.transform)
@@ -112,7 +110,6 @@ public class HUDManager : MonoBehaviour
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
 
         //不要なオブジェクトを非アクティブ化
-        //DisplayMemo.SetActive(false);
         DialPadLock.SetActive(false);
         ArrowSet.SetActive(false);
     }
@@ -128,13 +125,6 @@ public class HUDManager : MonoBehaviour
                 InputStr = Input.inputString;
                 BelongingsUIOps(InputStr);
             }
-
-            //メモの表示非表示切り替え
-            //メモを持っていなければ処理しない
-            //if (Input.GetKeyDown(KeyCode.Space) && HaveMemo)
-            //{
-            //    MemoDisplay = !MemoDisplay;
-            //}
         }
 
         //サイリウムの所持本数表示
@@ -191,7 +181,6 @@ public class HUDManager : MonoBehaviour
                 {
                     Reticle_Parent.SetActive(true);
                 }
-                //Reticle_Spray.gameObject.SetActive(false);
                 Reticle_Default.gameObject.SetActive(true);
                 break;
             case ReticleType.SprayType:
@@ -200,7 +189,6 @@ public class HUDManager : MonoBehaviour
                     Reticle_Parent.SetActive(true);
                 }
                 Reticle_Default.gameObject.SetActive(false);
-                //Reticle_Spray.gameObject.SetActive(true);
                 break;
             case ReticleType.DontUse:
                 Reticle_Parent.SetActive(false);

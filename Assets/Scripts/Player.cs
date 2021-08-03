@@ -72,7 +72,6 @@ public class Player : MonoBehaviour
 
         //壁のない方向にプレイヤーを向ける
         MainCamera.transform.localRotation = Quaternion.identity;
-        //CameraRotation = MGM.PlayerStartDir;
         transform.Rotate(0f, MGM.PlayerStartDir, 0f);
 
         //レティクルの色をグレーに設定
@@ -91,22 +90,9 @@ public class Player : MonoBehaviour
             switch (HUDM.BType)
             {
                 case HUDManager.BelongingsType.Hand:
-                    //ボックスレイの射出
-                    BoxCast = Physics.BoxCast(MainCamera.transform.position,
-                                              Vector3.one * (SetHandSize / 2f),
-                                              MainCamera.transform.forward,
-                                              out Touch,
-                                              Quaternion.identity, SetHandLength);
-                    //メモの拾得
-                    if (BoxCast)
-                    {
-                        PickHands();
-                    }
+                    PickHands();
                     break;
                 case HUDManager.BelongingsType.Psyllium:
-                    //レイの射出
-                    HandRay = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-                    Debug.DrawRay(HandRay.origin, HandRay.direction, Color.red);
                     PutPsyllium();
                     break;
                 case HUDManager.BelongingsType.Camera:
@@ -188,16 +174,24 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PickHands()
     {
-        if (Physics.Raycast(HandRay, out RaycastHit hit, SetHandLength))
+        //ボックスレイの射出
+        BoxCast = Physics.BoxCast(MainCamera.transform.position,
+                                              Vector3.one * (SetHandSize / 2f),
+                                              MainCamera.transform.forward,
+                                              out Touch,
+                                              Quaternion.identity, SetHandLength);
+
+        //触れた物に応じた処理
+        if (BoxCast)
         {
-            switch (hit.collider.tag)
+            switch (Touch.collider.tag)
             {
                 case "Notes":
                     DefaultReticle.color = Color.red;
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
-                        MM.PickMemos(Random.Range(0, MGM.PassTotalSplitMemos));
-                        hit.collider.gameObject.SetActive(false);
+                        MM.PickMemos();
+                        Touch.collider.gameObject.SetActive(false);
                         PickMemoSource.PlayOneShot(PickMemoClip);
                     }
                     break;
@@ -212,7 +206,7 @@ public class Player : MonoBehaviour
                     DefaultReticle.color = Color.red;
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
-                        Destroy(hit.collider.gameObject);
+                        Destroy(Touch.collider.gameObject);
                         HUDM.PassPsylliumCount++;
                         PsylliumSource.PlayOneShot(PsylliumClip);
                     }
@@ -233,6 +227,10 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PutPsyllium()
     {
+        //レイの射出
+        HandRay = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+        Debug.DrawRay(HandRay.origin, HandRay.direction, Color.red);
+
         if (Physics.Raycast(HandRay, out RaycastHit hit, SetHandLength))
         {
             if (hit.collider.gameObject.CompareTag("Floor"))

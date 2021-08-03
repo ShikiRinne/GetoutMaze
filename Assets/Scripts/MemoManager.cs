@@ -25,7 +25,6 @@ public class MemoManager : MonoBehaviour
     private List<GameObject> MemosList = new List<GameObject>();
     private List<int> OrderList = new List<int>();      //重複なしランダム実現のためのリスト
     private List<int> PickList = new List<int>();       //ランダムにピックした数値を入れるリスト
-    private List<int> SortList = new List<int>();       //ランダムピックした数値を並び替えるためのリスト
 
     void Start()
     {
@@ -65,9 +64,10 @@ public class MemoManager : MonoBehaviour
     /// メモを拾う
     /// </summary>
     /// <param name="pick"></param>
-    public void PickMemos(int pick)
+    public void PickMemos()
     {
         //ランダムにピックした数値を追加
+        int pick = Random.Range(0, OrderList.Count);
         PickList.Add(OrderList[pick]);
 
         //拾ったメモを表示して中央になるようずらす
@@ -77,11 +77,7 @@ public class MemoManager : MonoBehaviour
         //重複なしのランダムピックを行うためリストからピックした数値を削除
         OrderList.RemoveAt(pick);
 
-        //ソートするためのリストを0で追加
-        SortList.Add(0);
         SortAndDisplay(PickList);
-
-        MemoCounts++;
     }
 
     /// <summary>
@@ -90,6 +86,8 @@ public class MemoManager : MonoBehaviour
     /// <param name="memos"></param>
     private void SortAndDisplay(List<int> memos)
     {
+        MemoCounts++;
+
         //メモを所持状態にする
         if (!HaveMemo)
         {
@@ -103,11 +101,10 @@ public class MemoManager : MonoBehaviour
         }
 
         //ソートされたリストを配列番号として参照し、NumberListを順に表示
-        for (int i = 0; i < SortList.Count; ++i)
+        for (int i = 0; i < MemoCounts; ++i)
         {
-            SortList[i] = HUDM.ExitKeyCode[memos[i]];
             MemosList[i].transform.GetChild(0).GetComponent<Text>().text = (memos[i] + 1).ToString() + "/4";
-            MemosList[i].transform.GetChild(1).GetComponent<Text>().text = SortList[i].ToString();
+            MemosList[i].transform.GetChild(1).GetComponent<Text>().text = HUDM.ExitKeyCode[memos[i]].ToString();
         }
     }
 }

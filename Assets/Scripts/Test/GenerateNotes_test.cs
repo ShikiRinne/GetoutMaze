@@ -35,6 +35,7 @@ public class GenerateNotes_test : MonoBehaviour
             NumberList.Add(Random.Range(0, 10));
             Debug.Log("NumberList[" + i + "] = " + NumberList[i]);
         }
+        Debug.Log(OrderList.Count);
 
         foreach (Transform memos in NotesSet.transform)
         {
