@@ -176,18 +176,20 @@ public class Player : MonoBehaviour
     {
         //ボックスレイの射出
         BoxCast = Physics.BoxCast(MainCamera.transform.position,
-                                              Vector3.one * (SetHandSize / 2f),
-                                              MainCamera.transform.forward,
-                                              out Touch,
-                                              Quaternion.identity, SetHandLength);
+                                  Vector3.one * (SetHandSize / 2f),
+                                  MainCamera.transform.forward,
+                                  out Touch,
+                                  Quaternion.identity,
+                                  SetHandLength);
 
         //触れた物に応じた処理
         if (BoxCast)
         {
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
             switch (Touch.collider.tag)
             {
                 case "Notes":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
                         MM.PickMemos();
@@ -196,14 +198,14 @@ public class Player : MonoBehaviour
                     }
                     break;
                 case "Exit":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
                         HUDM.IsTouchiGoal = true;
                     }
                     break;
                 case "Psyllium":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
                         Destroy(Touch.collider.gameObject);
@@ -212,13 +214,13 @@ public class Player : MonoBehaviour
                     }
                     break;
                 default:
-                    DefaultReticle.color = Color.gray;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
                     break;
             }
         }
         else
         {
-            DefaultReticle.color = Color.gray;
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
         }
     }
 
@@ -235,7 +237,7 @@ public class Player : MonoBehaviour
         {
             if (hit.collider.gameObject.CompareTag("Floor"))
             {
-                DefaultReticle.color = Color.green;
+                HUDM.ChangeReticleType(HUDManager.ReticleType.Psyllium);
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
                 {
                     //サイリウムをプレイヤーに向いている方向に倒して生成
@@ -246,12 +248,12 @@ public class Player : MonoBehaviour
             }
             else
             {
-                DefaultReticle.color = Color.gray;
+                HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
             }
         }
         else
         {
-            DefaultReticle.color = Color.gray;
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
         }
     }
 
@@ -268,6 +270,22 @@ public class Player : MonoBehaviour
         else
         {
             PlayerAudio.Stop();
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        if (BoxCast)
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * Touch.distance);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * Touch.distance, Vector3.one * (SetHandSize / 2f));
+        }
+        else
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * SetHandLength);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * SetHandLength, Vector3.one * (SetHandSize / 2f));
         }
     }
 }

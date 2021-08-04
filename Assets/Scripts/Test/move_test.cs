@@ -45,6 +45,7 @@ public class move_test : MonoBehaviour
 
         if (HandHit && hit.collider.tag == "Notes")
         {
+            Debug.Log("Hit");
             GN_test.PickNotes();
         }
     }
@@ -64,5 +65,21 @@ public class move_test : MonoBehaviour
 
         transform.Rotate(0, Input.GetAxisRaw("Mouse X"), 0);
         MainCamera.transform.localEulerAngles = new Vector3(CameraRotate, 0, 0);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        if (HandHit)
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * hit.distance);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * hit.distance, Vector3.one * (HandSize / 2f));
+        }
+        else
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * HandLength);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * HandLength, Vector3.one * (HandSize / 2f));
+        }
     }
 }

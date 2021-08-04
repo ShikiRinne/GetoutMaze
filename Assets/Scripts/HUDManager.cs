@@ -22,11 +22,17 @@ public class HUDManager : MonoBehaviour
     private GameObject Reticle_Parent = default;
     [SerializeField]
     private GameObject BelongingsUI = default;
+    private GameObject NowReticle = null;
 
     [SerializeField]
     private Text PsylliumCountText = null;
+
     [SerializeField]
     private Image Reticle_Default = null;
+    [SerializeField]
+    private Image Reticle_Hand = null;
+    [SerializeField]
+    private Image Reticle_Psyllium = null;
 
     [SerializeField]
     private float SizeExpantion = 0f;
@@ -50,10 +56,11 @@ public class HUDManager : MonoBehaviour
 
     public enum ReticleType
     {
-        DefaultType,
-        SprayType,
-        DontUse
+        Default,
+        Hand,
+        Psyllium
     }
+    public ReticleType RType { get; set; }
 
     public enum BelongingsType
     {
@@ -101,6 +108,17 @@ public class HUDManager : MonoBehaviour
             }
         }
 
+        //デフォルト以外のレティクルを非表示
+        foreach (Transform reticle in Reticle_Parent.transform)
+        {
+            if (reticle.name != "Default")
+            {
+                reticle.gameObject.SetActive(false);
+            }
+        }
+        RType = ReticleType.Default;
+        NowReticle = Reticle_Default.gameObject;
+
         //初期値を1（Hand）に設定
         InputStr = "1";
         BelongingsUIOps(InputStr);
@@ -108,6 +126,7 @@ public class HUDManager : MonoBehaviour
         CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
         DialPadLock.GetComponent<DialOperation>().StartDialSetting();
         ArrowSet.GetComponent<ArrowOperation>().StertArrowSetting();
+
 
         //不要なオブジェクトを非アクティブ化
         DialPadLock.SetActive(false);
@@ -174,24 +193,21 @@ public class HUDManager : MonoBehaviour
     /// <param name="type"></param>
     public void ChangeReticleType(ReticleType type)
     {
+        NowReticle.SetActive(false);
+
         switch (type)
         {
-            case ReticleType.DefaultType:
-                if (!Reticle_Parent.activeSelf)
-                {
-                    Reticle_Parent.SetActive(true);
-                }
+            case ReticleType.Default:
                 Reticle_Default.gameObject.SetActive(true);
+                NowReticle = Reticle_Default.gameObject;
                 break;
-            case ReticleType.SprayType:
-                if (!Reticle_Parent.activeSelf)
-                {
-                    Reticle_Parent.SetActive(true);
-                }
-                Reticle_Default.gameObject.SetActive(false);
+            case ReticleType.Hand:
+                Reticle_Hand.gameObject.SetActive(true);
+                NowReticle = Reticle_Hand.gameObject;
                 break;
-            case ReticleType.DontUse:
-                Reticle_Parent.SetActive(false);
+            case ReticleType.Psyllium:
+                Reticle_Psyllium.gameObject.SetActive(true);
+                NowReticle = Reticle_Psyllium.gameObject;
                 break;
             default:
                 break;
