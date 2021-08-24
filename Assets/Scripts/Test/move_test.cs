@@ -5,29 +5,81 @@ using UnityEngine;
 public class move_test : MonoBehaviour
 {
     private CharacterController chara;
+    private GameObject MainCamera;
+    private GenerateNotes_test GN_test;
+
+    private Vector3 Horizontal;
+    private Vector3 Vertical;
+    private Vector3 Direction;
+
+    private float CameraRotate;
+    [SerializeField]
+    private float HandSize = 0f;
+    [SerializeField]
+    private float HandLength = 0f;
+
+    private bool HandHit = false;
+
+    RaycastHit hit;
 
     void Start()
     {
         chara = GetComponent<CharacterController>();
+
+        GN_test = GameObject.Find("Canvas").GetComponent<GenerateNotes_test>();
+
+        MainCamera = GameObject.Find("Main Camera");
+        MainCamera.transform.parent = gameObject.transform;
+        MainCamera.transform.localPosition = new Vector3(MainCamera.transform.localPosition.x, MainCamera.transform.localPosition.y, 0.1f);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        chara.SimpleMove(Input.GetAxis("Vertical") * transform.forward);
+        PlayerMove();
+        PlayerRotate();
+
+        HandHit = Physics.BoxCast(MainCamera.transform.position, Vector3.one * (HandSize / 2f), MainCamera.transform.forward, out hit, Quaternion.identity, HandLength);
+
+        if (HandHit && hit.collider.tag == "Notes")
+        {
+            Debug.Log("Hit");
+            GN_test.PickNotes();
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void PlayerMove()
     {
-        switch (other.name)
+        Horizontal = transform.TransformDirection(Vector3.right) * Input.GetAxisRaw("Horizontal");
+        Vertical = transform.TransformDirection(Vector3.forward) * Input.GetAxisRaw("Vertical");
+        Direction = Horizontal + Vertical;
+
+        chara.Move(Time.deltaTime * Direction.normalized);
+    }
+
+    private void PlayerRotate()
+    {
+        CameraRotate -= Input.GetAxisRaw("Mouse Y");
+
+        transform.Rotate(0, Input.GetAxisRaw("Mouse X"), 0);
+        MainCamera.transform.localEulerAngles = new Vector3(CameraRotate, 0, 0);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        if (HandHit)
         {
-            case "GameObject":
-                Debug.Log("object hit");
-                break;
-            case "GameObject (1)":
-                Debug.Log("object(1) hit");
-                break;
-            default:
-                break;
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * hit.distance);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * hit.distance, Vector3.one * (HandSize / 2f));
+        }
+        else
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * HandLength);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * HandLength, Vector3.one * (HandSize / 2f));
         }
     }
 }
