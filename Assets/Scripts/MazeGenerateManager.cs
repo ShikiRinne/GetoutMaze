@@ -318,7 +318,7 @@ public class MazeGenerateManager: MonoBehaviour
                         //メモを置く位置であればメモを配置
                         if (MemoPositionList.Contains(Count))
                         {
-                            float memodir = CharaDirection(Count);
+                            float memodir = CharaDirection(Count) + 180f;
                             Instantiate(Memo, new Vector3(x, 0.01f, y), Quaternion.Euler(Memo.transform.eulerAngles.x, memodir, Memo.transform.eulerAngles.z));
                         }
                         break;
