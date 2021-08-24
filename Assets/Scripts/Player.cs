@@ -8,12 +8,12 @@ public class Player : MonoBehaviour
 {
     private HUDManager HUDM;
     private MazeGenerateManager MGM;
+    private MemoManager MM;
     private CameraFlash CF;
 
     private CharacterController Chara;
 
     private GameObject MainCamera;
-    private GameObject Camera = default;
     [SerializeField]
     private GameObject Psyllium = default;
 
@@ -23,8 +23,10 @@ public class Player : MonoBehaviour
     private float SetRotateSpeed = 0f;
     [SerializeField]
     private float SetHandLength = 0f;
+    [SerializeField]
+    private float SetHandSize = 0f;
 
-    private Text DefaultReticle;
+    private Image DefaultReticle;
 
     private Vector3 PlayerDirection;
     private Vector3 Direction_Horizontal;
@@ -32,7 +34,8 @@ public class Player : MonoBehaviour
     private Vector3 PlayerRotation;
     private float CameraRotation;
 
-    private Ray PlayerHands;
+    private Ray HandRay;
+    private RaycastHit Touch;
 
     [SerializeField]
     private AudioSource PlayerAudio;
@@ -47,15 +50,17 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip PsylliumClip;
 
+    private bool BoxCast = false;
     public bool IsShoot { get; set; } = false;
 
     void Start()
     {
-        HUDM = GameObject.Find("PlaySceneManager").GetComponent<HUDManager>();
-        MGM = GameObject.Find("PlaySceneManager").GetComponent<MazeGenerateManager>();
-        DefaultReticle = GameObject.Find("Default").GetComponent<Text>();
-        Camera = GameObject.Find("Camera");
-        CF = Camera.GetComponent<CameraFlash>();
+        GameObject psm = GameObject.Find("PlaySceneManager");
+        HUDM = psm.GetComponent<HUDManager>();
+        MGM = psm.GetComponent<MazeGenerateManager>();
+        MM = psm.GetComponent<MemoManager>();
+        DefaultReticle = GameObject.Find("Default").GetComponent<Image>();
+        CF = GameObject.Find("Camera").GetComponent<CameraFlash>();
 
         //メインカメラをプレイヤーの視点に移動
         MainCamera = GameObject.Find("Main Camera");
@@ -67,7 +72,6 @@ public class Player : MonoBehaviour
 
         //壁のない方向にプレイヤーを向ける
         MainCamera.transform.localRotation = Quaternion.identity;
-        //CameraRotation = MGM.PlayerStartDir;
         transform.Rotate(0f, MGM.PlayerStartDir, 0f);
 
         //レティクルの色をグレーに設定
@@ -78,10 +82,6 @@ public class Player : MonoBehaviour
     {
         if (GameManager.GameManager_Instance.CanPlayerMove)
         {
-            //レイの射出
-            PlayerHands = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
-            Debug.DrawRay(PlayerHands.origin, PlayerHands.direction, Color.red);
-
             //移動
             PlayerMove();
             CameraMove();
@@ -97,6 +97,9 @@ public class Player : MonoBehaviour
                     break;
                 case HUDManager.BelongingsType.Camera:
                     CF.CameraShoot();
+                    break;
+                case HUDManager.BelongingsType.None:
+                    Debug.LogError("不正な操作");
                     break;
                 default:
                     break;
@@ -171,43 +174,53 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PickHands()
     {
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        //ボックスレイの射出
+        BoxCast = Physics.BoxCast(MainCamera.transform.position,
+                                  Vector3.one * (SetHandSize / 2f),
+                                  MainCamera.transform.forward,
+                                  out Touch,
+                                  Quaternion.identity,
+                                  SetHandLength);
+
+        //触れた物に応じた処理
+        if (BoxCast)
         {
-            switch (hit.collider.tag)
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
+            switch (Touch.collider.tag)
             {
                 case "Notes":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
-                        HUDM.PickupMemo();
-                        hit.collider.gameObject.SetActive(false);
+                        MM.PickMemos();
+                        Touch.collider.gameObject.SetActive(false);
                         PickMemoSource.PlayOneShot(PickMemoClip);
                     }
                     break;
                 case "Exit":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
                         HUDM.IsTouchiGoal = true;
                     }
                     break;
                 case "Psyllium":
-                    DefaultReticle.color = Color.red;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Hand);
                     if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push))
                     {
-                        Destroy(hit.collider.gameObject);
+                        Destroy(Touch.collider.gameObject);
                         HUDM.PassPsylliumCount++;
                         PsylliumSource.PlayOneShot(PsylliumClip);
                     }
                     break;
                 default:
-                    DefaultReticle.color = Color.gray;
+                    HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
                     break;
             }
         }
         else
         {
-            DefaultReticle.color = Color.gray;
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
         }
     }
 
@@ -216,27 +229,31 @@ public class Player : MonoBehaviour
     /// </summary>
     private void PutPsyllium()
     {
-        if (Physics.Raycast(PlayerHands, out RaycastHit hit, SetHandLength))
+        //レイの射出
+        HandRay = new Ray(MainCamera.transform.position, MainCamera.transform.forward);
+        Debug.DrawRay(HandRay.origin, HandRay.direction, Color.red);
+
+        if (Physics.Raycast(HandRay, out RaycastHit hit, SetHandLength))
         {
             if (hit.collider.gameObject.CompareTag("Floor"))
             {
-                DefaultReticle.color = Color.green;
+                HUDM.ChangeReticleType(HUDManager.ReticleType.Psyllium);
                 if (ControlManager.ControlManager_Instance.Action(ControlManager.PressType.Push) && HUDM.PassPsylliumCount > 0)
                 {
                     //サイリウムをプレイヤーに向いている方向に倒して生成
                     Instantiate(Psyllium, new Vector3(hit.point.x, Psyllium.transform.localScale.z, hit.point.z), Quaternion.Euler(90f, transform.eulerAngles.y, 0f));
                     PsylliumSource.PlayOneShot(PsylliumClip);
-                    HUDM.PassPsylliumCount--;                    
+                    HUDM.PassPsylliumCount--;
                 }
             }
             else
             {
-                DefaultReticle.color = Color.gray;
+                HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
             }
         }
         else
         {
-            DefaultReticle.color = Color.gray;
+            HUDM.ChangeReticleType(HUDManager.ReticleType.Default);
         }
     }
 
@@ -253,6 +270,22 @@ public class Player : MonoBehaviour
         else
         {
             PlayerAudio.Stop();
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        if (BoxCast)
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * Touch.distance);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * Touch.distance, Vector3.one * (SetHandSize / 2f));
+        }
+        else
+        {
+            Gizmos.DrawRay(MainCamera.transform.position, MainCamera.transform.forward * SetHandLength);
+            Gizmos.DrawWireCube(MainCamera.transform.position + MainCamera.transform.forward * SetHandLength, Vector3.one * (SetHandSize / 2f));
         }
     }
 }

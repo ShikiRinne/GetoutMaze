@@ -21,6 +21,8 @@ public class MazeGenerateManager: MonoBehaviour
     [SerializeField]
     private GameObject Wall = default;
     [SerializeField]
+    private GameObject Celling = default;
+    [SerializeField]
     private GameObject StartPoint = default;
     [SerializeField]
     private GameObject ExitPoint = default;
@@ -252,6 +254,7 @@ public class MazeGenerateManager: MonoBehaviour
             DeadendPointList.RemoveAt(RandomPoint);
         }
 
+        //再度スタート、ゴール、メモを除いた行き止まりを格納するため一度クリア
         DeadendPointList.Clear();
     }
 
@@ -265,6 +268,11 @@ public class MazeGenerateManager: MonoBehaviour
         //床をマップの大きさをもとにサイズと位置を調整して生成
         Floor.GetComponent<Transform>().localScale = new Vector3(MazeWidth * 0.1f, 1, MazeHight * 0.1f);
         Instantiate(Floor, new Vector3(Mathf.Floor(MazeWidth / 2.0f), 0, Mathf.Floor(MazeHight / 2.0f)), Quaternion.identity);
+
+        //マップの大きさを元にテクスチャのタイリングを調整
+        GameObject.FindWithTag("Floor").GetComponent<Renderer>().material.mainTextureScale = new Vector2(MazeWidth * 2f, MazeHight * 2f);
+
+        //ナビメッシュの適用
         GameObject.FindWithTag("Floor").GetComponent<NavMeshSurface>().BuildNavMesh();
 
         //オブジェクト配置リストに応じたオブジェクトを配置していく
@@ -273,6 +281,13 @@ public class MazeGenerateManager: MonoBehaviour
         {
             for (int x = 0; x < MazeWidth; ++x)
             {
+                //壁以外の位置に天井を配置
+                if (PlacementObjectList[Count] != (int)MazePoint.Wall)
+                {
+                    Instantiate(Celling, new Vector3(x, 1, y), Quaternion.identity);
+                }
+
+                //各位置にオブジェクトを配置
                 switch (PlacementObjectList[Count])
                 {
                     case (int)MazePoint.Path:
@@ -303,7 +318,8 @@ public class MazeGenerateManager: MonoBehaviour
                         //メモを置く位置であればメモを配置
                         if (MemoPositionList.Contains(Count))
                         {
-                            Instantiate(Memo, new Vector3(x, 0, y), Quaternion.identity);
+                            float memodir = CharaDirection(Count) + 180f;
+                            Instantiate(Memo, new Vector3(x, 0.01f, y), Quaternion.Euler(Memo.transform.eulerAngles.x, memodir, Memo.transform.eulerAngles.z));
                         }
                         break;
                     default:
@@ -316,7 +332,7 @@ public class MazeGenerateManager: MonoBehaviour
         //すべてのマップ上の配置が完了した後にエネミーの位置を決定する
         if (Count == PlacementObjectList.Count)
         {
-            CreateEnemy();
+            //CreateEnemy();
         }
     }
 
